@@ -1,6 +1,6 @@
 package org.moparscape.elysium.net.handler;
 
-import org.moparscape.elysium.entity.Entity;
+import org.moparscape.elysium.entity.Player;
 import org.moparscape.elysium.net.Session;
 import org.moparscape.elysium.net.codec.Message;
 
@@ -9,7 +9,8 @@ import org.moparscape.elysium.net.codec.Message;
  *
  * @author lothy
  */
-public interface MessageHandler<T extends Message> {
+public abstract class MessageHandler<T extends Message> {
 
-    void handle(Session session, Entity player, T message);
+    public abstract void handle(Session session, Player player, T message);
+
 }

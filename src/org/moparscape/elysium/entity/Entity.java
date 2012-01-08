@@ -8,7 +8,7 @@ import java.util.Map;
 /**
  * @author lothy
  */
-public final class Entity {
+public class Entity {
 
     private final Map<Class<? extends Component>, Component> components;
 
