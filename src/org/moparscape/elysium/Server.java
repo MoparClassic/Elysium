@@ -8,7 +8,9 @@ import org.moparscape.elysium.net.codec.Message;
 import java.net.InetSocketAddress;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -26,15 +28,15 @@ public class Server {
     private final Lock messageListLock = new ReentrantLock();
 
     private final ExecutorService nettyBossService = Executors.newFixedThreadPool(1);
-    
+
     private final ExecutorService nettyWorkerService = Executors.newFixedThreadPool(2);
-    
+
     private final ScheduledExecutorService taskExecutorService = Executors.newScheduledThreadPool(4);
 
     private final ExecutorService dataExecutorService = Executors.newFixedThreadPool(2);
 
     private final ServerBootstrap bootstrap;
-    
+
     private volatile long timestamp = System.nanoTime() / 1000000;
 
     private volatile long lastPulse = 0L;
@@ -65,8 +67,7 @@ public class Server {
             if (timestamp - lastPulse < 600) {
                 try {
                     Thread.sleep(20);
-                }
-                catch (InterruptedException e) {
+                } catch (InterruptedException e) {
                     System.err.println("Error occurred while sleeping between game pulses");
                 }
 

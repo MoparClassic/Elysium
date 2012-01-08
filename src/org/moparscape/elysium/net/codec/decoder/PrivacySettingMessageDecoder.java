@@ -9,11 +9,11 @@ import org.moparscape.elysium.net.codec.decoder.message.PrivacySettingMessage;
  * @author lothy
  */
 public final class PrivacySettingMessageDecoder extends AbstractMessageDecoder<PrivacySettingMessage> {
-    
+
     public PrivacySettingMessageDecoder() {
         super(PrivacySettingMessage.class, 176);
     }
-    
+
     public PrivacySettingMessage decode(ChannelBuffer buffer) {
         throw new UnsupportedOperationException("Not yet implemented");
     }

@@ -21,26 +21,6 @@
 		</PacketHandler>
 		<PacketHandler>
 			<ids>
-				<int>166</int>
-				<int>211</int>
-				<int>216</int>
-				<int>70</int>
-				<int>53</int>
-			</ids>
-			<className>org.moparscape.msc.gs.phandler.client.TradeHandler</className>
-		</PacketHandler>
-		<PacketHandler>
-			<ids>
-				<int>168</int>
-				<int>52</int>
-				<int>25</int>
-				<int>108</int>
-				<int>254</int>
-			</ids>
-			<className>org.moparscape.msc.gs.phandler.client.FriendHandler</className>
-		</PacketHandler>
-		<PacketHandler>
-			<ids>
 				<int>40</int>
 				<int>51</int>
 			</ids>
@@ -59,32 +39,5 @@
 				<int>94</int>
 			</ids>
 			<className>org.moparscape.msc.gs.phandler.client.InvUseOnObject</className>
-		</PacketHandler>
-		<PacketHandler>
-			<ids>
-				<int>48</int>
-				<int>183</int>
-				<int>198</int>
-			</ids>
-			<className>org.moparscape.msc.gs.phandler.client.BankHandler</className>
-		</PacketHandler>
-		<PacketHandler>
-			<ids>
-				<int>253</int>
-				<int>128</int>
-				<int>255</int>
-			</ids>
-			<className>org.moparscape.msc.gs.phandler.client.ShopHandler</className>
-		</PacketHandler>
-		<PacketHandler>
-			<ids>
-				<int>35</int>
-				<int>123</int>
-				<int>87</int>
-				<int>222</int>
-				<int>225</int>
-				<int>252</int>
-			</ids>
-			<className>org.moparscape.msc.gs.phandler.client.DuelHandler</className>
 		</PacketHandler>
 </PacketHandler-array>

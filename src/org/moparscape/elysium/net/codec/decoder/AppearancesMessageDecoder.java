@@ -13,7 +13,7 @@ public final class AppearancesMessageDecoder extends AbstractMessageDecoder<Appe
     public AppearancesMessageDecoder() {
         super(AppearancesMessage.class, 83);
     }
-    
+
     public AppearancesMessage decode(ChannelBuffer buffer) {
         throw new UnsupportedOperationException("Not yet implemented");
     }

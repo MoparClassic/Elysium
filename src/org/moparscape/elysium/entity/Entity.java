@@ -11,7 +11,7 @@ import java.util.Map;
 public final class Entity {
 
     private final Map<Class<? extends Component>, Component> components;
-    
+
     private int index;
 
     private Entity() {
@@ -25,7 +25,7 @@ public final class Entity {
     public <T extends Component> T getComponent(Class<T> type) {
         return type.cast(components.get(type));
     }
-    
+
     public int getIndex() {
         return index;
     }

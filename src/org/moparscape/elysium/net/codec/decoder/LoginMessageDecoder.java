@@ -9,11 +9,11 @@ import org.moparscape.elysium.net.codec.decoder.message.LoginMessage;
  * @author lothy
  */
 public final class LoginMessageDecoder extends AbstractMessageDecoder<LoginMessage> {
-    
+
     public LoginMessageDecoder() {
         super(LoginMessage.class, 77);
     }
-    
+
     public LoginMessage decode(ChannelBuffer buffer) {
         throw new UnsupportedOperationException("Not yet implemented");
     }

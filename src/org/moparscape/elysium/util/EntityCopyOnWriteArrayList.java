@@ -76,7 +76,7 @@ public final class EntityCopyOnWriteArrayList<E extends Entity> implements List<
 
     public void clear() {
         array = new Object[0];
-        
+
         lock.lock();
         try {
             for (int i = 0; i < capacity; i++) {
@@ -84,8 +84,7 @@ public final class EntityCopyOnWriteArrayList<E extends Entity> implements List<
             }
 
             mapIndex = 0;
-        }
-        finally {
+        } finally {
             lock.unlock();
         }
     }
@@ -337,15 +336,15 @@ public final class EntityCopyOnWriteArrayList<E extends Entity> implements List<
             throw new UnsupportedOperationException();
         }
     }
-    
+
     private static class COWIterable<E extends Entity> implements Iterable<E> {
 
         private final Iterator<E> iterator;
-        
+
         public COWIterable(Iterator<E> it) {
             this.iterator = it;
         }
-        
+
         public Iterator<E> iterator() {
             return iterator;
         }

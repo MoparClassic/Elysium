@@ -27,7 +27,7 @@ public final class World {
     public static World getInstance() {
         return INSTANCE;
     }
-    
+
     public boolean addPlayer(Entity e) {
         return playerList.add(e);
     }
