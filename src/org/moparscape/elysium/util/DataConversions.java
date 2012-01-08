@@ -1,5 +1,7 @@
 package org.moparscape.elysium.util;
 
+import org.jboss.netty.buffer.ChannelBuffer;
+import org.jboss.netty.buffer.ChannelBuffers;
 import org.moparscape.elysium.world.Point;
 
 import java.io.BufferedInputStream;
@@ -16,7 +18,7 @@ import java.util.Random;
  *
  * @author RSCD developers
  */
-public class DataConversions {
+public final class DataConversions {
 
     private static final char characters[] = {' ', 'e', 't', 'a', 'o', 'i', 'h',
             'n', 's', 'r', 'd', 'l', 'u', 'm', 'w', 'c', 'y', 'f', 'g', 'p',
@@ -123,6 +125,15 @@ public class DataConversions {
 //            return null;
 //        }
 //    }
+    public static ChannelBuffer decryptRSA(byte[] pData) {
+        try {
+            BigInteger bigInteger = new BigInteger(pData);
+            byte[] decrypted = bigInteger.modPow(key, modulus).toByteArray();
+            return ChannelBuffers.wrappedBuffer(decrypted);
+        } catch (Exception e) {
+            return null;
+        }
+    }
 
     /**
      * returns the code used to represent the given character in our byte array
