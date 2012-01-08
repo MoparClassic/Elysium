@@ -14,7 +14,7 @@ public final class IgnoreAddMessageDecoder extends AbstractMessageDecoder<Ignore
         super(IgnoreAddMessage.class, 25);
     }
 
-    public IgnoreAddMessage decode(ChannelBuffer buffer) {
+    public IgnoreAddMessage decode(ChannelBuffer buffer, int length) {
         throw new UnsupportedOperationException();
     }
 }

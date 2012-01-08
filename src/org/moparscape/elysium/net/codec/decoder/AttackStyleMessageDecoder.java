@@ -14,7 +14,7 @@ public final class AttackStyleMessageDecoder extends AbstractMessageDecoder<Atta
         super(AttackStyleMessage.class, 42);
     }
 
-    public AttackStyleMessage decode(ChannelBuffer buffer) {
+    public AttackStyleMessage decode(ChannelBuffer buffer, int length) {
         throw new UnsupportedOperationException();
     }
 }

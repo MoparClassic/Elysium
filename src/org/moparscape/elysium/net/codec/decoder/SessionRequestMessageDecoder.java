@@ -14,7 +14,7 @@ public final class SessionRequestMessageDecoder extends AbstractMessageDecoder<S
         super(SessionRequestMessage.class, 32);
     }
 
-    public SessionRequestMessage decode(ChannelBuffer buffer) {
+    public SessionRequestMessage decode(ChannelBuffer buffer, int length) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 }

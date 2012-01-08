@@ -14,7 +14,7 @@ public final class ItemPickupMessageDecoder extends AbstractMessageDecoder<ItemP
         super(ItemPickupMessage.class, 245);
     }
 
-    public ItemPickupMessage decode(ChannelBuffer buffer) {
+    public ItemPickupMessage decode(ChannelBuffer buffer, int length) {
         throw new UnsupportedOperationException();
     }
 }

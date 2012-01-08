@@ -14,7 +14,7 @@ public final class WalkTargetMessageDecoder extends AbstractMessageDecoder<WalkT
         super(WalkTargetMessage.class, 246);
     }
 
-    public WalkTargetMessage decode(ChannelBuffer buffer) {
+    public WalkTargetMessage decode(ChannelBuffer buffer, int length) {
         throw new UnsupportedOperationException();
     }
 }

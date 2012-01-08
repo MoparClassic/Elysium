@@ -14,7 +14,7 @@ public final class BankCloseMessageDecoder extends AbstractMessageDecoder<BankCl
         super(BankCloseMessage.class, 48);
     }
 
-    public BankCloseMessage decode(ChannelBuffer buffer) {
+    public BankCloseMessage decode(ChannelBuffer buffer, int length) {
         throw new UnsupportedOperationException();
     }
 }

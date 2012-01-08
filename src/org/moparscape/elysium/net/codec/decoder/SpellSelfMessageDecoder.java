@@ -14,7 +14,7 @@ public final class SpellSelfMessageDecoder extends AbstractMessageDecoder<SpellS
         super(SpellSelfMessage.class, 206);
     }
 
-    public SpellSelfMessage decode(ChannelBuffer buffer) {
+    public SpellSelfMessage decode(ChannelBuffer buffer, int length) {
         throw new UnsupportedOperationException();
     }
 }

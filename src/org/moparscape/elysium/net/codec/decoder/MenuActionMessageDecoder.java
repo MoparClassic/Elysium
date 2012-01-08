@@ -14,7 +14,7 @@ public final class MenuActionMessageDecoder extends AbstractMessageDecoder<MenuA
         super(MenuActionMessage.class, 154);
     }
 
-    public MenuActionMessage decode(ChannelBuffer buffer) {
+    public MenuActionMessage decode(ChannelBuffer buffer, int length) {
         throw new UnsupportedOperationException();
     }
 }

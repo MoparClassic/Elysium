@@ -14,7 +14,7 @@ public final class ObjectSecondaryActionMessageDecoder extends AbstractMessageDe
         super(ObjectSecondaryActionMessage.class, 40);
     }
 
-    public ObjectSecondaryActionMessage decode(ChannelBuffer buffer) {
+    public ObjectSecondaryActionMessage decode(ChannelBuffer buffer, int length) {
         throw new UnsupportedOperationException();
     }
 }

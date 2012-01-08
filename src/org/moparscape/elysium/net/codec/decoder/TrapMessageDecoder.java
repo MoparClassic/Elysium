@@ -14,7 +14,7 @@ public final class TrapMessageDecoder extends AbstractMessageDecoder<TrapMessage
         super(TrapMessage.class, 3);
     }
 
-    public TrapMessage decode(ChannelBuffer buffer) {
+    public TrapMessage decode(ChannelBuffer buffer, int length) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 }

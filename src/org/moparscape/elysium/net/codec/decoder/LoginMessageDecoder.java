@@ -16,7 +16,7 @@ public final class LoginMessageDecoder extends AbstractMessageDecoder<LoginMessa
         super(LoginMessage.class, 0);
     }
 
-    public LoginMessage decode(ChannelBuffer buffer) {
+    public LoginMessage decode(ChannelBuffer buffer, int length) {
         boolean reconnecting = buffer.readByte() == 1;
         int version = buffer.readShort();
         int loginPacketSize = buffer.readByte();

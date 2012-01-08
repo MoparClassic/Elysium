@@ -14,7 +14,7 @@ public final class FollowRequestMessageDecoder extends AbstractMessageDecoder<Fo
         super(FollowRequestMessage.class, 68);
     }
 
-    public FollowRequestMessage decode(ChannelBuffer buffer) {
+    public FollowRequestMessage decode(ChannelBuffer buffer, int length) {
         throw new UnsupportedOperationException();
     }
 }

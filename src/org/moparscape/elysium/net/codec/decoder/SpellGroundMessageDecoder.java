@@ -14,7 +14,7 @@ public final class SpellGroundMessageDecoder extends AbstractMessageDecoder<Spel
         super(SpellGroundMessage.class, 232);
     }
 
-    public SpellGroundMessage decode(ChannelBuffer buffer) {
+    public SpellGroundMessage decode(ChannelBuffer buffer, int length) {
         throw new UnsupportedOperationException();
     }
 }

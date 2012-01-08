@@ -14,7 +14,7 @@ public final class ItemItemMessageDecoder extends AbstractMessageDecoder<ItemIte
         super(ItemItemMessage.class, 27);
     }
 
-    public ItemItemMessage decode(ChannelBuffer buffer) {
+    public ItemItemMessage decode(ChannelBuffer buffer, int length) {
         throw new UnsupportedOperationException();
     }
 }

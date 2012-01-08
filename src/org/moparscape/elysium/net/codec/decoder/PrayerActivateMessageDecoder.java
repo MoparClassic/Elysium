@@ -14,7 +14,7 @@ public final class PrayerActivateMessageDecoder extends AbstractMessageDecoder<P
         super(PrayerActivateMessage.class, 56);
     }
 
-    public PrayerActivateMessage decode(ChannelBuffer buffer) {
+    public PrayerActivateMessage decode(ChannelBuffer buffer, int length) {
         throw new UnsupportedOperationException();
     }
 }

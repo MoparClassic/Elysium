@@ -14,7 +14,7 @@ public final class ItemGroundItemMessageDecoder extends AbstractMessageDecoder<I
         super(ItemGroundItemMessage.class, 34);
     }
 
-    public ItemGroundItemMessage decode(ChannelBuffer buffer) {
+    public ItemGroundItemMessage decode(ChannelBuffer buffer, int length) {
         throw new UnsupportedOperationException();
     }
 }

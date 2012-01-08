@@ -14,7 +14,7 @@ public final class SpellGameObjectMessageDecoder extends AbstractMessageDecoder<
         super(SpellGameObjectMessage.class, 17);
     }
 
-    public SpellGameObjectMessage decode(ChannelBuffer buffer) {
+    public SpellGameObjectMessage decode(ChannelBuffer buffer, int length) {
         throw new UnsupportedOperationException();
     }
 }

@@ -14,7 +14,7 @@ public final class ItemNpcMessageDecoder extends AbstractMessageDecoder<ItemNpcM
         super(ItemNpcMessage.class, 142);
     }
 
-    public ItemNpcMessage decode(ChannelBuffer buffer) {
+    public ItemNpcMessage decode(ChannelBuffer buffer, int length) {
         throw new UnsupportedOperationException();
     }
 }

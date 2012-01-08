@@ -14,7 +14,7 @@ public final class TradeRequestMessageDecoder extends AbstractMessageDecoder<Tra
         super(TradeRequestMessage.class, 166);
     }
 
-    public TradeRequestMessage decode(ChannelBuffer buffer) {
+    public TradeRequestMessage decode(ChannelBuffer buffer, int length) {
         throw new UnsupportedOperationException();
     }
 }

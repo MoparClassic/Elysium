@@ -14,7 +14,7 @@ public final class TradeDeclineMessageDecoder extends AbstractMessageDecoder<Tra
         super(TradeDeclineMessage.class, 216);
     }
 
-    public TradeDeclineMessage decode(ChannelBuffer buffer) {
+    public TradeDeclineMessage decode(ChannelBuffer buffer, int length) {
         throw new UnsupportedOperationException();
     }
 }

@@ -14,7 +14,7 @@ public final class AttackPlayerMessageDecoder extends AbstractMessageDecoder<Att
         super(AttackPlayerMessage.class, 57);
     }
 
-    public AttackPlayerMessage decode(ChannelBuffer buffer) {
+    public AttackPlayerMessage decode(ChannelBuffer buffer, int length) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 }

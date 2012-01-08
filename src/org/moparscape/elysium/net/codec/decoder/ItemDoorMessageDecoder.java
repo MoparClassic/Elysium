@@ -14,7 +14,7 @@ public final class ItemDoorMessageDecoder extends AbstractMessageDecoder<ItemDoo
         super(ItemDoorMessage.class, 36);
     }
 
-    public ItemDoorMessage decode(ChannelBuffer buffer) {
+    public ItemDoorMessage decode(ChannelBuffer buffer, int length) {
         throw new UnsupportedOperationException();
     }
 }

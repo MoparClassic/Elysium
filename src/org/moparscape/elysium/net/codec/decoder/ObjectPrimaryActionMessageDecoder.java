@@ -14,7 +14,7 @@ public final class ObjectPrimaryActionMessageDecoder extends AbstractMessageDeco
         super(ObjectPrimaryActionMessage.class, 51);
     }
 
-    public ObjectPrimaryActionMessage decode(ChannelBuffer buffer) {
+    public ObjectPrimaryActionMessage decode(ChannelBuffer buffer, int length) {
         throw new UnsupportedOperationException();
     }
 }

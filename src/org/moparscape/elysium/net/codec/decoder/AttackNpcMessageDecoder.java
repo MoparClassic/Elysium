@@ -14,7 +14,7 @@ public final class AttackNpcMessageDecoder extends AbstractMessageDecoder<Attack
         super(AttackNpcMessage.class, 73);
     }
 
-    public AttackNpcMessage decode(ChannelBuffer buffer) {
+    public AttackNpcMessage decode(ChannelBuffer buffer, int length) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 }

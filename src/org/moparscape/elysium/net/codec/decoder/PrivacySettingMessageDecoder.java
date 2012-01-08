@@ -14,7 +14,7 @@ public final class PrivacySettingMessageDecoder extends AbstractMessageDecoder<P
         super(PrivacySettingMessage.class, 176);
     }
 
-    public PrivacySettingMessage decode(ChannelBuffer buffer) {
+    public PrivacySettingMessage decode(ChannelBuffer buffer, int length) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 }

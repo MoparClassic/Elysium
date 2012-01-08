@@ -14,7 +14,7 @@ public final class LogoutRequestMessageDecoder extends AbstractMessageDecoder<Lo
         super(LogoutRequestMessage.class, 129);
     }
 
-    public LogoutRequestMessage decode(ChannelBuffer buffer) {
-        throw new UnsupportedOperationException("Not yet implemented");
+    public LogoutRequestMessage decode(ChannelBuffer buffer, int length) {
+        return new LogoutRequestMessage();
     }
 }

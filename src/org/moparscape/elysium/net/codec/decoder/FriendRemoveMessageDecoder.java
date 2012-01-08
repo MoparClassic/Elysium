@@ -14,7 +14,7 @@ public final class FriendRemoveMessageDecoder extends AbstractMessageDecoder<Fri
         super(FriendRemoveMessage.class, 52);
     }
 
-    public FriendRemoveMessage decode(ChannelBuffer buffer) {
+    public FriendRemoveMessage decode(ChannelBuffer buffer, int length) {
         throw new UnsupportedOperationException();
     }
 }

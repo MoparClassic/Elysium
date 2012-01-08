@@ -14,7 +14,7 @@ public final class BotDetectionMessageDecoder extends AbstractMessageDecoder<Bot
         super(BotDetectionMessage.class, 69);
     }
 
-    public BotDetectionMessage decode(ChannelBuffer buffer) {
+    public BotDetectionMessage decode(ChannelBuffer buffer, int length) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 }

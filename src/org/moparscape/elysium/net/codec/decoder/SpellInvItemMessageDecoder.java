@@ -14,7 +14,7 @@ public final class SpellInvItemMessageDecoder extends AbstractMessageDecoder<Spe
         super(SpellInvItemMessage.class, 49);
     }
 
-    public SpellInvItemMessage decode(ChannelBuffer buffer) {
+    public SpellInvItemMessage decode(ChannelBuffer buffer, int length) {
         throw new UnsupportedOperationException();
     }
 }

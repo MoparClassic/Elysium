@@ -14,7 +14,7 @@ public final class FriendPmMessageDecoder extends AbstractMessageDecoder<FriendP
         super(FriendPmMessage.class, 254);
     }
 
-    public FriendPmMessage decode(ChannelBuffer buffer) {
+    public FriendPmMessage decode(ChannelBuffer buffer, int length) {
         throw new UnsupportedOperationException();
     }
 }

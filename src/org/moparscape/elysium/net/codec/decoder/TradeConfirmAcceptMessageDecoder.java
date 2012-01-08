@@ -14,7 +14,7 @@ public final class TradeConfirmAcceptMessageDecoder extends AbstractMessageDecod
         super(TradeConfirmAcceptMessage.class, 53);
     }
 
-    public TradeConfirmAcceptMessage decode(ChannelBuffer buffer) {
+    public TradeConfirmAcceptMessage decode(ChannelBuffer buffer, int length) {
         throw new UnsupportedOperationException();
     }
 }

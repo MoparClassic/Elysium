@@ -14,7 +14,7 @@ public final class SleepwordMessageDecoder extends AbstractMessageDecoder<Sleepw
         super(SleepwordMessage.class, 200);
     }
 
-    public SleepwordMessage decode(ChannelBuffer buffer) {
+    public SleepwordMessage decode(ChannelBuffer buffer, int length) {
         throw new UnsupportedOperationException();
     }
 }

@@ -14,7 +14,7 @@ public final class DuelOptionsMessageDecoder extends AbstractMessageDecoder<Duel
         super(DuelOptionsMessage.class, 225);
     }
 
-    public DuelOptionsMessage decode(ChannelBuffer buffer) {
+    public DuelOptionsMessage decode(ChannelBuffer buffer, int length) {
         throw new UnsupportedOperationException();
     }
 }

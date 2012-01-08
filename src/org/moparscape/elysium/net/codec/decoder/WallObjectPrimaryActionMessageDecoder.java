@@ -14,7 +14,7 @@ public final class WallObjectPrimaryActionMessageDecoder extends AbstractMessage
         super(WallObjectPrimaryActionMessage.class, 126);
     }
 
-    public WallObjectPrimaryActionMessage decode(ChannelBuffer buffer) {
+    public WallObjectPrimaryActionMessage decode(ChannelBuffer buffer, int length) {
         throw new UnsupportedOperationException();
     }
 }

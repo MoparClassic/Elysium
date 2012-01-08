@@ -14,7 +14,7 @@ public final class WallObjectSecondaryActionMessageDecoder extends AbstractMessa
         super(WallObjectSecondaryActionMessage.class, 235);
     }
 
-    public WallObjectSecondaryActionMessage decode(ChannelBuffer buffer) {
+    public WallObjectSecondaryActionMessage decode(ChannelBuffer buffer, int length) {
         throw new UnsupportedOperationException();
     }
 }

@@ -14,7 +14,7 @@ public final class ExceptionMessageDecoder extends AbstractMessageDecoder<Except
         super(ExceptionMessage.class, 156);
     }
 
-    public ExceptionMessage decode(ChannelBuffer buffer) {
+    public ExceptionMessage decode(ChannelBuffer buffer, int length) {
         throw new UnsupportedOperationException();
     }
 }

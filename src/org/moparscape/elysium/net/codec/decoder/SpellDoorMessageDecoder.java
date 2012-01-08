@@ -14,7 +14,7 @@ public final class SpellDoorMessageDecoder extends AbstractMessageDecoder<SpellD
         super(SpellDoorMessage.class, 67);
     }
 
-    public SpellDoorMessage decode(ChannelBuffer buffer) {
+    public SpellDoorMessage decode(ChannelBuffer buffer, int length) {
         throw new UnsupportedOperationException();
     }
 }

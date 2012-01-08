@@ -14,12 +14,13 @@ public final class ElysiumConnectionHandler extends SimpleChannelUpstreamHandler
 
     @Override
     public void channelConnected(ChannelHandlerContext ctx, ChannelStateEvent e) {
-
+        Channel chan = e.getChannel();
+        System.out.println("Channel connected");
     }
 
     @Override
     public void channelDisconnected(ChannelHandlerContext ctx, ChannelStateEvent e) {
-
+        System.out.println("Channel disconnected");
     }
 
     @Override

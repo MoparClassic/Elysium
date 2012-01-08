@@ -14,7 +14,7 @@ public final class ItemUnwieldMessageDecoder extends AbstractMessageDecoder<Item
         super(ItemUnwieldMessage.class, 92);
     }
 
-    public ItemUnwieldMessage decode(ChannelBuffer buffer) {
+    public ItemUnwieldMessage decode(ChannelBuffer buffer, int length) {
         throw new UnsupportedOperationException();
     }
 }

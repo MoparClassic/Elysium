@@ -14,7 +14,7 @@ public final class SpellNpcMessageDecoder extends AbstractMessageDecoder<SpellNp
         super(SpellNpcMessage.class, 71);
     }
 
-    public SpellNpcMessage decode(ChannelBuffer buffer) {
+    public SpellNpcMessage decode(ChannelBuffer buffer, int length) {
         throw new UnsupportedOperationException();
     }
 }

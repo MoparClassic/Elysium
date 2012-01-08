@@ -14,7 +14,7 @@ public final class InventoryActionMessageDecoder extends AbstractMessageDecoder<
         super(InventoryActionMessage.class, 89);
     }
 
-    public InventoryActionMessage decode(ChannelBuffer buffer) {
+    public InventoryActionMessage decode(ChannelBuffer buffer, int length) {
         throw new UnsupportedOperationException();
     }
 }

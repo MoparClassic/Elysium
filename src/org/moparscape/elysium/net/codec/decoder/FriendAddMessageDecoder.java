@@ -14,7 +14,7 @@ public final class FriendAddMessageDecoder extends AbstractMessageDecoder<Friend
         super(FriendAddMessage.class, 168);
     }
 
-    public FriendAddMessage decode(ChannelBuffer buffer) {
+    public FriendAddMessage decode(ChannelBuffer buffer, int length) {
         throw new UnsupportedOperationException();
     }
 }

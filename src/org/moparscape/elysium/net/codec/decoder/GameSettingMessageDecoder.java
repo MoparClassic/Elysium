@@ -14,7 +14,7 @@ public final class GameSettingMessageDecoder extends AbstractMessageDecoder<Game
         super(GameSettingMessage.class, 157);
     }
 
-    public GameSettingMessage decode(ChannelBuffer buffer) {
+    public GameSettingMessage decode(ChannelBuffer buffer, int length) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 }

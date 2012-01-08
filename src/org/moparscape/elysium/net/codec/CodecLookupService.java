@@ -48,19 +48,19 @@ public final class CodecLookupService {
         encoderMap = bindings.messageToEncoderMap();
     }
 
-    private static void validateOpcode(int opcode) {
-        if (opcode < 0 || opcode >= 255) {
-            throw new RuntimeException("CodecLookupService invalid opcode: " + opcode);
-        }
-    }
-
     public static MessageDecoder<? extends Message> getDecoder(int opcode) {
-        validateOpcode(opcode);
+        if (opcode < 0 || opcode >= 255) {
+            return null;
+        }
+
         return decoders.get(opcode);
     }
 
     public static MessageEncoder<? extends Message> getEncoder(int opcode) {
-        validateOpcode(opcode);
+        if (opcode < 0 || opcode >= 255) {
+            return null;
+        }
+
         return encoders.get(opcode);
     }
 
@@ -91,7 +91,10 @@ public final class CodecLookupService {
             MessageDecoder<T> decoder = type.newInstance();
             int opcode = decoder.getOpcode();
 
-            validateOpcode(opcode);
+            if (opcode < 0 || opcode >= 255) {
+                return;
+            }
+
             this.decoders.set(opcode, decoder);
             this.decoderMap.put(decoder.getMessageType(), decoder);
         }
@@ -101,7 +104,10 @@ public final class CodecLookupService {
             MessageEncoder<T> encoder = type.newInstance();
             int opcode = encoder.getOpcode();
 
-            validateOpcode(opcode);
+            if (opcode < 0 || opcode >= 255) {
+                return;
+            }
+
             this.encoders.set(opcode, encoder);
             this.encoderMap.put(encoder.getMessageType(), encoder);
         }

@@ -14,7 +14,9 @@ public final class WalkMessageDecoder extends AbstractMessageDecoder<WalkMessage
         super(WalkMessage.class, 132);
     }
 
-    public WalkMessage decode(ChannelBuffer buffer) {
-        throw new UnsupportedOperationException();
+    public WalkMessage decode(ChannelBuffer buffer, int length) {
+        int startX = buffer.readShort();
+        int startY = buffer.readShort();
+        return null;
     }
 }

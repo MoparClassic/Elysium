@@ -14,7 +14,7 @@ public final class CommandMessageDecoder extends AbstractMessageDecoder<CommandM
         super(CommandMessage.class, 90);
     }
 
-    public CommandMessage decode(ChannelBuffer buffer) {
+    public CommandMessage decode(ChannelBuffer buffer, int length) {
         throw new UnsupportedOperationException();
     }
 }

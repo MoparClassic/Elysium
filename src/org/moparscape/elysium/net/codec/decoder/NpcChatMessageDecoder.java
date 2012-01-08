@@ -14,7 +14,7 @@ public final class NpcChatMessageDecoder extends AbstractMessageDecoder<NpcChatM
         super(NpcChatMessage.class, 177);
     }
 
-    public NpcChatMessage decode(ChannelBuffer buffer) {
+    public NpcChatMessage decode(ChannelBuffer buffer, int length) {
         throw new UnsupportedOperationException();
     }
 }

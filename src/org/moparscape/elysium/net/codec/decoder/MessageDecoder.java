@@ -14,5 +14,5 @@ public interface MessageDecoder<T extends Message> {
 
     Class<T> getMessageType();
 
-    T decode(ChannelBuffer buffer);
+    T decode(ChannelBuffer buffer, int length);
 }

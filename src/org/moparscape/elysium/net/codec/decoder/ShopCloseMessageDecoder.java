@@ -14,7 +14,7 @@ public final class ShopCloseMessageDecoder extends AbstractMessageDecoder<ShopCl
         super(ShopCloseMessage.class, 253);
     }
 
-    public ShopCloseMessage decode(ChannelBuffer buffer) {
+    public ShopCloseMessage decode(ChannelBuffer buffer, int length) {
         throw new UnsupportedOperationException();
     }
 }

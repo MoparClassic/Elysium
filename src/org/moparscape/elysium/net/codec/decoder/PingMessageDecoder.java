@@ -14,7 +14,7 @@ public final class PingMessageDecoder extends AbstractMessageDecoder<PingMessage
         super(PingMessage.class, 5);
     }
 
-    public PingMessage decode(ChannelBuffer buffer) {
+    public PingMessage decode(ChannelBuffer buffer, int length) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 }

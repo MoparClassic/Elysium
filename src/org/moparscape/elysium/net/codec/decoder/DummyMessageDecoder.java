@@ -14,7 +14,7 @@ public final class DummyMessageDecoder extends AbstractMessageDecoder<DummyMessa
         super(DummyMessage.class, 0);
     }
 
-    public DummyMessage decode(ChannelBuffer buffer) {
+    public DummyMessage decode(ChannelBuffer buffer, int length) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 }

@@ -14,7 +14,7 @@ public final class ReportMessageDecoder extends AbstractMessageDecoder<ReportMes
         super(ReportMessage.class, 7);
     }
 
-    public ReportMessage decode(ChannelBuffer buffer) {
+    public ReportMessage decode(ChannelBuffer buffer, int length) {
         throw new UnsupportedOperationException();
     }
 }
