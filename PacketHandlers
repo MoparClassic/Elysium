@@ -8,20 +8,6 @@
 		</PacketHandler>
 		<PacketHandler>
 			<ids>
-				<int>56</int>
-				<int>248</int>
-			</ids>
-			<className>org.moparscape.msc.gs.phandler.client.PrayerHandler</className>
-		</PacketHandler>
-		<PacketHandler>
-			<ids>
-				<int>181</int>
-				<int>92</int>
-			</ids>
-			<className>org.moparscape.msc.gs.phandler.client.WieldHandler</className>
-		</PacketHandler>
-		<PacketHandler>
-			<ids>
 				<int>206</int>
 				<int>55</int>
 				<int>71</int>
@@ -55,24 +41,6 @@
 		</PacketHandler>
 		<PacketHandler>
 			<ids>
-				<int>89</int>
-			</ids>
-			<className>org.moparscape.msc.gs.phandler.client.InvActionHandler</className>
-		</PacketHandler>
-		<PacketHandler>
-			<ids>
-				<int>16</int>
-			</ids>
-			<className>org.moparscape.msc.gs.phandler.client.InvUseOnPlayer</className>
-		</PacketHandler>
-		<PacketHandler>
-			<ids>
-				<int>245</int>
-			</ids>
-			<className>org.moparscape.msc.gs.phandler.client.PickupItem</className>
-		</PacketHandler>
-		<PacketHandler>
-			<ids>
 				<int>40</int>
 				<int>51</int>
 			</ids>
@@ -87,22 +55,10 @@
 		</PacketHandler>
 		<PacketHandler>
 			<ids>
-				<int>7</int>
-			</ids>
-			<className>org.moparscape.msc.gs.phandler.client.ReportHandler</className>
-		</PacketHandler>
-		<PacketHandler>
-			<ids>
 				<int>36</int>
 				<int>94</int>
 			</ids>
 			<className>org.moparscape.msc.gs.phandler.client.InvUseOnObject</className>
-		</PacketHandler>
-		<PacketHandler>
-			<ids>
-				<int>42</int>
-			</ids>
-			<className>org.moparscape.msc.gs.phandler.client.StyleHandler</className>
 		</PacketHandler>
 		<PacketHandler>
 			<ids>
@@ -111,30 +67,6 @@
 				<int>198</int>
 			</ids>
 			<className>org.moparscape.msc.gs.phandler.client.BankHandler</className>
-		</PacketHandler>
-		<PacketHandler>
-			<ids>
-				<int>154</int>
-			</ids>
-			<className>org.moparscape.msc.gs.phandler.client.MenuReplyHandler</className>
-		</PacketHandler>
-		<PacketHandler>
-			<ids>
-				<int>156</int>
-			</ids>
-			<className>org.moparscape.msc.gs.phandler.client.ExceptionHandler</className>
-		</PacketHandler>
-		<PacketHandler>
-			<ids>
-				<int>34</int>
-			</ids>
-			<className>org.moparscape.msc.gs.phandler.client.InvUseOnGroundItem</className>
-		</PacketHandler>
-		<PacketHandler>
-			<ids>
-				<int>27</int>
-			</ids>
-			<className>org.moparscape.msc.gs.phandler.client.InvUseOnItem</className>
 		</PacketHandler>
 		<PacketHandler>
 			<ids>

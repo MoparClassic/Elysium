@@ -7,5 +7,5 @@ import org.moparscape.elysium.net.codec.AbstractMessage;
  *
  * @author lothy
  */
-public final class MinimapWalkMessage extends AbstractMessage {
+public final class WalkMinimapMessage extends AbstractMessage {
 }
