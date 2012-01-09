@@ -1,8 +1,9 @@
 package org.moparscape.elysium.net;
 
 import org.jboss.netty.channel.Channel;
-import org.moparscape.elysium.entity.Entity;
+import org.moparscape.elysium.entity.Player;
 import org.moparscape.elysium.net.codec.Message;
+import org.moparscape.elysium.net.handler.HandlerLookupService;
 import org.moparscape.elysium.net.handler.MessageHandler;
 
 import java.util.Queue;
@@ -17,7 +18,7 @@ public final class Session {
 
     private final Channel channel;
 
-    private Entity player;
+    private Player player;
 
     private Queue<Message> messageQueue = new ConcurrentLinkedQueue<Message>();
 
@@ -27,10 +28,11 @@ public final class Session {
         this.channel = channel;
     }
 
-    public void setPlayer(Entity e) {
-        this.player = e;
+    public void setPlayer(Player player) {
+        this.player = player;
     }
 
+    @SuppressWarnings("unchecked")
     public boolean pulse() {
         if (removing) {
             return false;
@@ -39,12 +41,25 @@ public final class Session {
         Message message;
         int processed = 0;
         while ((message = messageQueue.poll()) != null && processed++ < 200) {
-            MessageHandler<Message> handler; // TODO: Finish
+            MessageHandler<Message> handler = (MessageHandler<Message>) HandlerLookupService.getHandler(message.getClass());
+            if (handler != null) {
+                handler.handle(this, player, message);
+            }
         }
         return false;
     }
 
     public <T extends Message> void messageReceived(T message) {
         messageQueue.offer(message);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return o == this;
     }
 }

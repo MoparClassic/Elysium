@@ -2,17 +2,15 @@ package org.moparscape.elysium;
 
 import org.jboss.netty.bootstrap.ServerBootstrap;
 import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
+import org.moparscape.elysium.net.Session;
 import org.moparscape.elysium.net.codec.ElysiumPipelineFactory;
-import org.moparscape.elysium.net.codec.Message;
+import org.moparscape.elysium.task.SessionPulseTask;
+import org.moparscape.elysium.util.SplittableCopyOnWriteArrayList;
 
 import java.net.InetSocketAddress;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -23,17 +21,17 @@ public class Server {
 
     private static final Server INSTANCE;
 
-    private volatile List<Message> messageList = new LinkedList<Message>();
-
-    private final Lock messageListLock = new ReentrantLock();
+    private static final int TASK_THREADS = 4;
 
     private final ExecutorService nettyBossService = Executors.newFixedThreadPool(1);
 
     private final ExecutorService nettyWorkerService = Executors.newFixedThreadPool(2);
 
-    private final ScheduledExecutorService taskExecutorService = Executors.newScheduledThreadPool(4);
+    private final ScheduledExecutorService taskExecutorService = Executors.newScheduledThreadPool(TASK_THREADS);
 
-    private final ExecutorService dataExecutorService = Executors.newFixedThreadPool(2);
+    private final ExecutorService dataExecutorService = Executors.newFixedThreadPool(1);
+
+    private final SplittableCopyOnWriteArrayList<Session> sessions = new SplittableCopyOnWriteArrayList<Session>(1500);
 
     private final ServerBootstrap bootstrap;
 
@@ -60,60 +58,73 @@ public class Server {
 
     private void gameLoop() {
         System.out.println("Game loop started");
-        while (running) {
-            // Update the cached timestamp, and see if more than 600ms have passed
-            // If 600ms have passed then do another update; otherwise, sleep and try again
-            timestamp = (System.nanoTime() / 1000000);
-            if (timestamp - lastPulse < 600) {
-                try {
-                    Thread.sleep(20);
-                } catch (InterruptedException e) {
-                    System.err.println("Error occurred while sleeping between game pulses");
+        while (true) {
+            try {
+                while (running) {
+                    // Update the cached timestamp, and see if more than 600ms have passed
+                    // If 600ms have passed then do another update; otherwise, sleep and try again
+                    timestamp = (System.nanoTime() / 1000000);
+                    if (timestamp - lastPulse < 600) {
+                        try {
+                            Thread.sleep(20);
+                        } catch (InterruptedException e) {
+                            System.err.println("Error occurred while sleeping between game pulses");
+                        }
+
+                        continue;
+                    }
+
+                    pulseSessions(); // This function blocks until all sessions have finished
+                    processEvents(); // This function blocks until all events have been processed
+                    processClients(); // This function blocks until all updating has finished
+
+                    // Update the time that the last pulse took place before finishing
+                    lastPulse = timestamp;
                 }
-
-                continue;
+            } catch (Exception e) {
+                System.out.println("Game loop exception: " + e.getCause());
             }
-
-            // Update the time that the last pulse took place before finishing
-            lastPulse = timestamp;
-        }
-
-
-    }
-
-    private void parsePackets() {
-        List<Message> messages = getMessages();
-        for (Message m : messages) {
-
         }
     }
 
-    public <T extends Message> void addMessage(T message) {
-        messageListLock.lock();
-        try {
-            messageList.add(message);
-        } finally {
-            messageListLock.unlock();
+    private void pulseSessions() throws ExecutionException, InterruptedException {
+        // Allow each Session to handle its packet queue
+        List<Iterable<Session>> sessionPartitions = sessions.divide(TASK_THREADS);
+        List<SessionPulseTask> sessionPulseTasks = new LinkedList<SessionPulseTask>();
+        for (Iterable<Session> s : sessionPartitions) {
+            sessionPulseTasks.add(new SessionPulseTask(s));
+        }
+
+        // By calling get() on each of the futures that were returned, we block until
+        // all of the sessions have finished processing their packet queues.
+        List<Future<Void>> futureList = taskExecutorService.invokeAll(sessionPulseTasks);
+        for (Future<Void> f : futureList) {
+            f.get();
         }
     }
 
-    private List<Message> getMessages() {
-        List<Message> newPackets = new LinkedList<Message>();
-        List<Message> curPackets = null;
+    private void processEvents() {
 
-        // Get the messageList lock and then replace the current list with the new empty one
-        messageListLock.lock();
-        try {
-            curPackets = messageList;
-            messageList = newPackets;
-            return curPackets;
-        } finally {
-            messageListLock.unlock();
-        }
+    }
+
+    private void processClients() {
+
     }
 
     public long getTimestamp() {
         return timestamp;
+    }
+
+    public void registerSession(Session session) {
+        sessions.add(session);
+    }
+
+    public void unregisterSession(Session session) {
+        sessions.remove(session);
+    }
+
+    public Future<?> submitTask(Runnable r) {
+        return taskExecutorService.submit(r);
     }
 
     public void shutdown() {

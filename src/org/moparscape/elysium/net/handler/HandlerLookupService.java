@@ -101,6 +101,11 @@ public final class HandlerLookupService {
         }
     }
 
+    @SuppressWarnings("unchecked")
+    public static <T extends Message> MessageHandler<T> getHandler(Class<T> type) {
+        return (MessageHandler<T>) handlers.get(type);
+    }
+
     private static final class ImmutableBindingBuilder {
 
         private final Map<Class<? extends Message>, MessageHandler<? extends Message>> handlers =
