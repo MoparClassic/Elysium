@@ -23,13 +23,13 @@ public class Server {
 
     private static final int TASK_THREADS = 4;
 
-    private final ExecutorService nettyBossService = Executors.newFixedThreadPool(1);
+    private final ExecutorService nettyBossService = Executors.newSingleThreadExecutor();
 
     private final ExecutorService nettyWorkerService = Executors.newFixedThreadPool(2);
 
     private final ScheduledExecutorService taskExecutorService = Executors.newScheduledThreadPool(TASK_THREADS);
 
-    private final ExecutorService dataExecutorService = Executors.newFixedThreadPool(1);
+    private final ExecutorService dataExecutorService = Executors.newSingleThreadExecutor();
 
     private final SplittableCopyOnWriteArrayList<Session> sessions = new SplittableCopyOnWriteArrayList<Session>(1500);
 
@@ -58,6 +58,8 @@ public class Server {
 
     private void gameLoop() {
         System.out.println("Game loop started");
+
+        ParentLoop:
         while (true) {
             try {
                 while (running) {
@@ -81,10 +83,16 @@ public class Server {
                     // Update the time that the last pulse took place before finishing
                     lastPulse = timestamp;
                 }
+
+                // If we reach this point then shutdown has been triggered.
+                // Break out of the parent loop so that the application can cleanup and shut down
+                break ParentLoop;
             } catch (Exception e) {
                 System.out.println("Game loop exception: " + e.getCause());
             }
         }
+
+        // TODO: Implement shutdown procedure and cleanup here
     }
 
     private void pulseSessions() throws ExecutionException, InterruptedException {
