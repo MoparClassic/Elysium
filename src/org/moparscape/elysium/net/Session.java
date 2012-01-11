@@ -40,7 +40,10 @@ public final class Session {
 
         Message message;
         int processed = 0;
-        while ((message = messageQueue.poll()) != null && processed++ < 200) {
+
+        // Process all of the messages that have been received from this player.
+        // Process the entire queue up to a maximum of 100 messages.
+        while ((message = messageQueue.poll()) != null && processed++ < 100) {
             MessageHandler<Message> handler = (MessageHandler<Message>) HandlerLookupService.getHandler(message.getClass());
             if (handler != null) {
                 handler.handle(this, player, message);

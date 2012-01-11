@@ -153,7 +153,10 @@
   </component>
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/DataAccess/DataAccess.iml" filepath="$PROJECT_DIR$/DataAccess/DataAccess.iml" />
+      <module fileurl="file://$PROJECT_DIR$/DataLayer/DataLayer.iml" filepath="$PROJECT_DIR$/DataLayer/DataLayer.iml" />
       <module fileurl="file://$PROJECT_DIR$/Elysium.iml" filepath="$PROJECT_DIR$/Elysium.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Logic/Logic.iml" filepath="$PROJECT_DIR$/Logic/Logic.iml" />
     </modules>
   </component>
   <component name="ProjectResources">
@@ -166,9 +169,30 @@
     <mapping directory="" vcs="Git" />
   </component>
   <component name="libraryTable">
+    <library name="hex-string">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/hex-string.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
     <library name="netty-3.2.7.Final">
       <CLASSES>
         <root url="jar://$PROJECT_DIR$/lib/netty-3.2.7.Final.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="xpp3">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/xpp3.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="xstream">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/xstream.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />

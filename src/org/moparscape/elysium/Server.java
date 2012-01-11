@@ -35,7 +35,17 @@ public class Server {
 
     private final ServerBootstrap bootstrap;
 
-    private volatile long timestamp = System.nanoTime() / 1000000;
+    /**
+     * A higher resolution (on most systems) timer that is used to accurately detect
+     * when an update should be performed.
+     */
+    private volatile long highResolutionTimestamp = System.nanoTime() / 1000000;
+
+    /**
+     * An epoch timestamp (set using System.currentTimeMillis()) that can be used
+     * for storing and comparing database timestamps.
+     */
+    private volatile long epochTimestamp = System.currentTimeMillis();
 
     private volatile long lastPulse = 0L;
 
@@ -63,10 +73,10 @@ public class Server {
         while (true) {
             try {
                 while (running) {
-                    // Update the cached timestamp, and see if more than 600ms have passed
+                    // Update the cached highResolutionTimestamp, and see if more than 600ms have passed
                     // If 600ms have passed then do another update; otherwise, sleep and try again
-                    timestamp = (System.nanoTime() / 1000000);
-                    if (timestamp - lastPulse < 600) {
+                    updateTimestamps();
+                    if (highResolutionTimestamp - lastPulse < 600) {
                         try {
                             Thread.sleep(20);
                         } catch (InterruptedException e) {
@@ -81,7 +91,7 @@ public class Server {
                     processClients(); // This function blocks until all updating has finished
 
                     // Update the time that the last pulse took place before finishing
-                    lastPulse = timestamp;
+                    lastPulse = highResolutionTimestamp;
                 }
 
                 // If we reach this point then shutdown has been triggered.
@@ -119,8 +129,17 @@ public class Server {
 
     }
 
-    public long getTimestamp() {
-        return timestamp;
+    private void updateTimestamps() {
+        highResolutionTimestamp = System.nanoTime() / 1000000;
+        epochTimestamp = System.currentTimeMillis();
+    }
+
+    public long getHighResolutionTimestamp() {
+        return highResolutionTimestamp;
+    }
+
+    public long getEpochTimestamp() {
+        return epochTimestamp;
     }
 
     public void registerSession(Session session) {
