@@ -1,7 +1,5 @@
 package org.moparscape.elysium.net.codec;
 
-import org.jboss.netty.buffer.ChannelBuffer;
-import org.jboss.netty.buffer.ChannelBuffers;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.handler.codec.oneone.OneToOneEncoder;
@@ -26,10 +24,7 @@ public final class ElysiumEncoder extends OneToOneEncoder {
                 throw new RuntimeException("Unknown message type: " + clazz);
             }
 
-            ChannelBuffer opcodeBuffer = ChannelBuffers.buffer(1);
-            opcodeBuffer.writeByte(encoder.getOpcode());
-
-            return ChannelBuffers.wrappedBuffer(opcodeBuffer, encoder.encode(msg));
+            return encoder.encode(msg);
         }
 
         return message;

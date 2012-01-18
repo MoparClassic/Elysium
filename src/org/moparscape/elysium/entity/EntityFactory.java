@@ -1,5 +1,7 @@
 package org.moparscape.elysium.entity;
 
+import org.moparscape.elysium.entity.component.NpcLoc;
+
 /**
  * Created by IntelliJ IDEA.
  *
@@ -7,7 +9,7 @@ package org.moparscape.elysium.entity;
  */
 public interface EntityFactory {
 
-    Entity newNpc();
+    Npc newNpc(NpcLoc loc);
 
-    Entity newPlayer();
+    Player newPlayer();
 }

@@ -116,15 +116,6 @@ public final class DataConversions {
     /**
      * Decrypts an RSA encrypted packet using our private key
      */
-//    public static RSCPacket decryptRSA(byte[] pData) {
-//        try {
-//            BigInteger bigInteger = new BigInteger(pData);
-//            pData = bigInteger.modPow(key, modulus).toByteArray();
-//            return new RSCPacket(null, 0, pData, true);
-//        } catch (Exception e) {
-//            return null;
-//        }
-//    }
     public static ChannelBuffer decryptRSA(byte[] pData) {
         try {
             BigInteger bigInteger = new BigInteger(pData);

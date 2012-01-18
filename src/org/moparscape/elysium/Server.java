@@ -49,7 +49,7 @@ public class Server {
 
     private volatile long lastPulse = 0L;
 
-    private volatile boolean running = false;
+    private volatile boolean running = true;
 
     static {
         INSTANCE = new Server();

@@ -1,6 +1,6 @@
 package org.moparscape.elysium.util;
 
-import org.moparscape.elysium.entity.Entity;
+import org.moparscape.elysium.entity.Indexable;
 
 import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
@@ -10,7 +10,7 @@ import java.util.concurrent.locks.ReentrantLock;
  *
  * @author lothy
  */
-public final class EntityCopyOnWriteArrayList<E extends Entity> implements List<E>, RandomAccess {
+public final class IndexableCopyOnWriteArrayList<E extends Indexable> implements List<E>, RandomAccess {
 
     private transient final ReentrantLock lock = new ReentrantLock();
 
@@ -20,7 +20,7 @@ public final class EntityCopyOnWriteArrayList<E extends Entity> implements List<
 
     private final int capacity;
 
-    public EntityCopyOnWriteArrayList(int capacity) {
+    public IndexableCopyOnWriteArrayList(int capacity) {
         this.capacity = capacity;
         this.array = new Object[0];
         this.arrayMap = new Object[capacity];
@@ -125,11 +125,11 @@ public final class EntityCopyOnWriteArrayList<E extends Entity> implements List<
             return true;
         }
 
-        if (o == null || !(o instanceof EntityCopyOnWriteArrayList)) {
+        if (o == null || !(o instanceof IndexableCopyOnWriteArrayList)) {
             return false;
         }
 
-        EntityCopyOnWriteArrayList<?> other = (EntityCopyOnWriteArrayList) o;
+        IndexableCopyOnWriteArrayList<?> other = (IndexableCopyOnWriteArrayList) o;
         Iterator<?> it = other.iterator();
         Object[] elements = array;
         int len = array.length;
@@ -305,7 +305,7 @@ public final class EntityCopyOnWriteArrayList<E extends Entity> implements List<
         throw new UnsupportedOperationException();
     }
 
-    private static class COWIterator<E extends Entity> implements Iterator<E> {
+    private static class COWIterator<E extends Indexable> implements Iterator<E> {
 
         private final Object[] snapshot;
 
@@ -337,7 +337,7 @@ public final class EntityCopyOnWriteArrayList<E extends Entity> implements List<
         }
     }
 
-    private static class COWIterable<E extends Entity> implements Iterable<E> {
+    private static class COWIterable<E extends Indexable> implements Iterable<E> {
 
         private final Iterator<E> iterator;
 

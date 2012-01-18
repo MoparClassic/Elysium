@@ -10,8 +10,6 @@ import org.moparscape.elysium.net.codec.Message;
  */
 public interface MessageEncoder<T extends Message> {
 
-    int getOpcode();
-
     Class<T> getMessageType();
 
     ChannelBuffer encode(T message);

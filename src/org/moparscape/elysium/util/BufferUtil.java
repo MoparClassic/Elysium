@@ -9,6 +9,10 @@ import org.jboss.netty.buffer.ChannelBuffer;
  */
 public final class BufferUtil {
 
+    public static String readString(ChannelBuffer buffer) {
+        return readString(buffer, buffer.readableBytes());
+    }
+
     public static String readString(ChannelBuffer buffer, int length) {
         byte[] data = new byte[length];
         buffer.readBytes(data);

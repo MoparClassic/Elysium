@@ -18,6 +18,7 @@ public final class ElysiumConnectionHandler extends SimpleChannelUpstreamHandler
         Channel chan = e.getChannel();
         Session session = new Session(chan);
         ctx.setAttachment(session);
+        server.registerSession(session);
         System.out.println("Channel connected");
     }
 

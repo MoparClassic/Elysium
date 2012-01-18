@@ -11,8 +11,18 @@ import java.util.Map;
  */
 public final class Player extends Entity {
 
+    private boolean loggedIn;
+
     public Player(Map<Class<? extends Component>, Component> components) {
         super(components);
+    }
+
+    public boolean isLoggedIn() {
+        return false;
+    }
+
+    public void setLoggedIn(boolean loggedIn) {
+        this.loggedIn = loggedIn;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package org.moparscape.elysium.net.codec;
 
 import org.moparscape.elysium.net.codec.decoder.*;
+import org.moparscape.elysium.net.codec.encoder.LoginResponseMessageEncoder;
 import org.moparscape.elysium.net.codec.encoder.MessageEncoder;
 
 import java.util.*;
@@ -13,8 +14,6 @@ import java.util.*;
 public final class CodecLookupService {
 
     private static final List<MessageDecoder<? extends Message>> decoders;
-
-    private static final List<MessageEncoder<? extends Message>> encoders;
 
     private static final Map<Class<? extends Message>, MessageDecoder<? extends Message>> decoderMap;
 
@@ -44,7 +43,7 @@ public final class CodecLookupService {
             bindings.bindDecoder(DuelInformationMessageDecoder.class);
             bindings.bindDecoder(DuelOptionsMessageDecoder.class);
             bindings.bindDecoder(DuelRequestMessageDecoder.class);
-            bindings.bindDecoder(DummyMessageDecoder.class);
+            //bindings.bindDecoder(DummyMessageDecoder.class);
             bindings.bindDecoder(ExceptionMessageDecoder.class);
             bindings.bindDecoder(FollowRequestMessageDecoder.class);
             bindings.bindDecoder(FriendAddMessageDecoder.class);
@@ -102,18 +101,19 @@ public final class CodecLookupService {
             bindings.bindDecoder(WallObjectPrimaryActionMessageDecoder.class);
             bindings.bindDecoder(WallObjectSecondaryActionMessageDecoder.class);
         } catch (Exception e) {
+            System.out.println("Failed to initialise decoders");
+            System.out.println(e);
             throw new ExceptionInInitializerError(e);
         }
 
         // Initialise all of the encoders in this block
         try {
-
+            bindings.bindEncoder(LoginResponseMessageEncoder.class);
         } catch (Exception e) {
             throw new ExceptionInInitializerError(e);
         }
 
         decoders = bindings.decoderList();
-        encoders = bindings.encoderList();
         decoderMap = bindings.messageToDecoderMap();
         encoderMap = bindings.messageToEncoderMap();
     }
@@ -124,14 +124,6 @@ public final class CodecLookupService {
         }
 
         return decoders.get(opcode);
-    }
-
-    public static MessageEncoder<? extends Message> getEncoder(int opcode) {
-        if (opcode < 0 || opcode >= 255) {
-            return null;
-        }
-
-        return encoders.get(opcode);
     }
 
     public static MessageDecoder<? extends Message> getDecoder(Class<? extends Message> type) {
@@ -147,14 +139,20 @@ public final class CodecLookupService {
         private final List<MessageDecoder<? extends Message>> decoders =
                 new ArrayList<MessageDecoder<? extends Message>>(255);
 
-        private final List<MessageEncoder<? extends Message>> encoders =
-                new ArrayList<MessageEncoder<? extends Message>>(255);
-
         private final Map<Class<? extends Message>, MessageDecoder<? extends Message>> decoderMap =
                 new HashMap<Class<? extends Message>, MessageDecoder<? extends Message>>(100, 0.50f);
 
         private final Map<Class<? extends Message>, MessageEncoder<? extends Message>> encoderMap =
                 new HashMap<Class<? extends Message>, MessageEncoder<? extends Message>>(100, 0.50f);
+
+        public ImmutableBindingBuilder() {
+            // Add dummy invalid message handlers to the list.
+            // These are replaced for appropriate opcodes.
+            InvalidMessageDecoder d = new InvalidMessageDecoder();
+            for (int i = 0; i < 255; i++) {
+                decoders.add(d);
+            }
+        }
 
         public <T extends Message, C extends MessageDecoder<T>> void bindDecoder(Class<C> type)
                 throws IllegalAccessException, InstantiationException {
@@ -172,13 +170,6 @@ public final class CodecLookupService {
         public <T extends Message, C extends MessageEncoder<T>> void bindEncoder(Class<C> type)
                 throws IllegalAccessException, InstantiationException {
             MessageEncoder<T> encoder = type.newInstance();
-            int opcode = encoder.getOpcode();
-
-            if (opcode < 0 || opcode >= 255) {
-                return;
-            }
-
-            this.encoders.set(opcode, encoder);
             this.encoderMap.put(encoder.getMessageType(), encoder);
         }
 
@@ -192,10 +183,6 @@ public final class CodecLookupService {
 
         public List<MessageDecoder<? extends Message>> decoderList() {
             return Collections.unmodifiableList(this.decoders);
-        }
-
-        public List<MessageEncoder<? extends Message>> encoderList() {
-            return Collections.unmodifiableList(this.encoders);
         }
     }
 }

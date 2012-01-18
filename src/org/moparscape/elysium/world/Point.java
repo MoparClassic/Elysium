@@ -5,28 +5,28 @@ package org.moparscape.elysium.world;
  *
  * @author lothy
  */
-public final class Point {
+public class Point {
 
-    private final short x;
+    protected final short x;
 
-    private final short y;
+    protected final short y;
 
     public Point(int x, int y) {
         this.x = (short) x;
         this.y = (short) y;
     }
 
-    public int getX() {
+    public final int getX() {
         return x;
     }
 
-    public int getY() {
+    public final int getY() {
         return y;
     }
 
     @Override
     public int hashCode() {
-        return 31 * (x << 16 | y);
+        return (x << 16) | y;
     }
 
     @Override

@@ -18,11 +18,11 @@ public final class ElysiumDecoder extends FrameDecoder {
 
     public Object decode(ChannelHandlerContext ctx, Channel channel, ChannelBuffer buffer)
             throws Exception {
-
         buffer.markReaderIndex();
 
         // If there are not enough bytes to read a length, return
         if (buffer.readableBytes() < 2) {
+            System.out.println("Insufficient bytes");
             return null;
         }
 
@@ -31,12 +31,14 @@ public final class ElysiumDecoder extends FrameDecoder {
         if (length >= 160) {
             length = (length - 160) * 256 + buffer.readByte();
             shortLen = true;
+            System.out.println("Packet has 2 byte length");
         }
 
         // If the remaining payload has less than length bytes then
         // the packet hasn't fully arrived. Rewind the buffer and return.
         if (length > buffer.readableBytes()) {
             buffer.resetReaderIndex();
+            System.out.println("Full payload has not arrived");
             return null;
         }
 
@@ -59,7 +61,7 @@ public final class ElysiumDecoder extends FrameDecoder {
             payload = ChannelBuffers.wrappedBuffer(data);
         }
 
-        dump(payload, opcode, length);
+        System.out.println("OPCODE: " + opcode);
 
         MessageDecoder<?> decoder = CodecLookupService.getDecoder(opcode);
         if (decoder == null) {

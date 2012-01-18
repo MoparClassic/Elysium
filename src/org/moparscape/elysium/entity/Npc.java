@@ -29,4 +29,8 @@ public final class Npc extends Entity {
     public String toString() {
         return "";
     }
+
+    public boolean isRemoved() {
+        return false;
+    }
 }

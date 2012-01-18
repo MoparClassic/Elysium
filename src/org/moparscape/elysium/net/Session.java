@@ -1,6 +1,7 @@
 package org.moparscape.elysium.net;
 
 import org.jboss.netty.channel.Channel;
+import org.jboss.netty.channel.ChannelFuture;
 import org.moparscape.elysium.entity.Player;
 import org.moparscape.elysium.net.codec.Message;
 import org.moparscape.elysium.net.handler.HandlerLookupService;
@@ -54,6 +55,10 @@ public final class Session {
 
     public <T extends Message> void messageReceived(T message) {
         messageQueue.offer(message);
+    }
+
+    public ChannelFuture write(Object o) {
+        return channel.write(o);
     }
 
     @Override

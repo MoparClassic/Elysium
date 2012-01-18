@@ -49,7 +49,7 @@ public class Derp {
 ////
 //        EntityFactory factory = new DefaultEntityFactory();
 //        Entity e = factory.newPlayer();
-//        EntityCopyOnWriteArrayList<Entity> elist = new EntityCopyOnWriteArrayList<Entity>(2000);
+//        IndexableCopyOnWriteArrayList<Entity> elist = new IndexableCopyOnWriteArrayList<Entity>(2000);
 //        start = System.nanoTime() / 1000000;
 //        for (int i = 0; i < 2000; i++) {
 //            elist.add(e);

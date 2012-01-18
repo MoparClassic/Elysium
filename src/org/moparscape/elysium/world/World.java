@@ -1,6 +1,8 @@
 package org.moparscape.elysium.world;
 
-import org.moparscape.elysium.entity.Entity;
+import org.moparscape.elysium.entity.*;
+import org.moparscape.elysium.external.Shop;
+import org.moparscape.elysium.util.IndexableCopyOnWriteArrayList;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -23,7 +25,17 @@ public final class World {
      */
     public static final int MAX_HEIGHT = 3776;
 
-    private final List<Entity> playerList = new CopyOnWriteArrayList<Entity>();
+    private static final EntityFactory ENTITY_FACTORY = new DefaultEntityFactory();
+
+    private final List<Player> playerList = new IndexableCopyOnWriteArrayList<Player>(2000);
+
+    private final List<GameObject> gameObjectList = new CopyOnWriteArrayList<GameObject>();
+
+    private final List<Item> itemList = new CopyOnWriteArrayList<Item>();
+
+    private final List<Npc> npcList = new IndexableCopyOnWriteArrayList<Npc>(10000);
+
+    private final List<Shop> shopList = new CopyOnWriteArrayList<Shop>();
 
     static {
         INSTANCE = new World();
@@ -37,8 +49,28 @@ public final class World {
         return INSTANCE;
     }
 
-    public boolean addPlayer(Entity e) {
-        return playerList.add(e);
+    public static EntityFactory getEntityFactory() {
+        return ENTITY_FACTORY;
+    }
+
+    public boolean addPlayer(Player p) {
+        return playerList.add(p);
+    }
+
+    public void registerGameObject(GameObject go) {
+
+    }
+
+    public void registerItem(Item item) {
+
+    }
+
+    public void registerNpc(Npc npc) {
+
+    }
+
+    public void registerShop(Shop shop) {
+
     }
 
     /**

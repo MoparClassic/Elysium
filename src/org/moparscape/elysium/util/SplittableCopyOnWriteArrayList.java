@@ -8,7 +8,7 @@ import java.util.concurrent.locks.ReentrantLock;
  *
  * @author lothy
  */
-public class SplittableCopyOnWriteArrayList<E> implements List<E>, RandomAccess {
+public final class SplittableCopyOnWriteArrayList<E> implements List<E>, RandomAccess {
 
     private transient final ReentrantLock lock = new ReentrantLock();
 
@@ -100,11 +100,11 @@ public class SplittableCopyOnWriteArrayList<E> implements List<E>, RandomAccess 
             return true;
         }
 
-        if (o == null || !(o instanceof EntityCopyOnWriteArrayList)) {
+        if (o == null || !(o instanceof IndexableCopyOnWriteArrayList)) {
             return false;
         }
 
-        EntityCopyOnWriteArrayList<?> other = (EntityCopyOnWriteArrayList) o;
+        IndexableCopyOnWriteArrayList<?> other = (IndexableCopyOnWriteArrayList) o;
         Iterator<?> it = other.iterator();
         Object[] elements = array;
         int len = array.length;
