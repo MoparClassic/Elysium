@@ -1,6 +1,4 @@
-package org.moparscape.elysium.external;
-
-import org.moparscape.elysium.world.Point;
+package org.moparscape.elysium.world;
 
 public final class TelePoint extends Point {
 

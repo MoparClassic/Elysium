@@ -12,6 +12,14 @@ public class Point {
     protected final short y;
 
     public Point(int x, int y) {
+        if (x < 0 || x > World.MAX_WIDTH) {
+            throw new IllegalArgumentException("Invalid x ordinate");
+        }
+
+        if (y < 0 || y > World.MAX_HEIGHT) {
+            throw new IllegalArgumentException("Invalid y ordinate");
+        }
+
         this.x = (short) x;
         this.y = (short) y;
     }

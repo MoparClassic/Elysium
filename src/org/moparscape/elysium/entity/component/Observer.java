@@ -3,6 +3,7 @@ package org.moparscape.elysium.entity.component;
 import org.moparscape.elysium.entity.*;
 import org.moparscape.elysium.util.StatefulEntityCollection;
 import org.moparscape.elysium.world.Point;
+import org.moparscape.elysium.world.Region;
 
 import java.util.Map;
 
@@ -21,9 +22,9 @@ public final class Observer extends AbstractComponent {
 
     private final StatefulEntityCollection<Player> watchedPlayers = new StatefulEntityCollection<Player>();
 
-    private final Entity owner;
+    private final Player owner;
 
-    public Observer(Entity owner) {
+    public Observer(Player owner) {
         this.owner = owner;
     }
 
@@ -81,19 +82,43 @@ public final class Observer extends AbstractComponent {
     }
 
     public void updateWatchedObjects() {
+        Iterable<GameObject> objects = Region.getViewableObjects(owner.getLocation(), 21);
 
+        for (GameObject go : objects) {
+            if (!watchedObjects.contains(go)) {
+                watchedObjects.add(go);
+            }
+        }
     }
 
     public void updateWatchedItems() {
+        Iterable<Item> items = Region.getViewableItems(owner.getLocation(), 16);
 
+        for (Item item : items) {
+            if (!watchedItems.contains(item) && item.isVisibleTo(owner)) {
+                watchedItems.add(item);
+            }
+        }
     }
 
     public void updateWatchedNpcs() {
+        Iterable<Npc> npcs = Region.getViewableNpcs(owner.getLocation(), 16);
 
+        for (Npc npc : npcs) {
+            if (!watchedNpcs.contains(npc) || watchedNpcs.isRemoving(npc)) {
+                watchedNpcs.add(npc);
+            }
+        }
     }
 
     public void updateWatchedPlayers() {
+        Iterable<Player> players = Region.getViewablePlayers(owner, 16);
 
+        for (Player player : players) {
+            if (!watchedPlayers.contains(player) || watchedPlayers.isRemoving(player)) {
+                watchedPlayers.add(player);
+            }
+        }
     }
 
     private boolean withinRange(Locatable e) {

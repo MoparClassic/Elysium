@@ -154,9 +154,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/DataAccess/DataAccess.iml" filepath="$PROJECT_DIR$/DataAccess/DataAccess.iml" />
-      <module fileurl="file://$PROJECT_DIR$/DataLayer/DataLayer.iml" filepath="$PROJECT_DIR$/DataLayer/DataLayer.iml" />
       <module fileurl="file://$PROJECT_DIR$/Elysium.iml" filepath="$PROJECT_DIR$/Elysium.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Logic/Logic.iml" filepath="$PROJECT_DIR$/Logic/Logic.iml" />
     </modules>
   </component>
   <component name="ProjectResources">
