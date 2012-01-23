@@ -27,13 +27,13 @@ public final class World {
 
     private static final EntityFactory ENTITY_FACTORY = new DefaultEntityFactory();
 
-    private final List<Player> playerList = new IndexableCopyOnWriteArrayList<Player>(2000);
+    private final IndexableCopyOnWriteArrayList<Player> playerList = new IndexableCopyOnWriteArrayList<Player>(2000);
 
     private final List<GameObject> gameObjectList = new CopyOnWriteArrayList<GameObject>();
 
     private final List<Item> itemList = new CopyOnWriteArrayList<Item>();
 
-    private final List<Npc> npcList = new IndexableCopyOnWriteArrayList<Npc>(10000);
+    private final IndexableCopyOnWriteArrayList<Npc> npcList = new IndexableCopyOnWriteArrayList<Npc>(10000);
 
     private final List<Shop> shopList = new CopyOnWriteArrayList<Shop>();
 
@@ -53,24 +53,32 @@ public final class World {
         return ENTITY_FACTORY;
     }
 
-    public boolean addPlayer(Player p) {
+    public boolean registerGameObject(GameObject go) {
+        return false;
+    }
+
+    public boolean registerItem(Item item) {
+        return false;
+    }
+
+    public boolean registerNpc(Npc npc) {
+        return npcList.add(npc);
+    }
+
+    public boolean registerPlayer(Player p) {
         return playerList.add(p);
     }
 
-    public void registerGameObject(GameObject go) {
-
+    public boolean registerShop(Shop shop) {
+        return false;
     }
 
-    public void registerItem(Item item) {
-
+    public IndexableCopyOnWriteArrayList<Npc> getNpcs() {
+        return npcList;
     }
 
-    public void registerNpc(Npc npc) {
-
-    }
-
-    public void registerShop(Shop shop) {
-
+    public IndexableCopyOnWriteArrayList<Player> getPlayers() {
+        return playerList;
     }
 
     /**

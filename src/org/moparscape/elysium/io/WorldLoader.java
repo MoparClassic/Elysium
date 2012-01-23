@@ -57,7 +57,7 @@ public final class WorldLoader {
             world.registerItem(new Item(item));
         }
         for (NpcLoc npc : (List<NpcLoc>) PersistenceManager.load("locs/NpcLoc.xml.gz")) {
-            world.registerNpc(efactory.newNpc(npc));
+            //world.registerNpc(efactory.newNpc(npc));
         }
         for (Shop shop : (List<Shop>) PersistenceManager.load("locs/Shops.xml.gz")) {
             world.registerShop(shop);

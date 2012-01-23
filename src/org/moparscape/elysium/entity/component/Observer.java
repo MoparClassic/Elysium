@@ -6,6 +6,8 @@ import org.moparscape.elysium.world.Point;
 import org.moparscape.elysium.world.Region;
 
 import java.util.Map;
+import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Created by IntelliJ IDEA.
@@ -22,10 +24,23 @@ public final class Observer extends AbstractComponent {
 
     private final StatefulEntityCollection<Player> watchedPlayers = new StatefulEntityCollection<Player>();
 
-    private final Player owner;
+    private final Queue<Projectile> projectiles = new LinkedBlockingQueue<Projectile>();
 
-    public Observer(Player owner) {
-        this.owner = owner;
+    private final Queue<Player> playerAppearanceUpdates = new LinkedBlockingQueue<Player>();
+
+    private final Queue<Player> playerHitUpdates = new LinkedBlockingQueue<Player>();
+
+    private final Queue<Npc> npcHitUpdates = new LinkedBlockingQueue<Npc>();
+
+    private final Queue<Bubble> bubbles = new LinkedBlockingQueue<Bubble>();
+
+    private Player owner;
+
+    public void setOwner(Player player) {
+        if (owner != null) {
+            throw new IllegalStateException("Observer's player is already set");
+        }
+        this.owner = player;
     }
 
     @Override
@@ -49,39 +64,91 @@ public final class Observer extends AbstractComponent {
         return watchedPlayers;
     }
 
-    public void revalidateWatchedObjects() {
+    public Queue<Projectile> getProjectilesNeedingDisplayed() {
+        return projectiles;
+    }
+
+    public Queue<Bubble> getBubblesNeedingDisplayed() {
+        return bubbles;
+    }
+
+    public Queue<Npc> getNpcHitUpdates() {
+        return npcHitUpdates;
+    }
+
+    public Queue<Player> getPlayerHitUpdates() {
+        return playerHitUpdates;
+    }
+
+    public Queue<Player> getPlayerAppearanceUpdates() {
+        return playerAppearanceUpdates;
+    }
+
+    public void revalidateWatchedEntities() {
+        revalidateWatchedPlayers();
+        revalidateWatchedObjects();
+        revalidateWatchedItems();
+        revalidateWatchedNpcs();
+    }
+
+    public void updateWatchedEntities() {
+        updateWatchedPlayers();
+        updateWatchedObjects();
+        updateWatchedItems();
+        updateWatchedNpcs();
+    }
+
+    public void updateEntityLists() {
+        watchedPlayers.update();
+        watchedObjects.update();
+        watchedItems.update();
+        watchedNpcs.update();
+    }
+
+    public void clearDisplayLists() {
+        projectiles.clear();
+        playerHitUpdates.clear();
+        npcHitUpdates.clear();
+        bubbles.clear();
+    }
+
+    private void revalidateWatchedObjects() {
+        Point loc = owner.getLocation();
         for (GameObject o : watchedObjects.getKnownEntities()) {
-            if (!withinRange(o) || o.isRemoved()) {
+            if (!loc.withinRange(o.getLocation(), 21) || o.isRemoved()) {
                 watchedObjects.remove(o);
             }
         }
     }
 
-    public void revalidateWatchedItems() {
+    private void revalidateWatchedItems() {
+        Point loc = owner.getLocation();
         for (Item i : watchedItems.getKnownEntities()) {
-            if (!withinRange(i) || i.isRemoved() || !i.isVisibleTo(owner)) {
+            if (!loc.withinRange(i.getLocation(), 16) || i.isRemoved() || !i.isVisibleTo(owner)) {
                 watchedItems.remove(i);
             }
         }
     }
 
-    public void revalidateWatchedNpcs() {
+    private void revalidateWatchedNpcs() {
+        Point loc = owner.getLocation();
         for (Npc n : watchedNpcs.getKnownEntities()) {
-            if (!withinRange(n) || n.isRemoved()) {
+            if (!loc.withinRange(n.getLocation(), 16) || n.isRemoved()) {
                 watchedNpcs.remove(n);
             }
         }
     }
 
-    public void revalidateWatchedPlayers() {
+    private void revalidateWatchedPlayers() {
+        Point loc = owner.getLocation();
         for (Player p : watchedPlayers.getKnownEntities()) {
-            if (!withinRange(p) || !p.isLoggedIn()) {
+            if (!loc.withinRange(p.getLocation(), 16) || !p.isLoggedIn()) {
                 watchedPlayers.remove(p);
             }
         }
     }
 
-    public void updateWatchedObjects() {
+    private void updateWatchedObjects() {
         Iterable<GameObject> objects = Region.getViewableObjects(owner.getLocation(), 21);
 
         for (GameObject go : objects) {
@@ -91,7 +158,7 @@ public final class Observer extends AbstractComponent {
         }
     }
 
-    public void updateWatchedItems() {
+    private void updateWatchedItems() {
         Iterable<Item> items = Region.getViewableItems(owner.getLocation(), 16);
 
         for (Item item : items) {
@@ -101,7 +168,7 @@ public final class Observer extends AbstractComponent {
         }
     }
 
-    public void updateWatchedNpcs() {
+    private void updateWatchedNpcs() {
         Iterable<Npc> npcs = Region.getViewableNpcs(owner.getLocation(), 16);
 
         for (Npc npc : npcs) {
@@ -111,7 +178,7 @@ public final class Observer extends AbstractComponent {
         }
     }
 
-    public void updateWatchedPlayers() {
+    private void updateWatchedPlayers() {
         Iterable<Player> players = Region.getViewablePlayers(owner, 16);
 
         for (Player player : players) {
@@ -119,13 +186,5 @@ public final class Observer extends AbstractComponent {
                 watchedPlayers.add(player);
             }
         }
-    }
-
-    private boolean withinRange(Locatable e) {
-        Point targetLoc = e.getLocation();
-        Point loc = owner.getLocation();
-        int xDiff = loc.getX() - targetLoc.getX();
-        int yDiff = loc.getY() - targetLoc.getY();
-        return xDiff <= 16 && xDiff >= -15 && yDiff <= 16 && yDiff >= -15;
     }
 }

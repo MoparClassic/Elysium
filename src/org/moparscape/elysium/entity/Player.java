@@ -1,6 +1,7 @@
 package org.moparscape.elysium.entity;
 
 import org.moparscape.elysium.entity.component.Component;
+import org.moparscape.elysium.net.Session;
 
 import java.util.Map;
 
@@ -11,14 +12,21 @@ import java.util.Map;
  */
 public final class Player extends Entity {
 
-    private boolean loggedIn;
+    private final Session session;
 
-    public Player(Map<Class<? extends Component>, Component> components) {
+    private volatile boolean loggedIn;
+
+    public Player(Session session, Map<Class<? extends Component>, Component> components) {
         super(components);
+        this.session = session;
+    }
+
+    public Session getSession() {
+        return session;
     }
 
     public boolean isLoggedIn() {
-        return false;
+        return loggedIn;
     }
 
     public void setLoggedIn(boolean loggedIn) {

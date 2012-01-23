@@ -99,7 +99,7 @@ public final class Region {
 
         for (Region r : regions) {
             for (GameObject go : r.getObjects()) {
-                if (!go.isRemoved() && withinRange(p, go.getLocation(), radius)) {
+                if (!go.isRemoved() && p.withinRange(go.getLocation(), radius)) {
                     objects.add(go);
                 }
             }
@@ -114,7 +114,7 @@ public final class Region {
 
         for (Region r : regions) {
             for (Item i : r.getItems()) {
-                if (!i.isRemoved() && withinRange(p, i.getLocation(), radius)) {
+                if (!i.isRemoved() && p.withinRange(i.getLocation(), radius)) {
                     items.add(i);
                 }
             }
@@ -129,7 +129,7 @@ public final class Region {
 
         for (Region r : regions) {
             for (Npc n : r.getNpcs()) {
-                if (withinRange(p, n.getLocation(), radius)) {
+                if (p.withinRange(n.getLocation(), radius)) {
                     npcs.add(n);
                 }
             }
@@ -144,7 +144,7 @@ public final class Region {
 
         for (Region r : regions) {
             for (Player player : r.getPlayers()) {
-                if (player.isLoggedIn() && withinRange(p, player.getLocation(), radius)) {
+                if (player.isLoggedIn() && p.withinRange(player.getLocation(), radius)) {
                     players.add(player);
                 }
             }
@@ -160,20 +160,13 @@ public final class Region {
 
         for (Region r : regions) {
             for (Player p : r.getPlayers()) {
-                if (p != player && p.isLoggedIn() && withinRange(loc, p.getLocation(), radius)) {
+                if (p != player && p.isLoggedIn() && loc.withinRange(p.getLocation(), radius)) {
                     players.add(p);
                 }
             }
         }
 
         return players;
-    }
-
-    private static boolean withinRange(Point p1, Point p2, int radius) {
-        int xDiff = p1.getX() - p2.getX();
-        int yDiff = p1.getY() - p2.getY();
-
-        return xDiff <= radius && xDiff > -radius && yDiff <= radius && yDiff > -radius;
     }
 
     public Iterable<GameObject> getObjects() {

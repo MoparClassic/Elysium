@@ -108,11 +108,9 @@ public final class IndexableCopyOnWriteArrayList<E extends Indexable> implements
             int start = i * partlen;
             int sz = start + partlen;
             if (i == (partitions - 1)) {
-                Iterator<E> it = new COWIterator<E>(elements, start, sz + remaining);
-                iteratorList.add(new COWIterable<E>(it));
+                iteratorList.add(new COWIterable<E>(elements, start, sz + remaining));
             } else {
-                Iterator<E> it = new COWIterator<E>(elements, start, sz);
-                iteratorList.add(new COWIterable<E>(it));
+                iteratorList.add(new COWIterable<E>(elements, start, sz));
             }
         }
 
@@ -313,10 +311,6 @@ public final class IndexableCopyOnWriteArrayList<E extends Indexable> implements
 
         private int cursor;
 
-        public COWIterator(Object[] elements, int initialCursor) {
-            this(elements, initialCursor, elements.length);
-        }
-
         public COWIterator(Object[] elements, int initialCursor, int len) {
             this.snapshot = elements;
             this.cursor = initialCursor;
@@ -339,14 +333,20 @@ public final class IndexableCopyOnWriteArrayList<E extends Indexable> implements
 
     private static class COWIterable<E extends Indexable> implements Iterable<E> {
 
-        private final Iterator<E> iterator;
+        private final Object[] snapshot;
 
-        public COWIterable(Iterator<E> it) {
-            this.iterator = it;
+        private final int initialCursor;
+
+        private final int len;
+
+        public COWIterable(Object[] elements, int initialCursor, int len) {
+            this.snapshot = elements;
+            this.initialCursor = initialCursor;
+            this.len = len;
         }
 
         public Iterator<E> iterator() {
-            return iterator;
+            return new COWIterator<E>(snapshot, initialCursor, len);
         }
     }
 }

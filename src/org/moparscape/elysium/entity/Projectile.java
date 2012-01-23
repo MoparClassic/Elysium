@@ -7,38 +7,38 @@ package org.moparscape.elysium.entity;
  */
 public final class Projectile {
 
-    private final Entity caster;
+    private final Indexable caster;
 
-    private final Entity target;
+    private final Indexable target;
 
     /**
      * The type of projectile.
      * 1) Magic projectile
      * 2) Range projectile
      */
-    private final int type;
+    private final ProjectileType type;
 
-    public Projectile(Entity caster, Entity target, int type) {
+    public Projectile(Entity caster, Entity target, ProjectileType type) {
         this.caster = caster;
         this.target = target;
         this.type = type;
     }
 
-    public Entity getCaster() {
+    public Indexable getCaster() {
         return caster;
     }
 
-    public Entity getTarget() {
+    public Indexable getTarget() {
         return target;
     }
 
     public int getType() {
-        return type;
+        return type.getType();
     }
 
     @Override
     public int hashCode() {
-        return 31 * (caster.hashCode() | target.hashCode() | type);
+        return 31 * (caster.hashCode() | target.hashCode() | type.getType());
     }
 
     @Override
@@ -53,5 +53,21 @@ public final class Projectile {
 
         Projectile p = (Projectile) o;
         return caster.equals(p.caster) && target.equals(p.target) && type == p.type;
+    }
+
+    public static enum ProjectileType {
+
+        MAGIC(1),
+        RANGE(2);
+
+        private final int type;
+
+        ProjectileType(int type) {
+            this.type = type;
+        }
+
+        public int getType() {
+            return type;
+        }
     }
 }

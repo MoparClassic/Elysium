@@ -18,6 +18,10 @@ public final class Item implements Locatable {
         this.loc = loc;
     }
 
+    public int getId() {
+        return loc.getId();
+    }
+
     public Point getLocation() {
         return location;
     }

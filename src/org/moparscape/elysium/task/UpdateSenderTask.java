@@ -1,6 +1,6 @@
 package org.moparscape.elysium.task;
 
-import org.moparscape.elysium.net.Session;
+import org.moparscape.elysium.entity.Player;
 
 import java.util.concurrent.CountDownLatch;
 
@@ -9,21 +9,21 @@ import java.util.concurrent.CountDownLatch;
  *
  * @author lothy
  */
-public final class SessionPulseTask implements Runnable {
+public final class UpdateSenderTask implements Runnable {
 
-    private final Iterable<Session> sessions;
+    private final Iterable<Player> players;
 
     private final CountDownLatch latch;
 
-    public SessionPulseTask(Iterable<Session> sessions, CountDownLatch latch) {
-        this.sessions = sessions;
+    public UpdateSenderTask(Iterable<Player> players, CountDownLatch latch) {
+        this.players = players;
         this.latch = latch;
     }
 
     public void run() {
         try {
-            for (Session s : sessions) {
-                s.pulse();
+            for (Player p : players) {
+
             }
         } finally {
             latch.countDown();

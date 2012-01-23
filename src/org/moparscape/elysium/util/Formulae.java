@@ -56,8 +56,7 @@ public final class Formulae {
             {new Point(48, 96), new Point(335, 142)},
             {new Point(343, 567), new Point(457, 432)},
             {new Point(203, 3206), new Point(233, 3265)},
-            {new Point(397, 525), new Point(441, 579),},
-            {new Point(431, 0), new Point(1007, 1007)}};
+            {new Point(397, 525), new Point(441, 579),}};
     public static final int[] potions1Dose = {224, 476, 479, 482, 485, 488,
             491, 494, 497, 500, 568, 571};
     public static final int[] potions2Dose = {223, 475, 478, 481, 484, 487,

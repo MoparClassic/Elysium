@@ -13,7 +13,7 @@ public class Entity implements Indexable, Locatable {
 
     private final Map<Class<? extends Component>, Component> components;
 
-    private Point location;
+    private Point location = new Point(329, 552);
 
     private int index;
 

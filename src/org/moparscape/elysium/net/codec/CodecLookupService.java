@@ -1,8 +1,6 @@
 package org.moparscape.elysium.net.codec;
 
 import org.moparscape.elysium.net.codec.decoder.*;
-import org.moparscape.elysium.net.codec.encoder.LoginResponseMessageEncoder;
-import org.moparscape.elysium.net.codec.encoder.MessageEncoder;
 
 import java.util.*;
 
@@ -16,8 +14,6 @@ public final class CodecLookupService {
     private static final List<MessageDecoder<? extends Message>> decoders;
 
     private static final Map<Class<? extends Message>, MessageDecoder<? extends Message>> decoderMap;
-
-    private static final Map<Class<? extends Message>, MessageEncoder<? extends Message>> encoderMap;
 
     // Empty constructor to enforce singleton property
     private CodecLookupService() {
@@ -106,16 +102,8 @@ public final class CodecLookupService {
             throw new ExceptionInInitializerError(e);
         }
 
-        // Initialise all of the encoders in this block
-        try {
-            bindings.bindEncoder(LoginResponseMessageEncoder.class);
-        } catch (Exception e) {
-            throw new ExceptionInInitializerError(e);
-        }
-
         decoders = bindings.decoderList();
         decoderMap = bindings.messageToDecoderMap();
-        encoderMap = bindings.messageToEncoderMap();
     }
 
     public static MessageDecoder<? extends Message> getDecoder(int opcode) {
@@ -130,10 +118,6 @@ public final class CodecLookupService {
         return decoderMap.get(type);
     }
 
-    public static MessageEncoder<? extends Message> getEncoder(Class<? extends Message> type) {
-        return encoderMap.get(type);
-    }
-
     private static final class ImmutableBindingBuilder {
 
         private final List<MessageDecoder<? extends Message>> decoders =
@@ -141,9 +125,6 @@ public final class CodecLookupService {
 
         private final Map<Class<? extends Message>, MessageDecoder<? extends Message>> decoderMap =
                 new HashMap<Class<? extends Message>, MessageDecoder<? extends Message>>(100, 0.50f);
-
-        private final Map<Class<? extends Message>, MessageEncoder<? extends Message>> encoderMap =
-                new HashMap<Class<? extends Message>, MessageEncoder<? extends Message>>(100, 0.50f);
 
         public ImmutableBindingBuilder() {
             // Add dummy invalid message handlers to the list.
@@ -167,18 +148,8 @@ public final class CodecLookupService {
             this.decoderMap.put(decoder.getMessageType(), decoder);
         }
 
-        public <T extends Message, C extends MessageEncoder<T>> void bindEncoder(Class<C> type)
-                throws IllegalAccessException, InstantiationException {
-            MessageEncoder<T> encoder = type.newInstance();
-            this.encoderMap.put(encoder.getMessageType(), encoder);
-        }
-
         public Map<Class<? extends Message>, MessageDecoder<? extends Message>> messageToDecoderMap() {
             return Collections.unmodifiableMap(this.decoderMap);
-        }
-
-        public Map<Class<? extends Message>, MessageEncoder<? extends Message>> messageToEncoderMap() {
-            return Collections.unmodifiableMap(this.encoderMap);
         }
 
         public List<MessageDecoder<? extends Message>> decoderList() {

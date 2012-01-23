@@ -1,22 +1,27 @@
 package org.moparscape.elysium.entity.component;
 
-import org.moparscape.elysium.entity.Locatable;
-import org.moparscape.elysium.world.Point;
-
 /**
  * Created by IntelliJ IDEA.
  *
  * @author lothy
  */
-public final class Movement extends AbstractComponent implements Locatable {
+public final class Movement extends AbstractComponent {
 
-    private Point location;
+    private boolean hasMoved = false;
 
-    public Point getLocation() {
-        return location;
+    public Movement() {
+
     }
 
-    public void setLocation(Point location) {
-        this.location = location;
+    public boolean hasMoved() {
+        return hasMoved;
+    }
+
+    public void resetMoved() {
+        this.hasMoved = false;
+    }
+
+    public void updatePosition() {
+
     }
 }

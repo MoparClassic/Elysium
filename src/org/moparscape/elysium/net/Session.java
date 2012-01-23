@@ -19,7 +19,7 @@ public final class Session {
 
     private final Channel channel;
 
-    private Player player;
+    private volatile Player player;
 
     private Queue<Message> messageQueue = new ConcurrentLinkedQueue<Message>();
 
@@ -27,6 +27,10 @@ public final class Session {
 
     public Session(Channel channel) {
         this.channel = channel;
+    }
+
+    public Player getPlayer() {
+        return player;
     }
 
     public void setPlayer(Player player) {
@@ -43,11 +47,16 @@ public final class Session {
         int processed = 0;
 
         // Process all of the messages that have been received from this player.
-        // Process the entire queue up to a maximum of 100 messages.
-        while ((message = messageQueue.poll()) != null && processed++ < 100) {
+        // Process the entire queue up to a maximum of 60 messages.
+        while ((message = messageQueue.poll()) != null && processed++ < 60) {
             MessageHandler<Message> handler = (MessageHandler<Message>) HandlerLookupService.getHandler(message.getClass());
             if (handler != null) {
-                handler.handle(this, player, message);
+                try {
+                    handler.handle(this, player, message);
+                } catch (Exception e) {
+                    System.out.printf("Player Index: %d - Failure during handling of %s\n",
+                            player.getIndex(), message.getClass().toString());
+                }
             }
         }
         return false;
@@ -59,6 +68,10 @@ public final class Session {
 
     public ChannelFuture write(Object o) {
         return channel.write(o);
+    }
+
+    public ChannelFuture close() {
+        return channel.close();
     }
 
     @Override

@@ -14,7 +14,6 @@ public final class ElysiumPipelineFactory implements ChannelPipelineFactory {
     public ChannelPipeline getPipeline() {
         return new StaticChannelPipeline(
                 new ElysiumDecoder(),
-                new ElysiumEncoder(),
                 new ElysiumConnectionHandler()
         );
     }

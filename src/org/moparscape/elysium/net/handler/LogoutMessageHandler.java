@@ -12,6 +12,8 @@ import org.moparscape.elysium.net.codec.decoder.message.LogoutMessage;
 public final class LogoutMessageHandler extends MessageHandler<LogoutMessage> {
     @Override
     public void handle(Session session, Player player, LogoutMessage message) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        // TODO: Verify that permission to logout has been granted before removing them from the world
+        // This ensures that they can't cheat by closing their client etc
+        session.close();
     }
 }

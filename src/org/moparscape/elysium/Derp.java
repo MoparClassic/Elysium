@@ -100,7 +100,7 @@ public class Derp {
 
         slist.clear();
 
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < 3; i++) {
             slist.add(i);
         }
 

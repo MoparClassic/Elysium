@@ -14,6 +14,12 @@ public final class GameObject implements Locatable {
 
     private Point location;
 
+    private int id;
+
+    private int direction;
+
+    private int type;
+
     public GameObject(GameObjectLoc loc) {
         this.loc = loc;
     }
@@ -24,6 +30,18 @@ public final class GameObject implements Locatable {
 
     public void setLocation(Point location) {
         this.location = location;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public int getDirection() {
+        return direction;
+    }
+
+    public int getType() {
+        return type;
     }
 
     public boolean isRemoved() {

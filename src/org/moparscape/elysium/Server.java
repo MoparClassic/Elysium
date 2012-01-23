@@ -4,11 +4,11 @@ import org.jboss.netty.bootstrap.ServerBootstrap;
 import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
 import org.moparscape.elysium.net.Session;
 import org.moparscape.elysium.net.codec.ElysiumPipelineFactory;
+import org.moparscape.elysium.task.IssueUpdatePacketsTask;
 import org.moparscape.elysium.task.SessionPulseTask;
 import org.moparscape.elysium.util.SplittableCopyOnWriteArrayList;
 
 import java.net.InetSocketAddress;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.*;
 
@@ -21,7 +21,7 @@ public class Server {
 
     private static final Server INSTANCE;
 
-    private static final int TASK_THREADS = 4;
+    public static final int TASK_THREADS = 1;
 
     private final ExecutorService nettyBossService = Executors.newSingleThreadExecutor();
 
@@ -32,6 +32,8 @@ public class Server {
     private final ExecutorService dataExecutorService = Executors.newSingleThreadExecutor();
 
     private final SplittableCopyOnWriteArrayList<Session> sessions = new SplittableCopyOnWriteArrayList<Session>(1500);
+
+    private final GameStateUpdater updater = new GameStateUpdater();
 
     private final ServerBootstrap bootstrap;
 
@@ -88,7 +90,9 @@ public class Server {
 
                     pulseSessions(); // This function blocks until all sessions have finished
                     processEvents(); // This function blocks until all events have been processed
-                    processClients(); // This function blocks until all updating has finished
+                    updater.updateState(); // This function blocks until all updating has finished
+                    issueUpdatePackets();
+                    updater.updateCollections();
 
                     // Update the time that the last pulse took place before finishing
                     lastPulse = highResolutionTimestamp;
@@ -99,34 +103,38 @@ public class Server {
                 break ParentLoop;
             } catch (Exception e) {
                 System.out.println("Game loop exception: " + e.getCause());
+                e.printStackTrace();
             }
         }
 
         // TODO: Implement shutdown procedure and cleanup here
     }
 
-    private void pulseSessions() throws ExecutionException, InterruptedException {
-        // Allow each Session to handle its packet queue
+    private void pulseSessions() throws Exception {
         List<Iterable<Session>> sessionPartitions = sessions.divide(TASK_THREADS);
-        List<SessionPulseTask> sessionPulseTasks = new LinkedList<SessionPulseTask>();
+        CountDownLatch latch = new CountDownLatch(sessionPartitions.size());
+
         for (Iterable<Session> s : sessionPartitions) {
-            sessionPulseTasks.add(new SessionPulseTask(s));
+            taskExecutorService.execute(new SessionPulseTask(s, latch));
         }
 
-        // By calling get() on each of the futures that were returned, we block until
-        // all of the sessions have finished processing their packet queues.
-        List<Future<Void>> futureList = taskExecutorService.invokeAll(sessionPulseTasks);
-        for (Future<Void> f : futureList) {
-            f.get();
-        }
+        // Block here until all of the tasks have finished
+        latch.await();
     }
 
     private void processEvents() {
 
     }
 
-    private void processClients() {
+    private void issueUpdatePackets() throws Exception {
+        List<Iterable<Session>> sessionPartitions = sessions.divide(TASK_THREADS);
+        CountDownLatch latch = new CountDownLatch(sessionPartitions.size());
 
+        for (Iterable<Session> s : sessionPartitions) {
+            taskExecutorService.execute(new IssueUpdatePacketsTask(s, latch));
+        }
+
+        latch.await();
     }
 
     private void updateTimestamps() {
