@@ -53,6 +53,10 @@ public final class World {
         return ENTITY_FACTORY;
     }
 
+    public boolean unregisterPlayer(Player p) {
+        return playerList.remove(p);
+    }
+
     public boolean registerGameObject(GameObject go) {
         return false;
     }
