@@ -89,7 +89,7 @@ public final class PacketBuilder {
         int dataLen = buffer.readableBytes(); // Length of payload
         int packetLen = dataLen + 1;          // Length of opcode followed by payload
 
-        System.out.printf("dataLen=%d; packetLen=%d;\n", dataLen, packetLen);
+        //System.out.printf("dataLen=%d; packetLen=%d;\n", dataLen, packetLen);
 
         ChannelBuffer header = ChannelBuffers.buffer(3);
         if (dataLen >= 160) {

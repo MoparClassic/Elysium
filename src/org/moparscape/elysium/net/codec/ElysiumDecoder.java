@@ -22,7 +22,6 @@ public final class ElysiumDecoder extends FrameDecoder {
 
         // If there are not enough bytes to read a length, return
         if (buffer.readableBytes() < 2) {
-            System.out.println("Insufficient bytes");
             return null;
         }
 
@@ -31,14 +30,12 @@ public final class ElysiumDecoder extends FrameDecoder {
         if (length >= 160) {
             length = (length - 160) * 256 + buffer.readByte();
             shortLen = true;
-            System.out.println("Packet has 2 byte length");
         }
 
         // If the remaining payload has less than length bytes then
         // the packet hasn't fully arrived. Rewind the buffer and return.
         if (length > buffer.readableBytes()) {
             buffer.resetReaderIndex();
-            System.out.println("Full payload has not arrived");
             return null;
         }
 
@@ -67,6 +64,9 @@ public final class ElysiumDecoder extends FrameDecoder {
         if (decoder == null) {
             throw new IOException("Unknown opcode: " + opcode);
         }
+
+        // Reduce length by 1 so that it is only referring to the payload's length, without the opcode
+        --length;
 
         return decoder.decode(payload, length);
     }

@@ -3,6 +3,7 @@ package org.moparscape.elysium.entity.component;
 import org.moparscape.elysium.entity.*;
 import org.moparscape.elysium.util.StatefulEntityCollection;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
@@ -82,7 +83,7 @@ public final class UpdateProxy extends AbstractComponent {
         return observer.getPlayerHitUpdates();
     }
 
-    public Queue<Player> getPlayerAppearanceUpdates() {
+    public List<Player> getPlayerAppearanceUpdates() {
         return observer.getPlayerAppearanceUpdates();
     }
 

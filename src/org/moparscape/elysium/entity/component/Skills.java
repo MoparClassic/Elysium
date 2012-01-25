@@ -1,5 +1,7 @@
 package org.moparscape.elysium.entity.component;
 
+import java.util.Arrays;
+
 /**
  * Created by IntelliJ IDEA.
  *
@@ -18,6 +20,12 @@ public final class Skills extends AbstractComponent {
     private int lastDamage = 0;
 
     private int fatigue;
+
+    public Skills() {
+        Arrays.fill(curStat, 99);
+        Arrays.fill(maxStat, 99);
+        Arrays.fill(exp, 14000000);
+    }
 
     public int getLastDamage() {
         return lastDamage;

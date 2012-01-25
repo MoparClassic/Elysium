@@ -21,7 +21,7 @@ public class Server {
 
     private static final Server INSTANCE;
 
-    public static final int TASK_THREADS = 1;
+    public static final int TASK_THREADS = 4;
 
     private final ExecutorService nettyBossService = Executors.newSingleThreadExecutor();
 

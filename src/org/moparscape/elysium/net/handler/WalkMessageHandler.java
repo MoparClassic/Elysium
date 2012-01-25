@@ -1,6 +1,8 @@
 package org.moparscape.elysium.net.handler;
 
+import org.moparscape.elysium.entity.Path;
 import org.moparscape.elysium.entity.Player;
+import org.moparscape.elysium.entity.component.Movement;
 import org.moparscape.elysium.net.Session;
 import org.moparscape.elysium.net.codec.decoder.message.WalkMessage;
 
@@ -12,6 +14,8 @@ import org.moparscape.elysium.net.codec.decoder.message.WalkMessage;
 public final class WalkMessageHandler extends MessageHandler<WalkMessage> {
     @Override
     public void handle(Session session, Player player, WalkMessage message) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        Movement movement = player.getComponent(Movement.class);
+        Path path = new Path(message);
+        movement.setPath(path);
     }
 }

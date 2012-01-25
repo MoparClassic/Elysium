@@ -27,6 +27,10 @@ public final class World {
 
     private static final EntityFactory ENTITY_FACTORY = new DefaultEntityFactory();
 
+    private final TileValue[][] tileType = new TileValue[MAX_WIDTH][MAX_HEIGHT];
+
+    private final TileValue outsideWorld = new TileValue();
+
     private final IndexableCopyOnWriteArrayList<Player> playerList = new IndexableCopyOnWriteArrayList<Player>(2000);
 
     private final List<GameObject> gameObjectList = new CopyOnWriteArrayList<GameObject>();
@@ -42,7 +46,8 @@ public final class World {
     }
 
     private World() {
-
+        this.outsideWorld.mapValue = Byte.MAX_VALUE;
+        this.outsideWorld.objectValue = Byte.MAX_VALUE;
     }
 
     public static World getInstance() {
@@ -90,5 +95,20 @@ public final class World {
      */
     public boolean withinWorld(int x, int y) {
         return x >= 0 && x < MAX_WIDTH && y >= 0 && y < MAX_HEIGHT;
+    }
+
+    /**
+     * Gets the tile value as point x, y
+     */
+    public TileValue getTileValue(int x, int y) {
+        if (!withinWorld(x, y)) {
+            return outsideWorld;
+        }
+        TileValue t = tileType[x][y];
+        if (t == null) {
+            t = new TileValue();
+            tileType[x][y] = t;
+        }
+        return t;
     }
 }

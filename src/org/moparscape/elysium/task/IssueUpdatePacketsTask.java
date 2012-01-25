@@ -10,6 +10,7 @@ import org.moparscape.elysium.util.StatefulEntityCollection;
 import org.moparscape.elysium.world.Point;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.CountDownLatch;
 
@@ -294,7 +295,7 @@ public final class IssueUpdatePacketsTask implements Runnable {
         Queue<Player> playerHitUpdates = proxy.getPlayerHitUpdates();
 
         Queue<Projectile> projectiles = proxy.getProjectilesNeedingDisplayed();
-        Queue<Player> playerAppearanceUpdates = proxy.getPlayerAppearanceUpdates();
+        List<Player> playerAppearanceUpdates = proxy.getPlayerAppearanceUpdates();
 
 
         int updateSize = bubbles.size() + chatMessages.size() + playerHitUpdates.size() +

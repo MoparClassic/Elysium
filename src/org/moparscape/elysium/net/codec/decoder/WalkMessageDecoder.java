@@ -17,6 +17,14 @@ public final class WalkMessageDecoder extends AbstractMessageDecoder<WalkMessage
     public WalkMessage decode(ChannelBuffer buffer, int length) {
         int startX = buffer.readShort();
         int startY = buffer.readShort();
-        return null;
+        int steps = (length - 4) / 2;
+        byte[] xOffsets = new byte[steps];
+        byte[] yOffsets = new byte[steps];
+
+        for (int i = 0; i < steps; i++) {
+            xOffsets[i] = buffer.readByte();
+            yOffsets[i] = buffer.readByte();
+        }
+        return new WalkMessage(startX, startY, steps, xOffsets, yOffsets);
     }
 }

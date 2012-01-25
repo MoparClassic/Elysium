@@ -79,7 +79,7 @@ public final class IndexableCopyOnWriteArrayList<E extends Indexable> implements
 
         lock.lock();
         try {
-            for (int i = 0; i < capacity; i++) {
+            for (int i = 0; i < arrayMap.length; i++) {
                 arrayMap[i] = null;
             }
 
@@ -104,6 +104,11 @@ public final class IndexableCopyOnWriteArrayList<E extends Indexable> implements
         int remaining = len % partitions;
 
         List<Iterable<E>> iteratorList = new ArrayList<Iterable<E>>();
+        if (partitions == 1) {
+            iteratorList.add(new COWIterable<E>(elements, 0, len));
+            return iteratorList;
+        }
+
         for (int i = 0; i < partitions; i++) {
             int start = i * partlen;
             int sz = start + partlen;

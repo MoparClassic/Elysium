@@ -32,13 +32,18 @@ public final class DefaultEntityFactory implements EntityFactory {
         Map<Class<? extends Component>, Component> components =
                 new HashMap<Class<? extends Component>, Component>(30, 0.4f);
 
-        components.put(Appearance.class, new Appearance());
+
         components.put(Combat.class, new Combat());
         components.put(Communication.class, new Communication());
         components.put(Credentials.class, new Credentials());
-        components.put(Movement.class, new Movement());
         components.put(Skills.class, new Skills());
         components.put(UpdateProxy.class, new UpdateProxy());
+
+        Appearance appearance = new Appearance();
+        components.put(Appearance.class, appearance);
+
+        Movement movement = new Movement();
+        components.put(Movement.class, movement);
 
         Observer observer = new Observer();
         components.put(Observer.class, observer);
@@ -48,6 +53,8 @@ public final class DefaultEntityFactory implements EntityFactory {
         }
 
         Player player = new Player(session, components);
+        appearance.setOwner(player);
+        movement.setOwner(player);
         observer.setOwner(player);
 
         return player;

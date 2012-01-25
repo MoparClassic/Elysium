@@ -45,6 +45,6 @@ public final class Player extends Entity {
 
     @Override
     public String toString() {
-        return "";
+        return "Player";
     }
 }

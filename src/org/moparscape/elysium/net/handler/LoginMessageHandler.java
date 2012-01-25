@@ -5,6 +5,7 @@ import org.moparscape.elysium.entity.Player;
 import org.moparscape.elysium.net.Packets;
 import org.moparscape.elysium.net.Session;
 import org.moparscape.elysium.net.codec.decoder.message.LoginMessage;
+import org.moparscape.elysium.world.World;
 
 /**
  * Created by IntelliJ IDEA.
@@ -23,7 +24,13 @@ public final class LoginMessageHandler extends MessageHandler<LoginMessage> {
         // TODO: Actually load a player and such
 
         Packets.sendLoginResponse(p, Packets.LoginResponse.SUCCESS);
+
+        Packets.sendServerInfo(p);
+        Packets.sendFatigue(p);
+        Packets.sendWorldInfo(p);
+        Packets.sendStats(p);
         Packets.sendLoginBox(p);
         p.setLoggedIn(true);
+        World.getInstance().registerPlayer(p);
     }
 }

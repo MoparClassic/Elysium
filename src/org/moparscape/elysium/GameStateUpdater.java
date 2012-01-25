@@ -18,15 +18,13 @@ import java.util.concurrent.CountDownLatch;
  */
 public final class GameStateUpdater {
 
-    private final World world = World.getInstance();
+    private final IndexableCopyOnWriteArrayList<Npc> npcList = World.getInstance().getNpcs();
 
-    private final IndexableCopyOnWriteArrayList<Player> playerList = world.getPlayers();
-
-    private final IndexableCopyOnWriteArrayList<Npc> npcList = world.getNpcs();
-
-    private List<Iterable<Player>> playerPartitions;
+    private final IndexableCopyOnWriteArrayList<Player> playerList = World.getInstance().getPlayers();
 
     private List<Iterable<Npc>> npcPartitions;
+
+    private List<Iterable<Player>> playerPartitions;
 
     public void updateState() throws Exception {
         playerPartitions = playerList.divide(Server.TASK_THREADS);

@@ -5,8 +5,7 @@ import org.moparscape.elysium.util.StatefulEntityCollection;
 import org.moparscape.elysium.world.Point;
 import org.moparscape.elysium.world.Region;
 
-import java.util.Map;
-import java.util.Queue;
+import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
@@ -15,6 +14,8 @@ import java.util.concurrent.LinkedBlockingQueue;
  * @author lothy
  */
 public final class Observer extends AbstractComponent {
+
+    private final Map<Integer, Integer> knownPlayerAppearanceIds = new HashMap<Integer, Integer>();
 
     private final StatefulEntityCollection<GameObject> watchedObjects = new StatefulEntityCollection<GameObject>();
 
@@ -26,8 +27,6 @@ public final class Observer extends AbstractComponent {
 
     private final Queue<Projectile> projectiles = new LinkedBlockingQueue<Projectile>();
 
-    private final Queue<Player> playerAppearanceUpdates = new LinkedBlockingQueue<Player>();
-
     private final Queue<Player> playerHitUpdates = new LinkedBlockingQueue<Player>();
 
     private final Queue<Npc> npcHitUpdates = new LinkedBlockingQueue<Npc>();
@@ -35,6 +34,8 @@ public final class Observer extends AbstractComponent {
     private final Queue<Bubble> bubbles = new LinkedBlockingQueue<Bubble>();
 
     private Player owner;
+
+    private Appearance appearance;
 
     public void setOwner(Player player) {
         if (owner != null) {
@@ -45,7 +46,7 @@ public final class Observer extends AbstractComponent {
 
     @Override
     public void resolveDependencies(Map<Class<? extends Component>, Component> components) {
-
+        this.appearance = Appearance.class.cast(components.get(Appearance.class));
     }
 
     public StatefulEntityCollection<GameObject> getWatchedObjects() {
@@ -80,8 +81,41 @@ public final class Observer extends AbstractComponent {
         return playerHitUpdates;
     }
 
-    public Queue<Player> getPlayerAppearanceUpdates() {
-        return playerAppearanceUpdates;
+    private boolean needsAppearanceUpdateFor(Player target) {
+        int targetIndex = target.getIndex();
+        if (knownPlayerAppearanceIds.containsKey(targetIndex)) {
+            Appearance targetAppearance = target.getComponent(Appearance.class);
+            int knownAppearanceId = knownPlayerAppearanceIds.get(targetIndex);
+            if (knownAppearanceId != targetAppearance.getAppearanceId()) {
+                return true;
+            }
+        } else {
+            return true;
+        }
+
+        return false;
+    }
+
+    public List<Player> getPlayerAppearanceUpdates() {
+        List<Player> needingUpdates = new LinkedList<Player>();
+        needingUpdates.addAll(watchedPlayers.getNewEntities());
+        if (appearance.appearanceChanged()) {
+            needingUpdates.add(owner);
+        }
+
+        for (Player p : watchedPlayers.getKnownEntities()) {
+            if (needsAppearanceUpdateFor(p)) {
+                needingUpdates.add(p);
+            }
+        }
+
+        return needingUpdates;
+    }
+
+    public void addPlayerAppearanceIds(int[] indices, int[] appearanceIds) {
+        for (int i = 0; i < indices.length; i++) {
+            knownPlayerAppearanceIds.put(indices[i], appearanceIds[i]);
+        }
     }
 
     public void revalidateWatchedEntities() {
@@ -144,6 +178,7 @@ public final class Observer extends AbstractComponent {
         for (Player p : watchedPlayers.getKnownEntities()) {
             if (!loc.withinRange(p.getLocation(), 16) || !p.isLoggedIn()) {
                 watchedPlayers.remove(p);
+                knownPlayerAppearanceIds.remove(p.getIndex());
             }
         }
     }
