@@ -5,6 +5,8 @@ import org.moparscape.elysium.world.Point;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author lothy
@@ -13,9 +15,9 @@ public class Entity implements Indexable, Locatable {
 
     private final Map<Class<? extends Component>, Component> components;
 
-    private Point location = new Point(329, 552);
+    private final AtomicReference<Point> location = new AtomicReference<Point>(new Point(329, 552));
 
-    private int index;
+    private final AtomicInteger index = new AtomicInteger(0);
 
     private Entity() {
         throw new RuntimeException("Default constructor not supported.");
@@ -30,23 +32,23 @@ public class Entity implements Indexable, Locatable {
     }
 
     public int getIndex() {
-        return index;
+        return index.get();
     }
 
     public void setIndex(int index) {
-        this.index = index;
+        this.index.getAndSet(index);
     }
 
     public Point getLocation() {
-        return location;
+        return location.get();
     }
 
     public void setLocation(Point location) {
-        this.location = location;
+        this.location.getAndSet(location);
     }
 
     @Override
     public String toString() {
-        return "Index: " + String.valueOf(index);
+        return "Index: " + String.valueOf(getIndex());
     }
 }

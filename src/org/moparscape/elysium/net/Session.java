@@ -9,6 +9,8 @@ import org.moparscape.elysium.net.handler.MessageHandler;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Created by IntelliJ IDEA.
@@ -19,27 +21,35 @@ public final class Session {
 
     private final Channel channel;
 
-    private volatile Player player;
+    private final AtomicReference<Player> player = new AtomicReference<Player>();
 
-    private Queue<Message> messageQueue = new ConcurrentLinkedQueue<Message>();
+    private final AtomicBoolean removing = new AtomicBoolean(false);
 
-    private boolean removing = false;
+    private final Queue<Message> messageQueue = new ConcurrentLinkedQueue<Message>();
 
     public Session(Channel channel) {
         this.channel = channel;
     }
 
     public Player getPlayer() {
-        return player;
+        return player.get();
     }
 
     public void setPlayer(Player player) {
-        this.player = player;
+        this.player.getAndSet(player);
+    }
+
+    public boolean isRemoving() {
+        return removing.get();
+    }
+
+    public void setRemoving(boolean removing) {
+        this.removing.getAndSet(removing);
     }
 
     @SuppressWarnings("unchecked")
     public boolean pulse() {
-        if (removing) {
+        if (isRemoving()) {
             return false;
         }
 
@@ -52,14 +62,15 @@ public final class Session {
             MessageHandler<Message> handler = (MessageHandler<Message>) HandlerLookupService.getHandler(message.getClass());
             if (handler != null) {
                 try {
-                    handler.handle(this, player, message);
+                    handler.handle(this, getPlayer(), message);
                 } catch (Exception e) {
                     System.out.printf("Player Index: %d - Failure during handling of %s\n",
-                            player.getIndex(), message.getClass().toString());
+                            getPlayer() == null ? -1 : getPlayer().getIndex(),
+                            message.getClass().toString());
                 }
             }
         }
-        return false;
+        return true;
     }
 
     public <T extends Message> void messageReceived(T message) {

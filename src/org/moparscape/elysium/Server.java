@@ -4,12 +4,16 @@ import org.jboss.netty.bootstrap.ServerBootstrap;
 import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
 import org.moparscape.elysium.net.Session;
 import org.moparscape.elysium.net.codec.ElysiumPipelineFactory;
+import org.moparscape.elysium.task.CountdownTaskExecutor;
 import org.moparscape.elysium.task.IssueUpdatePacketsTask;
 import org.moparscape.elysium.task.SessionPulseTask;
+import org.moparscape.elysium.task.timed.TimedTask;
 import org.moparscape.elysium.util.SplittableCopyOnWriteArrayList;
 
 import java.net.InetSocketAddress;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.concurrent.*;
 
 /**
@@ -32,6 +36,8 @@ public class Server {
     private final ExecutorService dataExecutorService = Executors.newSingleThreadExecutor();
 
     private final SplittableCopyOnWriteArrayList<Session> sessions = new SplittableCopyOnWriteArrayList<Session>(1500);
+
+    private final Queue<TimedTask> taskQueue = new PriorityBlockingQueue<TimedTask>();
 
     private final GameStateUpdater updater = new GameStateUpdater();
 
@@ -89,7 +95,7 @@ public class Server {
                     }
 
                     pulseSessions(); // This function blocks until all sessions have finished
-                    processEvents(); // This function blocks until all events have been processed
+                    processTasks(); // This function blocks until all events have been processed
                     updater.updateState(); // This function blocks until all updating has finished
                     issueUpdatePackets();
                     updater.updateCollections();
@@ -118,12 +124,36 @@ public class Server {
             taskExecutorService.execute(new SessionPulseTask(s, latch));
         }
 
-        // Block here until all of the tasks have finished
+        // Block here until all of the taskQueue have finished
         latch.await();
     }
 
-    private void processEvents() {
+    private void processTasks() throws Exception {
+        long time = getHighResolutionTimestamp();
+        LinkedList<TimedTask> taskList = new LinkedList<TimedTask>();
+        TimedTask task = null;
 
+        while ((task = taskQueue.peek()) != null && task.getExecutionTime() <= time) {
+            // This task is due to run -- remove from the priority queue
+            // and add it to the list of tasks to execute
+            task = taskQueue.poll();
+            taskList.add(task);
+
+            // If the task is a recurring task, have it calculate its next running time
+            // and then re-add it to the task queue
+            if (task.shouldRepeat()) {
+                task.setNextRunningTime(time);
+                taskQueue.offer(task);
+            }
+        }
+
+        // Create a countdown latch for the number of tasks to be executed,
+        // and then execute each of the tasks that were obtained from the queue.
+        CountDownLatch latch = new CountDownLatch(taskList.size());
+        for (Runnable r : taskList) {
+            taskExecutorService.execute(new CountdownTaskExecutor(r, latch));
+        }
+        latch.await();
     }
 
     private void issueUpdatePackets() throws Exception {

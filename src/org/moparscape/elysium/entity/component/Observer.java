@@ -5,8 +5,12 @@ import org.moparscape.elysium.util.StatefulEntityCollection;
 import org.moparscape.elysium.world.Point;
 import org.moparscape.elysium.world.Region;
 
-import java.util.*;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Created by IntelliJ IDEA.
@@ -15,7 +19,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public final class Observer extends AbstractComponent {
 
-    private final Map<Integer, Integer> knownPlayerAppearanceIds = new HashMap<Integer, Integer>();
+    private final Map<Integer, Integer> knownPlayerAppearanceIds = new ConcurrentHashMap<Integer, Integer>();
 
     private final StatefulEntityCollection<GameObject> watchedObjects = new StatefulEntityCollection<GameObject>();
 
@@ -25,13 +29,13 @@ public final class Observer extends AbstractComponent {
 
     private final StatefulEntityCollection<Player> watchedPlayers = new StatefulEntityCollection<Player>();
 
-    private final Queue<Projectile> projectiles = new LinkedBlockingQueue<Projectile>();
+    private final Queue<Projectile> projectiles = new ConcurrentLinkedQueue<Projectile>();
 
-    private final Queue<Player> playerHitUpdates = new LinkedBlockingQueue<Player>();
+    private final Queue<Player> playerHitUpdates = new ConcurrentLinkedQueue<Player>();
 
-    private final Queue<Npc> npcHitUpdates = new LinkedBlockingQueue<Npc>();
+    private final Queue<Npc> npcHitUpdates = new ConcurrentLinkedQueue<Npc>();
 
-    private final Queue<Bubble> bubbles = new LinkedBlockingQueue<Bubble>();
+    private final Queue<Bubble> bubbles = new ConcurrentLinkedQueue<Bubble>();
 
     private Player owner;
 

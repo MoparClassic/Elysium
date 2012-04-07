@@ -4,6 +4,9 @@ import org.moparscape.elysium.entity.Player;
 import org.moparscape.elysium.util.DataConversions;
 import org.moparscape.elysium.util.Formulae;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * Created by IntelliJ IDEA.
  *
@@ -11,13 +14,13 @@ import org.moparscape.elysium.util.Formulae;
  */
 public final class Appearance extends AbstractComponent {
 
-    private int appearanceId = 0;
+    private AtomicInteger appearanceId = new AtomicInteger(0);
 
-    private int sprite = 1;
+    private AtomicInteger sprite = new AtomicInteger(1);
 
-    private boolean appearanceChanged = true;
+    private AtomicBoolean appearanceChanged = new AtomicBoolean(true);
 
-    private boolean spriteChanged = true;
+    private AtomicBoolean spriteChanged = new AtomicBoolean(true);
 
     private int[] wornItems = new int[12];
 
@@ -31,7 +34,7 @@ public final class Appearance extends AbstractComponent {
 
     private boolean skulled = false;
 
-    private Player owner;
+    private volatile Player owner;
 
     public Appearance() {
         this.wornItems = getSprites();
@@ -42,20 +45,20 @@ public final class Appearance extends AbstractComponent {
     }
 
     public int getAppearanceId() {
-        return appearanceId;
+        return appearanceId.get();
     }
 
     public boolean appearanceChanged() {
-        return appearanceChanged;
+        return appearanceChanged.get();
     }
 
     public void setAppearanceChanged(boolean changed) {
-        this.appearanceChanged = changed;
+        this.appearanceChanged.getAndSet(changed);
     }
 
     public void updateAppearanceId() {
-        if (appearanceChanged) {
-            appearanceId++;
+        if (appearanceChanged.get()) {
+            appearanceId.getAndIncrement();
         }
     }
 
@@ -64,15 +67,15 @@ public final class Appearance extends AbstractComponent {
     }
 
     public void resetSpriteChanged() {
-        spriteChanged = false;
+        this.spriteChanged.getAndSet(false);
     }
 
     public int getSprite() {
-        return sprite;
+        return sprite.get();
     }
 
     public boolean spriteChanged() {
-        return spriteChanged;
+        return spriteChanged.get();
     }
 
     public int[] getWornItems() {

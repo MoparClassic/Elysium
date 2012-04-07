@@ -15,22 +15,27 @@ import org.moparscape.elysium.world.World;
 public final class LoginMessageHandler extends MessageHandler<LoginMessage> {
     @Override
     public void handle(Session session, Player player, LoginMessage message) {
-        System.out.printf("Login message received! %d %d %s %s\n", message.getUid(), message.getVersion(),
+        System.out.printf("Login message received! %d %d %s %s\n",
+                message.getUid(), message.getVersion(),
                 message.getUsername(), message.getPassword());
 
-        Player p = new DefaultEntityFactory().newPlayer(session);
+        Player p = DefaultEntityFactory.getInstance().newPlayer(session);
         session.setPlayer(p);
 
         // TODO: Actually load a player and such
 
         Packets.sendLoginResponse(p, Packets.LoginResponse.SUCCESS);
 
+        // This MUST happen before sending things such as the server and
+        // world info to the client
+        World.getInstance().registerPlayer(p);
+
         Packets.sendServerInfo(p);
         Packets.sendFatigue(p);
         Packets.sendWorldInfo(p);
         Packets.sendStats(p);
         Packets.sendLoginBox(p);
+
         p.setLoggedIn(true);
-        World.getInstance().registerPlayer(p);
     }
 }

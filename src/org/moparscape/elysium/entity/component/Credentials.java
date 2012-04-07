@@ -2,6 +2,8 @@ package org.moparscape.elysium.entity.component;
 
 import org.moparscape.elysium.util.DataConversions;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 /**
  * Created by IntelliJ IDEA.
  *
@@ -9,14 +11,18 @@ import org.moparscape.elysium.util.DataConversions;
  */
 public final class Credentials extends AbstractComponent {
 
-    private String username;
-
     private String password;
 
-    private long usernameHash;
+    /**
+     * An atomically updatable reference used to ensure that changes
+     * to the username and username hash are consistent and not prone
+     * to threading issues such as races and pre-empting.
+     */
+    private final AtomicReference<UsernameHashPair> usernameAndHash =
+            new AtomicReference<UsernameHashPair>();
 
     public String getUsername() {
-        return username;
+        return usernameAndHash.get().username;
     }
 
     public String getPassword() {
@@ -24,12 +30,11 @@ public final class Credentials extends AbstractComponent {
     }
 
     public long getUsernameHash() {
-        return usernameHash;
+        return usernameAndHash.get().hash;
     }
 
     public void setUsername(String username) {
-        this.username = username;
-        this.usernameHash = DataConversions.usernameToHash(username);
+        this.usernameAndHash.getAndSet(new UsernameHashPair(username));
     }
 
     public void setPassword(String password) {
@@ -38,7 +43,7 @@ public final class Credentials extends AbstractComponent {
 
     @Override
     public int hashCode() {
-        return (username.hashCode() * 31) | (password.hashCode() * 31);
+        return (usernameAndHash.get().username.hashCode() * 31) | (password.hashCode() * 31);
     }
 
     @Override
@@ -52,6 +57,18 @@ public final class Credentials extends AbstractComponent {
         }
 
         Credentials c = (Credentials) o;
-        return username.equals(c.username) && password.equals(c.password);
+        return usernameAndHash.get().username.equals(c.usernameAndHash.get().username) &&
+                password.equals(c.password);
+    }
+
+    private static final class UsernameHashPair {
+
+        private final String username;
+        private final long hash;
+
+        public UsernameHashPair(String username) {
+            this.username = username;
+            this.hash = DataConversions.usernameToHash(username);
+        }
     }
 }

@@ -1,5 +1,7 @@
 package org.moparscape.elysium.entity.component;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * Created by IntelliJ IDEA.
  *
@@ -7,13 +9,13 @@ package org.moparscape.elysium.entity.component;
  */
 public final class Combat extends AbstractComponent {
 
-    private int combatStyle;
+    private AtomicInteger combatStyle = new AtomicInteger(0);
 
     public int getCombatStyle() {
-        return combatStyle;
+        return combatStyle.get();
     }
 
     public void setCombatStyle(int style) {
-        this.combatStyle = style;
+        this.combatStyle.getAndSet(style);
     }
 }

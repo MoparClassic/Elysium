@@ -2,11 +2,9 @@ package org.moparscape.elysium.entity.component;
 
 import org.moparscape.elysium.entity.ChatMessage;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Queue;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Created by IntelliJ IDEA.
@@ -19,18 +17,34 @@ public final class Communication extends AbstractComponent {
 
     public static final int MAX_IGNORES = 50;
 
-    private final Queue<ChatMessage> messagesToDisplay = new LinkedBlockingQueue<ChatMessage>();
+    private final Queue<ChatMessage> messagesToDisplay = new ConcurrentLinkedQueue<ChatMessage>();
 
-    private final Queue<ChatMessage> npcMessagesToDisplay = new LinkedList<ChatMessage>();
+    private final Queue<ChatMessage> npcMessagesToDisplay = new ConcurrentLinkedQueue<ChatMessage>();
 
-    private final Queue<ChatMessage> messages = new LinkedList<ChatMessage>();
+    private final Queue<ChatMessage> messages = new ConcurrentLinkedQueue<ChatMessage>();
 
-    private final List<Long> ignores = new ArrayList<Long>(MAX_IGNORES);
+    /**
+     * This should be fine as a standard linked list as the only time it is
+     * modified is when a player explicitly adds another player to the list.
+     * This means that only one thread (the thread handling the incoming
+     * packet from the player) will modify this list at a time.
+     */
+    private final Queue<Long> ignores = new LinkedList<Long>();
 
-    private final List<Long> friends = new ArrayList<Long>(MAX_FRIENDS);
+    /**
+     * This should be fine as a standard linked list as the only time it is
+     * modified is when a player explicitly adds another player to the list.
+     * This means that only one thread (the thread handling the incoming
+     * packet from the player) will modify this list at a time.
+     */
+    private final Queue<Long> friends = new LinkedList<Long>();
 
     public void informOfChatMessage(ChatMessage message) {
-        messagesToDisplay.add(message);
+        messagesToDisplay.offer(message); // Use offer, it doesn't block
+    }
+
+    public void informOfNpcChatMessage(ChatMessage message) {
+        npcMessagesToDisplay.offer(message);
     }
 
     public boolean addFriend(long usernameHash) {
@@ -65,11 +79,11 @@ public final class Communication extends AbstractComponent {
         return ignores.contains(usernameHash);
     }
 
-    public List<Long> getFriendList() {
+    public Queue<Long> getFriendList() {
         return friends;
     }
 
-    public List<Long> getIgnoreList() {
+    public Queue<Long> getIgnoreList() {
         return ignores;
     }
 

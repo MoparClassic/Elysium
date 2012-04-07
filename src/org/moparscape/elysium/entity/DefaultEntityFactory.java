@@ -13,6 +13,12 @@ import java.util.Map;
  */
 public final class DefaultEntityFactory implements EntityFactory {
 
+    private static final DefaultEntityFactory INSTANCE = new DefaultEntityFactory();
+
+    public static DefaultEntityFactory getInstance() {
+        return INSTANCE;
+    }
+
     public Npc newNpc(NpcLoc loc) {
 //        Map<Class<? extends Component>, Component> components =
 //                new HashMap<Class<? extends Component>, Component>();
@@ -31,7 +37,6 @@ public final class DefaultEntityFactory implements EntityFactory {
     public Player newPlayer(Session session) {
         Map<Class<? extends Component>, Component> components =
                 new HashMap<Class<? extends Component>, Component>(30, 0.4f);
-
 
         components.put(Combat.class, new Combat());
         components.put(Communication.class, new Communication());

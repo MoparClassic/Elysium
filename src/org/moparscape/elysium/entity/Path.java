@@ -9,9 +9,9 @@ import org.moparscape.elysium.net.codec.decoder.message.WalkMessage;
  */
 public final class Path {
 
-    private int startX, startY;
+    private final int startX, startY;
 
-    private byte[] waypointXOffsets, waypointYOffsets;
+    private final byte[] waypointXOffsets, waypointYOffsets;
 
     public Path(WalkMessage message) {
         this.startX = message.getStartX();

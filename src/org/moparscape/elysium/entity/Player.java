@@ -4,6 +4,7 @@ import org.moparscape.elysium.entity.component.Component;
 import org.moparscape.elysium.net.Session;
 
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Created by IntelliJ IDEA.
@@ -14,7 +15,7 @@ public final class Player extends Entity {
 
     private final Session session;
 
-    private volatile boolean loggedIn;
+    private AtomicBoolean loggedIn = new AtomicBoolean(false);
 
     public Player(Session session, Map<Class<? extends Component>, Component> components) {
         super(components);
@@ -26,11 +27,11 @@ public final class Player extends Entity {
     }
 
     public boolean isLoggedIn() {
-        return loggedIn;
+        return loggedIn.get();
     }
 
     public void setLoggedIn(boolean loggedIn) {
-        this.loggedIn = loggedIn;
+        this.loggedIn.getAndSet(loggedIn);
     }
 
     @Override

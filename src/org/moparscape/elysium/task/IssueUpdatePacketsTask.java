@@ -337,6 +337,7 @@ public final class IssueUpdatePacketsTask implements Runnable {
             }
 
             for (Player p : playerAppearanceUpdates) {
+                System.out.println("Updating appearance " + p.getIndex());
                 UpdateProxy targetProxy = p.getComponent(UpdateProxy.class);
                 pb.writeShort(p.getIndex());
                 pb.writeByte(5);
