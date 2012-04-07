@@ -1,6 +1,4 @@
 import org.jboss.netty.buffer.ChannelBuffer;
-import org.jboss.netty.buffer.ChannelBuffers;
-import org.moparscape.elysium.net.Bitpacker;
 import org.moparscape.elysium.net.PacketBuilder;
 
 /**
@@ -11,36 +9,23 @@ import org.moparscape.elysium.net.PacketBuilder;
 public final class BufferTest {
 
     public static void main(String[] args) {
-        ChannelBuffer buffer = ChannelBuffers.buffer(30);
-        buffer.writeLong(0xCCCCDDDDEEEEFFFFL);
-        System.out.println(buffer.readableBytes());
-        System.out.println(buffer.writerIndex());
-        System.out.println(buffer.getUnsignedByte(buffer.writerIndex() - 1));
-        dump(buffer);
+        PacketBuilder pb = new PacketBuilder(8);
+        pb.setId(100);
+        dump(pb.toPacket());
 
-        System.out.println();
-
-        PacketBuilder pb = new PacketBuilder(30, true);
-        pb.setId(22);
-        for (int i = 1; i <= 20; i++) {
-            pb.writeByte(i);
-        }
-        ChannelBuffer p1 = pb.toPacket();
-        dump(p1);
-
-        pb = new PacketBuilder(256, true);
+        pb = new PacketBuilder(8);
         pb.setId(99);
-        for (int i = 1; i <= 160; i++) {
-            pb.writeByte(i);
+        pb.writeByte(255);
+        pb.writeShort(0xAAAA);
+        dump(pb.toPacket());
+
+        pb = new PacketBuilder(170);
+        pb.setId(88);
+        for (int i = 0; i < 20; i++) {
+            pb.writeLong(0xFFFFFFFFFFFFFFFFL);
         }
-        ChannelBuffer p2 = pb.toPacket();
-        dump(p2);
-
-        System.out.println();
-
-        Bitpacker bp = new Bitpacker();
-        bp.addBits(255, 8);
-        bp.addBits(1, 1);
+        pb.writeLong(0xAAAAAAAAAAAAAAAAL);
+        dump(pb.toPacket());
     }
 
     public static void dump(ChannelBuffer buffer) {

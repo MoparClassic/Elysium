@@ -174,6 +174,13 @@
       <JAVADOC />
       <SOURCES />
     </library>
+    <library name="luajava-1.1">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/luajava-1.1.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
     <library name="netty-3.2.7.Final">
       <CLASSES>
         <root url="jar://$PROJECT_DIR$/lib/netty-3.2.7.Final.jar!/" />

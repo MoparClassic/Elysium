@@ -11,6 +11,7 @@
     <orderEntry type="library" name="hex-string" level="project" />
     <orderEntry type="library" name="xpp3" level="project" />
     <orderEntry type="library" name="xstream" level="project" />
+    <orderEntry type="library" name="luajava-1.1" level="project" />
   </component>
 </module>
 
