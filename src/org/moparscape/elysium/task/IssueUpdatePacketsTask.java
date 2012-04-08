@@ -13,6 +13,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicIntegerArray;
 
 /**
  * Created by IntelliJ IDEA.
@@ -344,16 +345,17 @@ public final class IssueUpdatePacketsTask implements Runnable {
                 pb.writeShort(targetProxy.getAppearanceId());
                 pb.writeLong(targetProxy.getUsernameHash());
 
-                int[] wornItems = targetProxy.getWornItems();
-                pb.writeByte(wornItems.length);
-                for (int i : wornItems) {
-                    pb.writeByte(i);
+                AtomicIntegerArray wornItems = targetProxy.getWornItems();
+                pb.writeByte(wornItems.length());
+                for (int i = 0; i < wornItems.length(); i++) {
+                    pb.writeByte(wornItems.get(i));
                 }
 
-                pb.writeByte(targetProxy.getHairColour());
-                pb.writeByte(targetProxy.getTopColour());
-                pb.writeByte(targetProxy.getTrouserColour());
-                pb.writeByte(targetProxy.getSkinColour());
+                Appearance app = targetProxy.getAppearance();
+                pb.writeByte(app.getHairColour());
+                pb.writeByte(app.getTopColour());
+                pb.writeByte(app.getTrouserColour());
+                pb.writeByte(app.getSkinColour());
                 pb.writeByte(targetProxy.getCombatLevel());
                 pb.writeByte(targetProxy.isSkulled() ? 1 : 0);
                 pb.writeByte(0); // 3: Admin 2: Mod 1; Pmod 0: None

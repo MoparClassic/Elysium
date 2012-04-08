@@ -100,11 +100,11 @@ public class Derp {
 
         slist.clear();
 
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 50; i++) {
             slist.add(i);
         }
 
-        List<Iterable<Integer>> parts = slist.divide(4);
+        List<Iterable<Integer>> parts = slist.divide(10);
         for (Iterable<Integer> iterable : parts) {
             System.out.println("Starting partition");
             for (Integer i : iterable) {
@@ -112,9 +112,9 @@ public class Derp {
             }
         }
 
-        System.out.println("Multithreaded: ");
+        System.out.println("\nMultithreaded: ");
         Executor exec = Executors.newCachedThreadPool();
-        parts = slist.divide(4);
+        parts = slist.divide(2);
         for (final Iterable<Integer> iterable : parts) {
             Runnable r = new Runnable() {
                 @Override

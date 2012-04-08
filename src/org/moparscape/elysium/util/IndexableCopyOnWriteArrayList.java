@@ -100,25 +100,15 @@ public final class IndexableCopyOnWriteArrayList<E extends Indexable> implements
     public List<Iterable<E>> divide(int partitions) {
         Object[] elements = array;
         int len = elements.length;
-        int partlen = len / partitions;
-        int remaining = len % partitions;
 
-        List<Iterable<E>> iteratorList = new ArrayList<Iterable<E>>();
-        if (partitions == 1) {
-            iteratorList.add(new COWIterable<E>(elements, 0, len));
-            return iteratorList;
+        if (partitions > len) {
+            partitions = len;
         }
 
+        List<Iterable<E>> iteratorList = new ArrayList<Iterable<E>>(partitions);
         for (int i = 0; i < partitions; i++) {
-            int start = i * partlen;
-            int sz = start + partlen;
-            if (i == (partitions - 1)) {
-                iteratorList.add(new COWIterable<E>(elements, start, sz + remaining));
-            } else {
-                iteratorList.add(new COWIterable<E>(elements, start, sz));
-            }
+            iteratorList.add(new COWIterable<E>(elements, i, partitions, len));
         }
-
         return iteratorList;
     }
 
@@ -314,11 +304,15 @@ public final class IndexableCopyOnWriteArrayList<E extends Indexable> implements
 
         private final int len;
 
+        private final int increment;
+
         private int cursor;
 
-        public COWIterator(Object[] elements, int initialCursor, int len) {
+        public COWIterator(Object[] elements, int initialCursor,
+                           int increment, int len) {
             this.snapshot = elements;
             this.cursor = initialCursor;
+            this.increment = increment;
             this.len = len;
         }
 
@@ -328,7 +322,9 @@ public final class IndexableCopyOnWriteArrayList<E extends Indexable> implements
 
         @SuppressWarnings("unchecked")
         public E next() {
-            return (E) snapshot[cursor++];
+            E ret = (E) snapshot[cursor];
+            cursor += increment;
+            return ret;
         }
 
         public void remove() {
@@ -342,16 +338,20 @@ public final class IndexableCopyOnWriteArrayList<E extends Indexable> implements
 
         private final int initialCursor;
 
+        private final int increment;
+
         private final int len;
 
-        public COWIterable(Object[] elements, int initialCursor, int len) {
+        public COWIterable(Object[] elements, int initialCursor,
+                           int increment, int len) {
             this.snapshot = elements;
             this.initialCursor = initialCursor;
+            this.increment = increment;
             this.len = len;
         }
 
         public Iterator<E> iterator() {
-            return new COWIterator<E>(snapshot, initialCursor, len);
+            return new COWIterator<E>(snapshot, initialCursor, increment, len);
         }
     }
 }

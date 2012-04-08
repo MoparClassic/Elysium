@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public final class Credentials extends AbstractComponent {
 
-    private String password;
+    private final AtomicReference<String> password = new AtomicReference<String>();
 
     /**
      * An atomically updatable reference used to ensure that changes
@@ -26,7 +26,7 @@ public final class Credentials extends AbstractComponent {
     }
 
     public String getPassword() {
-        return password;
+        return password.get();
     }
 
     public long getUsernameHash() {
@@ -38,12 +38,13 @@ public final class Credentials extends AbstractComponent {
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        this.password.getAndSet(password);
     }
 
     @Override
     public int hashCode() {
-        return (usernameAndHash.get().username.hashCode() * 31) | (password.hashCode() * 31);
+        return (usernameAndHash.get().username.hashCode() * 31) |
+                (password.hashCode() * 31);
     }
 
     @Override

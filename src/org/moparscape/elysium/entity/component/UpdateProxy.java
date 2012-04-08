@@ -6,6 +6,7 @@ import org.moparscape.elysium.util.StatefulEntityCollection;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.concurrent.atomic.AtomicIntegerArray;
 
 /**
  * Created by IntelliJ IDEA.
@@ -14,7 +15,7 @@ import java.util.Queue;
  */
 public final class UpdateProxy extends AbstractComponent {
 
-    private Appearance appearance;
+    private Sprite sprite;
 
     private Communication communication;
 
@@ -27,7 +28,7 @@ public final class UpdateProxy extends AbstractComponent {
     private Skills skills;
 
     public void resolveDependencies(Map<Class<? extends Component>, Component> components) {
-        this.appearance = Appearance.class.cast(components.get(Appearance.class));
+        this.sprite = Sprite.class.cast(components.get(Sprite.class));
         this.communication = Communication.class.cast(components.get(Communication.class));
         this.credentials = Credentials.class.cast(components.get(Credentials.class));
         this.movement = Movement.class.cast(components.get(Movement.class));
@@ -88,51 +89,39 @@ public final class UpdateProxy extends AbstractComponent {
     }
 
     public boolean spriteChanged() {
-        return appearance.spriteChanged();
+        return sprite.spriteChanged();
     }
 
     public void resetSpriteChanged() {
-        appearance.resetSpriteChanged();
+        sprite.resetSpriteChanged();
     }
 
     public void setAppearanceChanged(boolean changed) {
-        appearance.setAppearanceChanged(changed);
+        sprite.setAppearanceChanged(changed);
     }
 
     public void updateAppearanceId() {
-        appearance.updateAppearanceId();
+        sprite.updateAppearanceId();
     }
 
     public int getAppearanceId() {
-        return appearance.getAppearanceId();
+        return sprite.getAppearanceId();
+    }
+
+    public Appearance getAppearance() {
+        return sprite.getAppearance();
     }
 
     public int getSprite() {
-        return appearance.getSprite();
+        return sprite.getSprite();
     }
 
-    public int[] getWornItems() {
-        return appearance.getWornItems();
-    }
-
-    public byte getHairColour() {
-        return appearance.getHairColour();
-    }
-
-    public byte getTopColour() {
-        return appearance.getTopColour();
-    }
-
-    public byte getTrouserColour() {
-        return appearance.getTrouserColour();
-    }
-
-    public byte getSkinColour() {
-        return appearance.getSkinColour();
+    public AtomicIntegerArray getWornItems() {
+        return sprite.getWornItems();
     }
 
     public boolean isSkulled() {
-        return appearance.isSkulled();
+        return sprite.isSkulled();
     }
 
     public boolean hasMoved() {

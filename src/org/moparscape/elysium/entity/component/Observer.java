@@ -39,7 +39,7 @@ public final class Observer extends AbstractComponent {
 
     private Player owner;
 
-    private Appearance appearance;
+    private Sprite sprite;
 
     public void setOwner(Player player) {
         if (owner != null) {
@@ -50,7 +50,7 @@ public final class Observer extends AbstractComponent {
 
     @Override
     public void resolveDependencies(Map<Class<? extends Component>, Component> components) {
-        this.appearance = Appearance.class.cast(components.get(Appearance.class));
+        this.sprite = Sprite.class.cast(components.get(Sprite.class));
     }
 
     public StatefulEntityCollection<GameObject> getWatchedObjects() {
@@ -88,9 +88,9 @@ public final class Observer extends AbstractComponent {
     private boolean needsAppearanceUpdateFor(Player target) {
         int targetIndex = target.getIndex();
         if (knownPlayerAppearanceIds.containsKey(targetIndex)) {
-            Appearance targetAppearance = target.getComponent(Appearance.class);
+            Sprite targetSprite = target.getComponent(Sprite.class);
             int knownAppearanceId = knownPlayerAppearanceIds.get(targetIndex);
-            if (knownAppearanceId != targetAppearance.getAppearanceId()) {
+            if (knownAppearanceId != targetSprite.getAppearanceId()) {
                 return true;
             }
         } else {
@@ -103,7 +103,7 @@ public final class Observer extends AbstractComponent {
     public List<Player> getPlayerAppearanceUpdates() {
         List<Player> needingUpdates = new LinkedList<Player>();
         needingUpdates.addAll(watchedPlayers.getNewEntities());
-        if (appearance.appearanceChanged()) {
+        if (sprite.appearanceChanged()) {
             needingUpdates.add(owner);
         }
 

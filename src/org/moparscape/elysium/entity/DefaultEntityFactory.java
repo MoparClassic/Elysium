@@ -44,8 +44,8 @@ public final class DefaultEntityFactory implements EntityFactory {
         components.put(Skills.class, new Skills());
         components.put(UpdateProxy.class, new UpdateProxy());
 
-        Appearance appearance = new Appearance();
-        components.put(Appearance.class, appearance);
+        Sprite sprite = new Sprite();
+        components.put(Sprite.class, sprite);
 
         Movement movement = new Movement();
         components.put(Movement.class, movement);
@@ -58,7 +58,7 @@ public final class DefaultEntityFactory implements EntityFactory {
         }
 
         Player player = new Player(session, components);
-        appearance.setOwner(player);
+        sprite.setOwner(player);
         movement.setOwner(player);
         observer.setOwner(player);
 
