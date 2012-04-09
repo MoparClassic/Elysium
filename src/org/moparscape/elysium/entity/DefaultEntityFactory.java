@@ -53,6 +53,12 @@ public final class DefaultEntityFactory implements EntityFactory {
         Observer observer = new Observer();
         components.put(Observer.class, observer);
 
+        Inventory inventory = new Inventory();
+        components.put(Inventory.class, inventory);
+
+        Bank bank = new Bank();
+        components.put(Bank.class, bank);
+
         for (Component c : components.values()) {
             c.resolveDependencies(components);
         }
@@ -61,6 +67,8 @@ public final class DefaultEntityFactory implements EntityFactory {
         sprite.setOwner(player);
         movement.setOwner(player);
         observer.setOwner(player);
+        inventory.setOwner(player);
+        bank.setOwner(player);
 
         return player;
     }

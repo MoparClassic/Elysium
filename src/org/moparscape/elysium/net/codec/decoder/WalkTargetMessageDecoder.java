@@ -15,6 +15,16 @@ public final class WalkTargetMessageDecoder extends AbstractMessageDecoder<WalkT
     }
 
     public WalkTargetMessage decode(ChannelBuffer buffer, int length) {
-        throw new UnsupportedOperationException();
+        int startX = buffer.readShort();
+        int startY = buffer.readShort();
+        int steps = (length - 4) / 2;
+        byte[] xOffsets = new byte[steps];
+        byte[] yOffsets = new byte[steps];
+
+        for (int i = 0; i < steps; i++) {
+            xOffsets[i] = buffer.readByte();
+            yOffsets[i] = buffer.readByte();
+        }
+        return new WalkTargetMessage(startX, startY, steps, xOffsets, yOffsets);
     }
 }

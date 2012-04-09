@@ -15,6 +15,8 @@ public final class PublicChatMessageDecoder extends AbstractMessageDecoder<Publi
     }
 
     public PublicChatMessage decode(ChannelBuffer buffer, int length) {
-        throw new UnsupportedOperationException("Not yet implemented");
+        byte[] message = new byte[length];
+        buffer.readBytes(message);
+        return new PublicChatMessage(message);
     }
 }

@@ -62,6 +62,11 @@ public final class Credentials extends AbstractComponent {
                 password.equals(c.password);
     }
 
+    @Override
+    public String toString() {
+        return getUsername() + " " + getPassword();
+    }
+
     private static final class UsernameHashPair {
 
         private final String username;

@@ -6,6 +6,8 @@ import org.moparscape.elysium.world.Point;
 import org.moparscape.elysium.world.TileValue;
 import org.moparscape.elysium.world.World;
 
+import java.util.Map;
+
 /**
  * Created by IntelliJ IDEA.
  *
@@ -14,6 +16,8 @@ import org.moparscape.elysium.world.World;
 public final class Movement extends AbstractComponent {
 
     private static final World world = World.getInstance();
+
+    private Sprite sprite;
 
     private boolean hasMoved = false;
 
@@ -25,6 +29,10 @@ public final class Movement extends AbstractComponent {
 
     public Movement() {
 
+    }
+
+    public void resolveDependencies(Map<Class<? extends Component>, Component> components) {
+        this.sprite = Sprite.class.cast(components.get(Sprite.class));
     }
 
     public void setOwner(Locatable owner) {
@@ -78,7 +86,7 @@ public final class Movement extends AbstractComponent {
             }
         }
         if (newCoords[0] > -1 && newCoords[1] > -1) {
-            owner.setLocation(new Point(newCoords[0], newCoords[1]));
+            setLocation(new Point(newCoords[0], newCoords[1]));
         }
     }
 
@@ -183,5 +191,21 @@ public final class Movement extends AbstractComponent {
 
     public void resetMoved() {
         this.hasMoved = false;
+    }
+
+    public Point getLocation() {
+        return owner.getLocation();
+    }
+
+    public void setLocation(Point location) {
+        this.setLocation(location, false);
+    }
+
+    public void setLocation(Point location, boolean teleport) {
+        if (!teleport) {
+            hasMoved = true;
+            sprite.updateSprite(location);
+        }
+        owner.setLocation(location);
     }
 }

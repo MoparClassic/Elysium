@@ -1,6 +1,9 @@
 package org.moparscape.elysium.postgresql;
 
 import org.moparscape.elysium.DataLayer;
+import org.moparscape.elysium.external.ItemDef;
+
+import java.sql.SQLException;
 
 /**
  * Created by IntelliJ IDEA.
@@ -8,4 +11,8 @@ import org.moparscape.elysium.DataLayer;
  * @author lothy
  */
 public final class PostgresqlDataLayer implements DataLayer {
+
+    public ItemDef[] loadItemDefinitions() throws SQLException {
+        return null;
+    }
 }

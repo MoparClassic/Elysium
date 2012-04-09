@@ -1,11 +1,10 @@
 package org.moparscape.elysium.world;
 
-import org.moparscape.elysium.entity.*;
-import org.moparscape.elysium.external.Shop;
+import org.moparscape.elysium.entity.DefaultEntityFactory;
+import org.moparscape.elysium.entity.EntityFactory;
+import org.moparscape.elysium.entity.Npc;
+import org.moparscape.elysium.entity.Player;
 import org.moparscape.elysium.util.IndexableCopyOnWriteArrayList;
-
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by IntelliJ IDEA.
@@ -33,13 +32,7 @@ public final class World {
 
     private final IndexableCopyOnWriteArrayList<Player> playerList = new IndexableCopyOnWriteArrayList<Player>(2000);
 
-    private final List<GameObject> gameObjectList = new CopyOnWriteArrayList<GameObject>();
-
-    private final List<Item> itemList = new CopyOnWriteArrayList<Item>();
-
     private final IndexableCopyOnWriteArrayList<Npc> npcList = new IndexableCopyOnWriteArrayList<Npc>(10000);
-
-    private final List<Shop> shopList = new CopyOnWriteArrayList<Shop>();
 
     static {
         INSTANCE = new World();
@@ -58,28 +51,22 @@ public final class World {
         return ENTITY_FACTORY;
     }
 
+    public boolean registerPlayer(Player p) {
+        return playerList.add(p);
+    }
+
     public boolean unregisterPlayer(Player p) {
-        return playerList.remove(p);
-    }
+        if (playerList.remove(p)) {
+            Region r = Region.getRegion(p.getLocation());
+            r.removePlayer(p);
+            return true;
+        }
 
-    public boolean registerGameObject(GameObject go) {
-        return false;
-    }
-
-    public boolean registerItem(Item item) {
         return false;
     }
 
     public boolean registerNpc(Npc npc) {
         return npcList.add(npc);
-    }
-
-    public boolean registerPlayer(Player p) {
-        return playerList.add(p);
-    }
-
-    public boolean registerShop(Shop shop) {
-        return false;
     }
 
     public IndexableCopyOnWriteArrayList<Npc> getNpcs() {

@@ -67,6 +67,7 @@ public final class Session {
                     System.out.printf("Player Index: %d - Failure during handling of %s\n",
                             getPlayer() == null ? -1 : getPlayer().getIndex(),
                             message.getClass().toString());
+                    e.printStackTrace();
                 }
             }
         }

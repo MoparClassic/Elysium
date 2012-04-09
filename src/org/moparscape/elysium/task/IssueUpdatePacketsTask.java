@@ -1,6 +1,7 @@
 package org.moparscape.elysium.task;
 
 import org.moparscape.elysium.entity.*;
+import org.moparscape.elysium.entity.component.Credentials;
 import org.moparscape.elysium.entity.component.UpdateProxy;
 import org.moparscape.elysium.net.Bitpacker;
 import org.moparscape.elysium.net.PacketBuilder;
@@ -12,7 +13,6 @@ import org.moparscape.elysium.world.Point;
 import java.util.Collection;
 import java.util.List;
 import java.util.Queue;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 
 /**
@@ -24,11 +24,8 @@ public final class IssueUpdatePacketsTask implements Runnable {
 
     private final Iterable<Session> sessions;
 
-    private final CountDownLatch latch;
-
-    public IssueUpdatePacketsTask(Iterable<Session> sessions, CountDownLatch latch) {
+    public IssueUpdatePacketsTask(Iterable<Session> sessions) {
         this.sessions = sessions;
-        this.latch = latch;
     }
 
     public void run() {
@@ -58,8 +55,6 @@ public final class IssueUpdatePacketsTask implements Runnable {
             }
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            latch.countDown();
         }
     }
 
@@ -262,14 +257,17 @@ public final class IssueUpdatePacketsTask implements Runnable {
             UpdateProxy targetProxy = p.getComponent(UpdateProxy.class);
             pb.addBits(p.getIndex(), 16);
             if (players.isRemoving(p)) {
+                System.out.println("Removing: " + targetProxy.getUsername() + " removed from view of " + proxy.getUsername());
                 pb.addBits(1, 1);
                 pb.addBits(1, 1);
                 pb.addBits(12, 4);
             } else if (targetProxy.hasMoved()) {
+                System.out.println("Moving: " + targetProxy.getUsername() + " has moved for " + proxy.getUsername());
                 pb.addBits(1, 1);
                 pb.addBits(0, 1);
                 pb.addBits(targetProxy.getSprite(), 3);
             } else if (targetProxy.spriteChanged()) {
+                System.out.println("Sprite changed: " + targetProxy.getUsername() + " sprite changed in view of " + proxy.getUsername());
                 pb.addBits(1, 1);
                 pb.addBits(1, 1);
                 pb.addBits(targetProxy.getSprite(), 4);
@@ -279,6 +277,7 @@ public final class IssueUpdatePacketsTask implements Runnable {
         }
         for (Player p : newPlayers) {
             UpdateProxy targetProxy = p.getComponent(UpdateProxy.class);
+            System.out.println("New player: " + targetProxy.getUsername() + " added to world view of " + proxy.getUsername());
             byte[] offsets = DataConversions.getMobPositionOffsets(p.getLocation(), loc);
             pb.addBits(p.getIndex(), 16);
             pb.addBits(offsets[0], 5);
@@ -338,12 +337,14 @@ public final class IssueUpdatePacketsTask implements Runnable {
             }
 
             for (Player p : playerAppearanceUpdates) {
-                System.out.println("Updating appearance " + p.getIndex());
                 UpdateProxy targetProxy = p.getComponent(UpdateProxy.class);
                 pb.writeShort(p.getIndex());
                 pb.writeByte(5);
                 pb.writeShort(targetProxy.getAppearanceId());
                 pb.writeLong(targetProxy.getUsernameHash());
+
+                System.out.println("Sending appearance update to " + player.getComponent(Credentials.class).getUsername() +
+                        " for player " + targetProxy.getUsername() + " (Target AID: " + targetProxy.getAppearanceId() + ")");
 
                 AtomicIntegerArray wornItems = targetProxy.getWornItems();
                 pb.writeByte(wornItems.length());

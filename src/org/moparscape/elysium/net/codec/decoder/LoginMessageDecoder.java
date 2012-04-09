@@ -35,7 +35,7 @@ public final class LoginMessageDecoder extends AbstractMessageDecoder<LoginMessa
         String username = BufferUtil.readString(loginPacket, 20).trim();
         loginPacket.skipBytes(1);
         String password = BufferUtil.readString(loginPacket, 20).trim();
-        loginPacket.skipBytes(1);
+//        loginPacket.skipBytes(1);
 
         return new LoginMessage(username, password, uid, version, sessionKeys, reconnecting);
     }

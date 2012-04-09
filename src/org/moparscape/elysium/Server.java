@@ -84,9 +84,10 @@ public class Server {
                     // Update the cached highResolutionTimestamp, and see if more than 600ms have passed
                     // If 600ms have passed then do another update; otherwise, sleep and try again
                     updateTimestamps();
-                    if (highResolutionTimestamp - lastPulse < 600) {
+                    long stampDiff = highResolutionTimestamp - lastPulse;
+                    if (stampDiff < 600) {
                         try {
-                            Thread.sleep(20);
+                            Thread.sleep(10); // Surrender this time slice
                         } catch (InterruptedException e) {
                             System.err.println("Error occurred while sleeping between game pulses");
                         }
@@ -97,8 +98,8 @@ public class Server {
                     pulseSessions(); // This function blocks until all sessions have finished
                     processTasks(); // This function blocks until all events have been processed
                     updater.updateState(); // This function blocks until all updating has finished
-                    issueUpdatePackets();
-                    updater.updateCollections();
+                    issueUpdatePackets(); // This function blocks until all packets have been sent
+                    updater.updateCollections(); // This function blocks until everything is finished
 
                     // Update the time that the last pulse took place before finishing
                     lastPulse = highResolutionTimestamp;
@@ -121,10 +122,10 @@ public class Server {
         CountDownLatch latch = new CountDownLatch(sessionPartitions.size());
 
         for (Iterable<Session> s : sessionPartitions) {
-            taskExecutorService.execute(new SessionPulseTask(s, latch));
+            taskExecutorService.execute(new CountdownTaskExecutor(new SessionPulseTask(s), latch));
         }
 
-        // Block here until all of the taskQueue have finished
+        // Block until session pulsing (and associated updating) has finished
         latch.await();
     }
 
@@ -138,13 +139,6 @@ public class Server {
             // and add it to the list of tasks to execute
             task = taskQueue.poll();
             taskList.add(task);
-
-            // If the task is a recurring task, have it calculate its next running time
-            // and then re-add it to the task queue
-            if (task.shouldRepeat()) {
-                task.setNextRunningTime(time);
-                taskQueue.offer(task);
-            }
         }
 
         // Create a countdown latch for the number of tasks to be executed,
@@ -153,7 +147,18 @@ public class Server {
         for (Runnable r : taskList) {
             taskExecutorService.execute(new CountdownTaskExecutor(r, latch));
         }
+
+        // Wait for all priority queue tasks that have been schedule to run
+        // to complete their execution
         latch.await();
+
+        // Any task that needs to be executed again should be re-added
+        // to the task priority queue
+        for (TimedTask t : taskList) {
+            if (t.shouldRepeat()) {
+                taskQueue.offer(t);
+            }
+        }
     }
 
     private void issueUpdatePackets() throws Exception {
@@ -161,7 +166,7 @@ public class Server {
         CountDownLatch latch = new CountDownLatch(sessionPartitions.size());
 
         for (Iterable<Session> s : sessionPartitions) {
-            taskExecutorService.execute(new IssueUpdatePacketsTask(s, latch));
+            taskExecutorService.execute(new CountdownTaskExecutor(new IssueUpdatePacketsTask(s), latch));
         }
 
         latch.await();
@@ -185,11 +190,15 @@ public class Server {
     }
 
     public void unregisterSession(Session session) {
-        sessions.remove(session);
+        System.out.println("Session removed: " + sessions.remove(session));
     }
 
     public Future<?> submitTask(Runnable r) {
         return taskExecutorService.submit(r);
+    }
+
+    public void submitTimedTask(TimedTask task) {
+        taskQueue.offer(task);
     }
 
     public void shutdown() {

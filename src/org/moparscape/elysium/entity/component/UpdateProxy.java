@@ -44,6 +44,11 @@ public final class UpdateProxy extends AbstractComponent {
         observer.clearDisplayLists();
     }
 
+    public void clearChatLists() {
+        communication.clearChatMessagesNeedingDisplayed();
+        communication.clearNpcMessagesNeedingDisplayed();
+    }
+
     public void revalidateWatchedEntities() {
         observer.revalidateWatchedEntities();
     }
@@ -158,6 +163,10 @@ public final class UpdateProxy extends AbstractComponent {
 
     public Queue<ChatMessage> getNpcMessagesNeedingDisplayed() {
         return communication.getNpcMessagesNeedingDisplayed();
+    }
+
+    public String getUsername() {
+        return credentials.getUsername();
     }
 
     public long getUsernameHash() {

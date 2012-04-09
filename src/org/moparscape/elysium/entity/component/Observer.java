@@ -87,13 +87,15 @@ public final class Observer extends AbstractComponent {
 
     private boolean needsAppearanceUpdateFor(Player target) {
         int targetIndex = target.getIndex();
+        Sprite targetSprite = target.getComponent(Sprite.class);
         if (knownPlayerAppearanceIds.containsKey(targetIndex)) {
-            Sprite targetSprite = target.getComponent(Sprite.class);
             int knownAppearanceId = knownPlayerAppearanceIds.get(targetIndex);
             if (knownAppearanceId != targetSprite.getAppearanceId()) {
+                knownPlayerAppearanceIds.put(targetIndex, targetSprite.getAppearanceId());
                 return true;
             }
         } else {
+            knownPlayerAppearanceIds.put(targetIndex, targetSprite.getAppearanceId());
             return true;
         }
 

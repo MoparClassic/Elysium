@@ -39,6 +39,10 @@ public final class Communication extends AbstractComponent {
      */
     private final Queue<Long> friends = new LinkedList<Long>();
 
+    public void addChatMessage(ChatMessage message) {
+        messages.offer(message);
+    }
+
     public void informOfChatMessage(ChatMessage message) {
         messagesToDisplay.offer(message); // Use offer, it doesn't block
     }

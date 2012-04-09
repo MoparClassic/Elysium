@@ -1,17 +1,10 @@
 package org.moparscape.elysium.io;
 
 import org.moparscape.elysium.entity.EntityFactory;
-import org.moparscape.elysium.entity.GameObject;
-import org.moparscape.elysium.entity.Item;
-import org.moparscape.elysium.entity.component.ItemLoc;
-import org.moparscape.elysium.entity.component.NpcLoc;
-import org.moparscape.elysium.external.GameObjectLoc;
-import org.moparscape.elysium.external.Shop;
 import org.moparscape.elysium.util.Config;
 import org.moparscape.elysium.world.World;
 
 import java.io.File;
-import java.util.List;
 import java.util.zip.ZipFile;
 
 /**
@@ -50,18 +43,18 @@ public final class WorldLoader {
 
         EntityFactory efactory = World.getEntityFactory();
 
-        for (GameObjectLoc gameObject : (List<GameObjectLoc>) PersistenceManager.load("locs/org.moparscape.elysium.external.GameObjectLoc.xml.gz")) {
-            world.registerGameObject(new GameObject(gameObject));
-        }
-        for (ItemLoc item : (List<ItemLoc>) PersistenceManager.load("locs/org.moparscape.elysium.entity.component.ItemLoc.xml.gz")) {
-            world.registerItem(new Item(item));
-        }
-        for (NpcLoc npc : (List<NpcLoc>) PersistenceManager.load("locs/NpcLoc.xml.gz")) {
-            //world.registerNpc(efactory.newNpc(npc));
-        }
-        for (Shop shop : (List<Shop>) PersistenceManager.load("locs/Shops.xml.gz")) {
-            world.registerShop(shop);
-        }
+//        for (GameObjectLoc gameObject : (List<GameObjectLoc>) PersistenceManager.load("locs/org.moparscape.elysium.external.GameObjectLoc.xml.gz")) {
+//            world.registerGameObject(new GameObject(gameObject));
+//        }
+//        for (ItemLoc item : (List<ItemLoc>) PersistenceManager.load("locs/org.moparscape.elysium.entity.component.ItemLoc.xml.gz")) {
+//            world.registerItem(new Item(item));
+//        }
+//        for (NpcLoc npc : (List<NpcLoc>) PersistenceManager.load("locs/NpcLoc.xml.gz")) {
+//            //world.registerNpc(efactory.newNpc(npc));
+//        }
+//        for (Shop shop : (List<Shop>) PersistenceManager.load("locs/Shops.xml.gz")) {
+//            world.registerShop(shop);
+//        }
 
         System.gc();
     }

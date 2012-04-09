@@ -15,7 +15,7 @@ public class Entity implements Indexable, Locatable {
 
     private final Map<Class<? extends Component>, Component> components;
 
-    private final AtomicReference<Point> location = new AtomicReference<Point>(new Point(329, 552));
+    private final AtomicReference<Point> location = new AtomicReference<Point>();
 
     private final AtomicInteger index = new AtomicInteger(0);
 

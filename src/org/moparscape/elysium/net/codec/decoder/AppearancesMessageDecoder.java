@@ -15,6 +15,15 @@ public final class AppearancesMessageDecoder extends AbstractMessageDecoder<Appe
     }
 
     public AppearancesMessage decode(ChannelBuffer buffer, int length) {
-        throw new UnsupportedOperationException("Not yet implemented");
+        int mobCount = buffer.readShort();
+        int[] indicies = new int[mobCount];
+        int[] appearanceIds = new int[mobCount];
+
+        for (int i = 0; i < mobCount; i++) {
+            indicies[i] = buffer.readShort();
+            appearanceIds[i] = buffer.readShort();
+        }
+
+        return new AppearancesMessage(indicies, appearanceIds);
     }
 }

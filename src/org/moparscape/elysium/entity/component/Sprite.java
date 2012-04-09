@@ -1,7 +1,8 @@
 package org.moparscape.elysium.entity.component;
 
 import org.moparscape.elysium.entity.Appearance;
-import org.moparscape.elysium.entity.Player;
+import org.moparscape.elysium.entity.Entity;
+import org.moparscape.elysium.world.Point;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -31,13 +32,19 @@ public final class Sprite extends AbstractComponent {
 
     private final AtomicBoolean skulled = new AtomicBoolean(false);
 
-    private final AtomicReference<Player> owner = new AtomicReference<Player>();
+    private final AtomicReference<Entity> owner = new AtomicReference<Entity>();
+
+    private final int[][] mobSprites = new int[][]{
+            {3, 2, 1},
+            {4, -1, 0},
+            {5, 6, 7}
+    };
 
     public Sprite() {
     }
 
-    public void setOwner(Player player) {
-        owner.getAndSet(player);
+    public void setOwner(Entity entity) {
+        owner.getAndSet(entity);
     }
 
     public int getAppearanceId() {
@@ -88,9 +95,6 @@ public final class Sprite extends AbstractComponent {
     }
 
     public void setWornItem(int index, int itemId) {
-        if (index < 0 || index >= MAX_WORN_ITEMS) {
-            throw new IllegalArgumentException("Invalid worn item index: " + index);
-        }
         wornItems.getAndSet(index, itemId);
     }
 
@@ -100,5 +104,21 @@ public final class Sprite extends AbstractComponent {
 
     public void setSkulled(boolean skulled) {
         this.skulled.getAndSet(skulled);
+    }
+
+    public void setSprite(int sprite) {
+        spriteChanged.getAndSet(true);
+        this.sprite.getAndSet(sprite);
+    }
+
+    public void updateSprite(Point newLocation) {
+        Point curLoc = this.owner.get().getLocation();
+        try {
+            int xIndex = curLoc.getX() - newLocation.getX() + 1;
+            int yIndex = curLoc.getY() - newLocation.getY() + 1;
+            setSprite(mobSprites[xIndex][yIndex]);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

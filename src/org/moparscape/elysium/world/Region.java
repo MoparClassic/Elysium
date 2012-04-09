@@ -185,6 +185,28 @@ public final class Region {
         return Collections.unmodifiableCollection(players);
     }
 
+    public GameObject getObject() {
+        throw new UnsupportedOperationException();
+    }
+
+    public Item getItem(int itemId, Point location) {
+        for (Item i : items) {
+            if (i.getId() == itemId && i.getLocation().equals(location)) {
+                return i;
+            }
+        }
+
+        return null;
+    }
+
+    public Npc getNpc() {
+        throw new UnsupportedOperationException();
+    }
+
+    public Player getPlayer() {
+        throw new UnsupportedOperationException();
+    }
+
     public void addObject(GameObject go) {
         objects.add(go);
     }
@@ -215,5 +237,20 @@ public final class Region {
 
     public void removePlayer(Player player) {
         players.remove(player);
+    }
+
+    public String toString() {
+        StringBuilder sb = new StringBuilder(2000);
+        sb.append("Players:\n");
+        for (Player p : players) {
+            sb.append("\t").append(p).append("\n");
+        }
+
+        sb.append("\nItems:\n");
+        for (Item i : items) {
+            sb.append("\t").append(i).append("\n");
+        }
+
+        return sb.toString();
     }
 }

@@ -3,8 +3,6 @@ package org.moparscape.elysium.task;
 import org.moparscape.elysium.entity.Player;
 import org.moparscape.elysium.entity.component.UpdateProxy;
 
-import java.util.concurrent.CountDownLatch;
-
 /**
  * Created by IntelliJ IDEA.
  *
@@ -14,11 +12,8 @@ public final class UpdatePlayerCollections implements Runnable {
 
     private final Iterable<Player> players;
 
-    private final CountDownLatch latch;
-
-    public UpdatePlayerCollections(Iterable<Player> players, CountDownLatch latch) {
+    public UpdatePlayerCollections(Iterable<Player> players) {
         this.players = players;
-        this.latch = latch;
     }
 
     public void run() {
@@ -28,14 +23,13 @@ public final class UpdatePlayerCollections implements Runnable {
 
                 proxy.updateEntityLists();
                 proxy.clearDisplayLists();
+                proxy.clearChatLists();
 
                 proxy.resetSpriteChanged();
                 proxy.setAppearanceChanged(false);
             }
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            latch.countDown();
         }
     }
 }

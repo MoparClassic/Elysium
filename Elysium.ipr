@@ -153,6 +153,7 @@
   </component>
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/Common/Common.iml" filepath="$PROJECT_DIR$/Common/Common.iml" />
       <module fileurl="file://$PROJECT_DIR$/DataAccess/DataAccess.iml" filepath="$PROJECT_DIR$/DataAccess/DataAccess.iml" />
       <module fileurl="file://$PROJECT_DIR$/Elysium.iml" filepath="$PROJECT_DIR$/Elysium.iml" />
     </modules>
@@ -177,6 +178,13 @@
     <library name="luajava-1.1">
       <CLASSES>
         <root url="jar://$PROJECT_DIR$/lib/luajava-1.1.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="mysql-connector">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/mysql-connector.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />

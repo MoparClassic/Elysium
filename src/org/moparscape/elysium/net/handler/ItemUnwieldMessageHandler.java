@@ -10,6 +10,7 @@ import org.moparscape.elysium.net.codec.decoder.message.ItemUnwieldMessage;
  * @author lothy
  */
 public final class ItemUnwieldMessageHandler extends MessageHandler<ItemUnwieldMessage> {
+
     @Override
     public void handle(Session session, Player player, ItemUnwieldMessage message) {
         //To change body of implemented methods use File | Settings | File Templates.

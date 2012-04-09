@@ -8,4 +8,14 @@ import org.moparscape.elysium.net.codec.AbstractMessage;
  * @author lothy
  */
 public final class PublicChatMessage extends AbstractMessage {
+
+    private final byte[] messagePayload;
+
+    public PublicChatMessage(byte[] messagePayload) {
+        this.messagePayload = messagePayload;
+    }
+
+    public byte[] getMessagePayload() {
+        return messagePayload;
+    }
 }

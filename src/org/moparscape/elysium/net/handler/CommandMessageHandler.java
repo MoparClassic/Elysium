@@ -1,8 +1,10 @@
 package org.moparscape.elysium.net.handler;
 
+import org.moparscape.elysium.entity.Item;
 import org.moparscape.elysium.entity.Player;
 import org.moparscape.elysium.net.Session;
 import org.moparscape.elysium.net.codec.decoder.message.CommandMessage;
+import org.moparscape.elysium.world.Region;
 
 /**
  * Created by IntelliJ IDEA.
@@ -25,5 +27,17 @@ public final class CommandMessageHandler extends MessageHandler<CommandMessage> 
         }
 
         // TODO: Execute an appropriate command handler
+        if (message.getCommand().equals("item")) {
+            System.out.println("Adding item to floor");
+            Region r = Region.getRegion(player.getLocation());
+            r.addItem(new Item(10, 2000, player.getLocation(), null));
+            r.addItem(new Item(11, 1, player.getLocation(), null));
+            return;
+        }
+
+        if (message.getCommand().equals("region")) {
+            System.out.println(Region.getRegion(player.getLocation()));
+            return;
+        }
     }
 }

@@ -7,7 +7,6 @@ import org.moparscape.elysium.entity.Player;
 import org.moparscape.elysium.entity.component.Combat;
 import org.moparscape.elysium.entity.component.Communication;
 import org.moparscape.elysium.entity.component.Skills;
-import org.moparscape.elysium.external.Shop;
 import org.moparscape.elysium.util.Formulae;
 import org.moparscape.elysium.world.Point;
 
@@ -79,9 +78,9 @@ public final class Packets {
         return player.getSession().write(pb.toPacket());
     }
 
-    public static ChannelFuture showShop(Player player, Shop shop) {
-        throw new UnsupportedOperationException();
-    }
+//    public static ChannelFuture showShop(Player player, Shop shop) {
+//        throw new UnsupportedOperationException();
+//    }
 
     public static ChannelFuture hideShop(Player player) {
         PacketBuilder pb = new PacketBuilder(0, true);
@@ -239,21 +238,6 @@ public final class Packets {
         pb.setId(48);
         pb.writeBytes(msg);
         return player.getSession().write(pb.toPacket());
-    }
-
-    public static ChannelFuture sendRemoveItem(Player player, int slot) {
-        PacketBuilder pb = new PacketBuilder(1, true);
-        pb.setId(191);
-        pb.writeByte(slot);
-        return player.getSession().write(pb.toPacket());
-    }
-
-    public static ChannelFuture sendUpdateItem(Player player, int slot) {
-        throw new UnsupportedOperationException();
-    }
-
-    public static ChannelFuture sendInventory(Player player) {
-        throw new UnsupportedOperationException();
     }
 
     public static ChannelFuture sendEquipmentStats(Player player) {

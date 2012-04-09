@@ -1,6 +1,7 @@
 package org.moparscape.elysium.entity;
 
 import org.moparscape.elysium.net.codec.decoder.message.WalkMessage;
+import org.moparscape.elysium.net.codec.decoder.message.WalkTargetMessage;
 
 /**
  * Created by IntelliJ IDEA.
@@ -14,6 +15,13 @@ public final class Path {
     private final byte[] waypointXOffsets, waypointYOffsets;
 
     public Path(WalkMessage message) {
+        this.startX = message.getStartX();
+        this.startY = message.getStartY();
+        this.waypointXOffsets = message.getXOffsets();
+        this.waypointYOffsets = message.getYOffsets();
+    }
+
+    public Path(WalkTargetMessage message) {
         this.startX = message.getStartX();
         this.startY = message.getStartY();
         this.waypointXOffsets = message.getXOffsets();
