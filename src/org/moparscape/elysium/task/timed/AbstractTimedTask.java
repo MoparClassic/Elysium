@@ -24,7 +24,7 @@ public abstract class AbstractTimedTask implements TimedTask {
 
     /**
      * Returns true if this task should be repeated in the future.
-     * <p/>
+     * <p>
      * This implementation returns false by default. If a task should
      * be executed repeatedly then it is up to the implementor of the
      * task in question to override this method such that it returns
@@ -38,7 +38,7 @@ public abstract class AbstractTimedTask implements TimedTask {
 
     /**
      * Sets the next time that this task should be executed.
-     * <p/>
+     * <p>
      * This implementation sets the task to re-execute immediately
      * at the next chance.
      *

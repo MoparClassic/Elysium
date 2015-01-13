@@ -1,6 +1,6 @@
 package org.moparscape.elysium.net.codec.decoder;
 
-import org.jboss.netty.buffer.ChannelBuffer;
+import io.netty.buffer.ByteBuf;
 import org.moparscape.elysium.net.codec.decoder.message.SpellSelfMessage;
 
 /**
@@ -14,7 +14,7 @@ public final class SpellSelfMessageDecoder extends AbstractMessageDecoder<SpellS
         super(SpellSelfMessage.class, 206);
     }
 
-    public SpellSelfMessage decode(ChannelBuffer buffer, int length) {
+    public SpellSelfMessage decode(ByteBuf buffer, int length) {
         throw new UnsupportedOperationException();
     }
 }

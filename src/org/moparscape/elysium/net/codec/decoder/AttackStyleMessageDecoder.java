@@ -1,6 +1,6 @@
 package org.moparscape.elysium.net.codec.decoder;
 
-import org.jboss.netty.buffer.ChannelBuffer;
+import io.netty.buffer.ByteBuf;
 import org.moparscape.elysium.net.codec.decoder.message.AttackStyleMessage;
 
 /**
@@ -14,7 +14,7 @@ public final class AttackStyleMessageDecoder extends AbstractMessageDecoder<Atta
         super(AttackStyleMessage.class, 42);
     }
 
-    public AttackStyleMessage decode(ChannelBuffer buffer, int length) {
+    public AttackStyleMessage decode(ByteBuf buffer, int length) {
         throw new UnsupportedOperationException();
     }
 }

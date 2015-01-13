@@ -1,19 +1,22 @@
 package org.moparscape.elysium;
 
-import org.jboss.netty.bootstrap.ServerBootstrap;
-import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
+import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
 import org.moparscape.elysium.net.Session;
-import org.moparscape.elysium.net.codec.ElysiumPipelineFactory;
+import org.moparscape.elysium.net.codec.ElysiumChannelInitializer;
 import org.moparscape.elysium.task.CountdownTaskExecutor;
 import org.moparscape.elysium.task.IssueUpdatePacketsTask;
 import org.moparscape.elysium.task.SessionPulseTask;
 import org.moparscape.elysium.task.timed.TimedTask;
-import org.moparscape.elysium.util.SplittableCopyOnWriteArrayList;
 
 import java.net.InetSocketAddress;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Queue;
+import java.util.PriorityQueue;
 import java.util.concurrent.*;
 
 /**
@@ -23,25 +26,28 @@ import java.util.concurrent.*;
  */
 public class Server {
 
-    private static final Server INSTANCE;
-
     public static final int TASK_THREADS = 4;
+    private static final Object INSTANCE_LOCK = new Object();
 
-    private final ExecutorService nettyBossService = Executors.newSingleThreadExecutor();
+    private static volatile Server INSTANCE;
 
-    private final ExecutorService nettyWorkerService = Executors.newFixedThreadPool(2);
+    private final EventLoopGroup bossGroup = new NioEventLoopGroup();
+    private final EventLoopGroup workerGroup = new NioEventLoopGroup();
 
     private final ScheduledExecutorService taskExecutorService = Executors.newScheduledThreadPool(TASK_THREADS);
 
     private final ExecutorService dataExecutorService = Executors.newSingleThreadExecutor();
 
-    private final SplittableCopyOnWriteArrayList<Session> sessions = new SplittableCopyOnWriteArrayList<Session>(1500);
+    private final ArrayBlockingQueue<Session> sessions = new ArrayBlockingQueue<>(1500);
 
-    private final Queue<TimedTask> taskQueue = new PriorityBlockingQueue<TimedTask>();
+    /**
+     * We used to use a PriorityBlockingQueue here. But upon inspecting the source code
+     * I've learned that it acquires and release a lock EVERY TIME you peek/poll.
+     * We're better off just synchronizing externally which is what's done now.
+     */
+    private final PriorityQueue<TimedTask> taskQueue = new PriorityQueue<>();
 
     private final GameStateUpdater updater = new GameStateUpdater();
-
-    private final ServerBootstrap bootstrap;
 
     /**
      * A higher resolution (on most systems) timer that is used to accurately detect
@@ -59,19 +65,27 @@ public class Server {
 
     private volatile boolean running = true;
 
-    static {
-        INSTANCE = new Server();
-    }
-
     private Server() {
         int cores = Runtime.getRuntime().availableProcessors();
         System.out.println("CPU cores: " + cores);
+    }
 
-        this.bootstrap = new ServerBootstrap(
-                new NioServerSocketChannelFactory(nettyBossService, nettyWorkerService));
+    private ChannelFuture listen() {
+        try {
+            ServerBootstrap bootstrap = new ServerBootstrap();
+            bootstrap.group(bossGroup, workerGroup)
+                    .channel(NioServerSocketChannel.class)
+                    .childHandler(new ElysiumChannelInitializer())
+                    .option(ChannelOption.SO_BACKLOG, 128)
+                    .option(ChannelOption.TCP_NODELAY, true)
+                    .childOption(ChannelOption.SO_KEEPALIVE, true)
+                    .childOption(ChannelOption.TCP_NODELAY, true);
 
-        this.bootstrap.setPipelineFactory(new ElysiumPipelineFactory());
-        this.bootstrap.bind(new InetSocketAddress(43594));
+            // Bind and start to accept incoming connections.
+            return bootstrap.bind(new InetSocketAddress(43594));
+        } catch (Exception e) {
+            throw new IllegalStateException("netty down");
+        }
     }
 
     private void gameLoop() {
@@ -115,30 +129,46 @@ public class Server {
         }
 
         // TODO: Implement shutdown procedure and cleanup here
+        try {
+            System.out.println("Game loop stopped. Shutting down.");
+
+            // Block on the shutdown until it's complete for each one.
+            workerGroup.shutdownGracefully().sync();
+            bossGroup.shutdownGracefully().sync();
+        } catch (Exception e) {
+            throw new IllegalStateException("Graceful shutdown failed.");
+        }
     }
 
     private void pulseSessions() throws Exception {
-        List<Iterable<Session>> sessionPartitions = sessions.divide(TASK_THREADS);
-        CountDownLatch latch = new CountDownLatch(sessionPartitions.size());
-
-        for (Iterable<Session> s : sessionPartitions) {
-            taskExecutorService.execute(new CountdownTaskExecutor(new SessionPulseTask(s), latch));
-        }
-
-        // Block until session pulsing (and associated updating) has finished
+        // TODO: Improve concurrency here. Currently it's sequential.
+        CountDownLatch latch = new CountDownLatch(1);
+        taskExecutorService.submit(new CountdownTaskExecutor(new SessionPulseTask(sessions), latch));
         latch.await();
+
+//        List<Iterable<Session>> sessionPartitions = sessions.divide(TASK_THREADS);
+//        CountDownLatch latch = new CountDownLatch(sessionPartitions.size());
+//
+//        for (Iterable<Session> s : sessionPartitions) {
+//            taskExecutorService.execute(new CountdownTaskExecutor(new SessionPulseTask(s), latch));
+//        }
+//
+//        // Block until session pulsing (and associated updating) has finished
+//        latch.await();
     }
 
     private void processTasks() throws Exception {
         long time = getHighResolutionTimestamp();
-        LinkedList<TimedTask> taskList = new LinkedList<TimedTask>();
+        List<TimedTask> taskList = new ArrayList<>(taskQueue.size());
         TimedTask task = null;
 
-        while ((task = taskQueue.peek()) != null && task.getExecutionTime() <= time) {
-            // This task is due to run -- remove from the priority queue
-            // and add it to the list of tasks to execute
-            task = taskQueue.poll();
-            taskList.add(task);
+        synchronized (taskQueue) {
+            while ((task = taskQueue.peek()) != null && task.getExecutionTime() <= time) {
+                // This task is due to run -- remove from the priority queue
+                // and add it to the list of tasks to execute
+                task = taskQueue.poll();
+                taskList.add(task);
+            }
         }
 
         // Create a countdown latch for the number of tasks to be executed,
@@ -154,22 +184,29 @@ public class Server {
 
         // Any task that needs to be executed again should be re-added
         // to the task priority queue
-        for (TimedTask t : taskList) {
-            if (t.shouldRepeat()) {
-                taskQueue.offer(t);
+        synchronized (taskQueue) {
+            for (TimedTask t : taskList) {
+                if (t.shouldRepeat()) {
+                    taskQueue.offer(t);
+                }
             }
         }
     }
 
     private void issueUpdatePackets() throws Exception {
-        List<Iterable<Session>> sessionPartitions = sessions.divide(TASK_THREADS);
-        CountDownLatch latch = new CountDownLatch(sessionPartitions.size());
-
-        for (Iterable<Session> s : sessionPartitions) {
-            taskExecutorService.execute(new CountdownTaskExecutor(new IssueUpdatePacketsTask(s), latch));
-        }
-
+        // TODO: Improve concurrency here. Currently it's sequential.
+        CountDownLatch latch = new CountDownLatch(1);
+        taskExecutorService.submit(new CountdownTaskExecutor(new IssueUpdatePacketsTask(sessions), latch));
         latch.await();
+
+//        List<Iterable<Session>> sessionPartitions = sessions.divide(TASK_THREADS);
+//        CountDownLatch latch = new CountDownLatch(sessionPartitions.size());
+//
+//        for (Iterable<Session> s : sessionPartitions) {
+//            taskExecutorService.execute(new CountdownTaskExecutor(new IssueUpdatePacketsTask(s), latch));
+//        }
+//
+//        latch.await();
     }
 
     private void updateTimestamps() {
@@ -198,26 +235,38 @@ public class Server {
     }
 
     public void submitTimedTask(TimedTask task) {
-        taskQueue.offer(task);
+        synchronized (taskQueue) {
+            taskQueue.offer(task);
+        }
     }
 
     public void shutdown() {
         running = false;
     }
 
-    private void shutdown0() {
-        // Shut the executors down so that the program can exit
-    }
-
     public static Server getInstance() {
-        return INSTANCE;
+        Server result = INSTANCE;
+        if (result == null) {
+            synchronized (INSTANCE_LOCK) {
+                result = INSTANCE;
+                if (result == null) {
+                    INSTANCE = result = new Server();
+                }
+            }
+        }
+
+        return result;
     }
 
     public static void main(String[] args) {
         Server server = Server.getInstance();
+        ChannelFuture cf = server.listen();
+
         System.out.println("Server has started. :)");
 
         // Enter the game loop, and stay there until shutdown
         server.gameLoop();
+
+        System.out.println("Shutdown complete.");
     }
 }

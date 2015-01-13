@@ -1,6 +1,6 @@
 package org.moparscape.elysium.net.codec.decoder;
 
-import org.jboss.netty.buffer.ChannelBuffer;
+import io.netty.buffer.ByteBuf;
 import org.moparscape.elysium.net.codec.decoder.message.PrayerDeactivateMessage;
 
 /**
@@ -14,7 +14,7 @@ public final class PrayerDeactivateMessageDecoder extends AbstractMessageDecoder
         super(PrayerDeactivateMessage.class, 248);
     }
 
-    public PrayerDeactivateMessage decode(ChannelBuffer buffer, int length) {
+    public PrayerDeactivateMessage decode(ByteBuf buffer, int length) {
         throw new UnsupportedOperationException();
     }
 }

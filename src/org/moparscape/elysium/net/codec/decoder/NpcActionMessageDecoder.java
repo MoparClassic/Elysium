@@ -1,6 +1,6 @@
 package org.moparscape.elysium.net.codec.decoder;
 
-import org.jboss.netty.buffer.ChannelBuffer;
+import io.netty.buffer.ByteBuf;
 import org.moparscape.elysium.net.codec.decoder.message.NpcActionMessage;
 
 /**
@@ -14,7 +14,7 @@ public final class NpcActionMessageDecoder extends AbstractMessageDecoder<NpcAct
         super(NpcActionMessage.class, 74);
     }
 
-    public NpcActionMessage decode(ChannelBuffer buffer, int length) {
+    public NpcActionMessage decode(ByteBuf buffer, int length) {
         throw new UnsupportedOperationException();
     }
 }

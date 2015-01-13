@@ -1,8 +1,8 @@
 package org.moparscape.elysium.util;
 
-import org.moparscape.elysium.external.ObjectMiningDef;
-import org.moparscape.elysium.external.ObjectWoodcuttingDef;
-import org.moparscape.elysium.external.SpellDef;
+import org.moparscape.elysium.def.ObjectMiningDef;
+import org.moparscape.elysium.def.ObjectWoodcuttingDef;
+import org.moparscape.elysium.def.SpellDef;
 import org.moparscape.elysium.world.Point;
 
 import java.util.ArrayList;

@@ -38,7 +38,7 @@ public abstract class AbstractComponent implements Component {
     /**
      * An empty implementation of resolveDependencies so that components with no dependencies
      * are not forced to implement an extra method.
-     * <p/>
+     * <p>
      * This method MUST be overridden by any Component that has one or more dependencies.
      *
      * @param components The map of all components associated with the entity being initialised

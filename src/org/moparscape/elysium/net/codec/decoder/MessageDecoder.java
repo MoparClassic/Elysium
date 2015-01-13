@@ -1,6 +1,6 @@
 package org.moparscape.elysium.net.codec.decoder;
 
-import org.jboss.netty.buffer.ChannelBuffer;
+import io.netty.buffer.ByteBuf;
 import org.moparscape.elysium.net.codec.Message;
 
 /**
@@ -14,5 +14,5 @@ public interface MessageDecoder<T extends Message> {
 
     Class<T> getMessageType();
 
-    T decode(ChannelBuffer buffer, int length);
+    T decode(ByteBuf buffer, int length);
 }

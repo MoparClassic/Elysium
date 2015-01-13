@@ -1,6 +1,6 @@
 package org.moparscape.elysium.net.codec.decoder;
 
-import org.jboss.netty.buffer.ChannelBuffer;
+import io.netty.buffer.ByteBuf;
 import org.moparscape.elysium.net.codec.decoder.message.ItemPickupMessage;
 
 /**
@@ -14,7 +14,7 @@ public final class ItemPickupMessageDecoder extends AbstractMessageDecoder<ItemP
         super(ItemPickupMessage.class, 245);
     }
 
-    public ItemPickupMessage decode(ChannelBuffer buffer, int length) {
+    public ItemPickupMessage decode(ByteBuf buffer, int length) {
         int x = buffer.readShort();
         int y = buffer.readShort();
         int itemId = buffer.readShort();

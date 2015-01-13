@@ -43,7 +43,7 @@ public final class WorldLoader {
 
         EntityFactory efactory = World.getEntityFactory();
 
-//        for (GameObjectLoc gameObject : (List<GameObjectLoc>) PersistenceManager.load("locs/org.moparscape.elysium.external.GameObjectLoc.xml.gz")) {
+//        for (GameObjectLoc gameObject : (List<GameObjectLoc>) PersistenceManager.load("locs/org.moparscape.elysium.def.GameObjectLoc.xml.gz")) {
 //            world.registerGameObject(new GameObject(gameObject));
 //        }
 //        for (ItemLoc item : (List<ItemLoc>) PersistenceManager.load("locs/org.moparscape.elysium.entity.component.ItemLoc.xml.gz")) {

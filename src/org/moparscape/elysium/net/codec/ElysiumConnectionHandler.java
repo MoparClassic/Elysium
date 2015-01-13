@@ -1,6 +1,7 @@
 package org.moparscape.elysium.net.codec;
 
-import org.jboss.netty.channel.*;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
 import org.moparscape.elysium.Server;
 import org.moparscape.elysium.net.Session;
 
@@ -9,33 +10,33 @@ import org.moparscape.elysium.net.Session;
  *
  * @author lothy
  */
-public final class ElysiumConnectionHandler extends SimpleChannelUpstreamHandler {
+public final class ElysiumConnectionHandler extends SimpleChannelInboundHandler<Message> {
 
-    private static final Server server = Server.getInstance();
+    private volatile Session session;
 
     @Override
-    public void channelConnected(ChannelHandlerContext ctx, ChannelStateEvent e) {
-        Channel chan = e.getChannel();
-        Session session = new Session(chan);
-        ctx.setAttachment(session);
+    public void channelActive(ChannelHandlerContext ctx) {
+        this.session = new Session(ctx.channel());
+
+        Server server = Server.getInstance();
         server.registerSession(session);
+
         System.out.println("Channel connected");
     }
 
     @Override
-    public void channelDisconnected(ChannelHandlerContext ctx, ChannelStateEvent e) {
-        Session session = (Session) ctx.getAttachment();
+    public void channelInactive(ChannelHandlerContext ctx) {
+        Session session = this.session;
         System.out.println("Channel disconnected");
     }
 
     @Override
-    public void messageReceived(ChannelHandlerContext ctx, MessageEvent e) {
-        Session session = (Session) ctx.getAttachment();
-        session.messageReceived((Message) e.getMessage());
+    public void channelRead0(ChannelHandlerContext ctx, Message message) {
+        session.messageReceived(message);
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent e) {
-        Session session = (Session) ctx.getAttachment();
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        throw new IllegalStateException(cause);
     }
 }

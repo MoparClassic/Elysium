@@ -1,6 +1,6 @@
 package org.moparscape.elysium.net.codec.decoder;
 
-import org.jboss.netty.buffer.ChannelBuffer;
+import io.netty.buffer.ByteBuf;
 import org.moparscape.elysium.net.codec.decoder.message.PublicChatMessage;
 
 /**
@@ -14,7 +14,7 @@ public final class PublicChatMessageDecoder extends AbstractMessageDecoder<Publi
         super(PublicChatMessage.class, 145);
     }
 
-    public PublicChatMessage decode(ChannelBuffer buffer, int length) {
+    public PublicChatMessage decode(ByteBuf buffer, int length) {
         byte[] message = new byte[length];
         buffer.readBytes(message);
         return new PublicChatMessage(message);

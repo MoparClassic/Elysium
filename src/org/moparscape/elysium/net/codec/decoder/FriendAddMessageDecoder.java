@@ -1,6 +1,6 @@
 package org.moparscape.elysium.net.codec.decoder;
 
-import org.jboss.netty.buffer.ChannelBuffer;
+import io.netty.buffer.ByteBuf;
 import org.moparscape.elysium.net.codec.decoder.message.FriendAddMessage;
 
 /**
@@ -14,7 +14,7 @@ public final class FriendAddMessageDecoder extends AbstractMessageDecoder<Friend
         super(FriendAddMessage.class, 168);
     }
 
-    public FriendAddMessage decode(ChannelBuffer buffer, int length) {
+    public FriendAddMessage decode(ByteBuf buffer, int length) {
         throw new UnsupportedOperationException();
     }
 }

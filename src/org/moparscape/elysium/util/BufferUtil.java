@@ -1,6 +1,6 @@
 package org.moparscape.elysium.util;
 
-import org.jboss.netty.buffer.ChannelBuffer;
+import io.netty.buffer.ByteBuf;
 
 /**
  * Created by IntelliJ IDEA.
@@ -9,11 +9,11 @@ import org.jboss.netty.buffer.ChannelBuffer;
  */
 public final class BufferUtil {
 
-    public static String readString(ChannelBuffer buffer) {
+    public static String readString(ByteBuf buffer) {
         return readString(buffer, buffer.readableBytes());
     }
 
-    public static String readString(ChannelBuffer buffer, int length) {
+    public static String readString(ByteBuf buffer, int length) {
         byte[] data = new byte[length];
         buffer.readBytes(data);
         return new String(data, 0, length);

@@ -1,6 +1,6 @@
 package org.moparscape.elysium.net.codec.decoder;
 
-import org.jboss.netty.buffer.ChannelBuffer;
+import io.netty.buffer.ByteBuf;
 import org.moparscape.elysium.net.codec.decoder.message.IgnoreRemoveMessage;
 
 /**
@@ -14,7 +14,7 @@ public final class IgnoreRemoveMessageDecoder extends AbstractMessageDecoder<Ign
         super(IgnoreRemoveMessage.class, 108);
     }
 
-    public IgnoreRemoveMessage decode(ChannelBuffer buffer, int length) {
+    public IgnoreRemoveMessage decode(ByteBuf buffer, int length) {
         throw new UnsupportedOperationException();
     }
 }

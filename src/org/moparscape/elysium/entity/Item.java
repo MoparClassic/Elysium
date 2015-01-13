@@ -1,7 +1,7 @@
 package org.moparscape.elysium.entity;
 
 import org.moparscape.elysium.Server;
-import org.moparscape.elysium.external.ItemDef;
+import org.moparscape.elysium.def.ItemDef;
 import org.moparscape.elysium.task.timed.RespawnItemTask;
 import org.moparscape.elysium.util.UnsafeWrapper;
 import org.moparscape.elysium.world.Point;

@@ -1,8 +1,8 @@
 package org.moparscape.elysium.entity;
 
 import org.moparscape.elysium.Server;
+import org.moparscape.elysium.def.NpcDef;
 import org.moparscape.elysium.entity.component.Movement;
-import org.moparscape.elysium.external.NpcDef;
 import org.moparscape.elysium.world.Point;
 
 /**

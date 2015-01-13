@@ -1,6 +1,6 @@
 package org.moparscape.elysium.net.codec.decoder;
 
-import org.jboss.netty.buffer.ChannelBuffer;
+import io.netty.buffer.ByteBuf;
 import org.moparscape.elysium.net.codec.decoder.message.DuelInformationMessage;
 
 /**
@@ -14,7 +14,7 @@ public final class DuelInformationMessageDecoder extends AbstractMessageDecoder<
         super(DuelInformationMessage.class, 123);
     }
 
-    public DuelInformationMessage decode(ChannelBuffer buffer, int length) {
+    public DuelInformationMessage decode(ByteBuf buffer, int length) {
         throw new UnsupportedOperationException();
     }
 }

@@ -1,6 +1,6 @@
 package org.moparscape.elysium.net.codec.decoder;
 
-import org.jboss.netty.buffer.ChannelBuffer;
+import io.netty.buffer.ByteBuf;
 import org.moparscape.elysium.net.codec.decoder.message.SessionRequestMessage;
 import org.moparscape.elysium.util.BufferUtil;
 
@@ -15,7 +15,7 @@ public final class SessionRequestMessageDecoder extends AbstractMessageDecoder<S
         super(SessionRequestMessage.class, 32);
     }
 
-    public SessionRequestMessage decode(ChannelBuffer buffer, int length) {
+    public SessionRequestMessage decode(ByteBuf buffer, int length) {
         byte userByte = buffer.readByte();
         String className = BufferUtil.readString(buffer);
 

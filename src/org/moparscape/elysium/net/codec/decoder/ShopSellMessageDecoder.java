@@ -1,6 +1,6 @@
 package org.moparscape.elysium.net.codec.decoder;
 
-import org.jboss.netty.buffer.ChannelBuffer;
+import io.netty.buffer.ByteBuf;
 import org.moparscape.elysium.net.codec.decoder.message.ShopSellMessage;
 
 /**
@@ -14,7 +14,7 @@ public final class ShopSellMessageDecoder extends AbstractMessageDecoder<ShopSel
         super(ShopSellMessage.class, 255);
     }
 
-    public ShopSellMessage decode(ChannelBuffer buffer, int length) {
+    public ShopSellMessage decode(ByteBuf buffer, int length) {
         throw new UnsupportedOperationException();
     }
 }

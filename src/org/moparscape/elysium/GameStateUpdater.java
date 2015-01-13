@@ -3,10 +3,9 @@ package org.moparscape.elysium;
 import org.moparscape.elysium.entity.Npc;
 import org.moparscape.elysium.entity.Player;
 import org.moparscape.elysium.task.*;
-import org.moparscape.elysium.util.IndexableCopyOnWriteArrayList;
 import org.moparscape.elysium.world.World;
 
-import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -16,56 +15,71 @@ import java.util.concurrent.CountDownLatch;
  */
 public final class GameStateUpdater {
 
-    private final IndexableCopyOnWriteArrayList<Npc> npcList = World.getInstance().getNpcs();
+    private final CopyOnWriteArrayList<Npc> npcList = World.getInstance().getNpcs();
 
-    private final IndexableCopyOnWriteArrayList<Player> playerList = World.getInstance().getPlayers();
-
-    private volatile List<Iterable<Npc>> npcPartitions;
-
-    private volatile List<Iterable<Player>> playerPartitions;
+    private final CopyOnWriteArrayList<Player> playerList = World.getInstance().getPlayers();
 
     public void updateState() throws Exception {
-        playerPartitions = playerList.divide(Server.TASK_THREADS);
-        npcPartitions = npcList.divide(Server.TASK_THREADS);
-
         updateNpcPositions();
         updatePlayers();
     }
 
     private void updateNpcPositions() throws Exception {
-        CountDownLatch latch = new CountDownLatch(npcPartitions.size());
         Server server = Server.getInstance();
 
-        for (Iterable<Npc> n : npcPartitions) {
-            server.submitTask(new CountdownTaskExecutor(new NpcPositionUpdateTask(n), latch));
-        }
+        // TODO: Improve concurrency here. Currently it's sequential.
+        CountDownLatch latch = new CountDownLatch(1);
+        server.submitTask(new CountdownTaskExecutor(new NpcPositionUpdateTask(npcList), latch));
 
         // Block until all of the npc position updating is finished
         latch.await();
+
+//        CountDownLatch latch = new CountDownLatch(npcPartitions.size());
+//        Server server = Server.getInstance();
+//
+//        for (Iterable<Npc> n : npcPartitions) {
+//            server.submitTask(new CountdownTaskExecutor(new NpcPositionUpdateTask(n), latch));
+//        }
+//
+//        // Block until all of the npc position updating is finished
+//        latch.await();
     }
 
     private void updatePlayers() throws Exception {
-        CountDownLatch latch = new CountDownLatch(playerPartitions.size());
         Server server = Server.getInstance();
 
-        for (Iterable<Player> p : playerPartitions) {
-            server.submitTask(new CountdownTaskExecutor(new PlayerUpdateTask(p), latch));
-        }
+        // TODO: Improve concurrency for all of these.
+        final CountDownLatch playerUpdateLatch = new CountDownLatch(1);
+        server.submitTask(new CountdownTaskExecutor(new PlayerUpdateTask(playerList), playerUpdateLatch));
+        playerUpdateLatch.await();
 
-        // Block until all of the player updating is finished
-        latch.await();
+        final CountDownLatch revalidateWatchedEntitiesLatch = new CountDownLatch(1);
+        server.submitTask(new CountdownTaskExecutor(
+                new RevalidateWatchedEntitiesTask(playerList), revalidateWatchedEntitiesLatch));
+        revalidateWatchedEntitiesLatch.await();
 
-        latch = new CountDownLatch(playerPartitions.size());
-        for (Iterable<Player> p : playerPartitions) {
-            server.submitTask(new CountdownTaskExecutor(new RevalidateWatchedEntitiesTask(p), latch));
-        }
-        latch.await();
+        final CountDownLatch issueMessagesLatch = new CountDownLatch(1);
+        server.submitTask(new CountdownTaskExecutor(new IssueMessagesTask(playerList), issueMessagesLatch));
+        issueMessagesLatch.await();
 
-        latch = new CountDownLatch(playerPartitions.size());
-        for (Iterable<Player> p : playerPartitions) {
-            server.submitTask(new CountdownTaskExecutor(new IssueMessagesTask(p), latch));
-        }
-        latch.await();
+//        for (Iterable<Player> p : playerPartitions) {
+//            server.submitTask(new CountdownTaskExecutor(new PlayerUpdateTask(p), latch));
+//        }
+//
+//        // Block until all of the player updating is finished
+//        latch.await();
+//
+//        latch = new CountDownLatch(playerPartitions.size());
+//        for (Iterable<Player> p : playerPartitions) {
+//            server.submitTask(new CountdownTaskExecutor(new RevalidateWatchedEntitiesTask(p), latch));
+//        }
+//        latch.await();
+//
+//        latch = new CountDownLatch(playerPartitions.size());
+//        for (Iterable<Player> p : playerPartitions) {
+//            server.submitTask(new CountdownTaskExecutor(new IssueMessagesTask(p), latch));
+//        }
+//        latch.await();
     }
 
     public void updateCollections() throws Exception {
@@ -79,12 +93,18 @@ public final class GameStateUpdater {
 //        }
 //        latch.await();
 
+        // TODO: Improve concurrency here.
         // Update the player collections, and clear their display lists
-        latch = new CountDownLatch(playerPartitions.size());
-        for (Iterable<Player> p : playerPartitions) {
-            server.submitTask(new CountdownTaskExecutor(new UpdatePlayerCollections(p), latch));
-        }
-        latch.await();
+        final CountDownLatch updatePlayerCollectionsLatch = new CountDownLatch(1);
+        server.submitTask(new CountdownTaskExecutor(
+                new UpdatePlayerCollections(playerList), updatePlayerCollectionsLatch));
+        updatePlayerCollectionsLatch.await();
+
+//        latch = new CountDownLatch(playerPartitions.size());
+//        for (Iterable<Player> p : playerPartitions) {
+//            server.submitTask(new CountdownTaskExecutor(new UpdatePlayerCollections(p), latch));
+//        }
+//        latch.await();
 
         // TODO: Reset the npcs
 //        latch = new CountDownLatch(npcPartitions.size());

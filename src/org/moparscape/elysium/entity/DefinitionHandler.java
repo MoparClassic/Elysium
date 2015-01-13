@@ -1,8 +1,8 @@
 package org.moparscape.elysium.entity;
 
-import org.moparscape.elysium.DataLayer;
-import org.moparscape.elysium.external.ItemDef;
-import org.moparscape.elysium.mysql.MysqlDataLayer;
+import org.moparscape.elysium.data.DataLayer;
+import org.moparscape.elysium.data.mysql.MysqlDataLayer;
+import org.moparscape.elysium.def.ItemDef;
 
 import java.sql.SQLException;
 

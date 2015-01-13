@@ -1,6 +1,6 @@
 package org.moparscape.elysium.net.codec.decoder;
 
-import org.jboss.netty.buffer.ChannelBuffer;
+import io.netty.buffer.ByteBuf;
 import org.moparscape.elysium.net.codec.decoder.message.SpellGroundItemMessage;
 
 /**
@@ -14,7 +14,7 @@ public final class SpellGroundItemMessageDecoder extends AbstractMessageDecoder<
         super(SpellGroundItemMessage.class, 104);
     }
 
-    public SpellGroundItemMessage decode(ChannelBuffer buffer, int length) {
+    public SpellGroundItemMessage decode(ByteBuf buffer, int length) {
         throw new UnsupportedOperationException();
     }
 }

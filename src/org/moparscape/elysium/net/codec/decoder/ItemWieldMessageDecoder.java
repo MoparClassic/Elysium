@@ -1,6 +1,6 @@
 package org.moparscape.elysium.net.codec.decoder;
 
-import org.jboss.netty.buffer.ChannelBuffer;
+import io.netty.buffer.ByteBuf;
 import org.moparscape.elysium.net.codec.decoder.message.ItemWieldMessage;
 
 /**
@@ -14,7 +14,7 @@ public final class ItemWieldMessageDecoder extends AbstractMessageDecoder<ItemWi
         super(ItemWieldMessage.class, 181);
     }
 
-    public ItemWieldMessage decode(ChannelBuffer buffer, int length) {
+    public ItemWieldMessage decode(ByteBuf buffer, int length) {
         int itemIndex = buffer.readShort();
         return new ItemWieldMessage(itemIndex);
     }

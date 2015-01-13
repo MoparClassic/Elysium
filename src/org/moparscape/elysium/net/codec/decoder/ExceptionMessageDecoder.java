@@ -1,6 +1,6 @@
 package org.moparscape.elysium.net.codec.decoder;
 
-import org.jboss.netty.buffer.ChannelBuffer;
+import io.netty.buffer.ByteBuf;
 import org.moparscape.elysium.net.codec.decoder.message.ExceptionMessage;
 
 /**
@@ -14,7 +14,7 @@ public final class ExceptionMessageDecoder extends AbstractMessageDecoder<Except
         super(ExceptionMessage.class, 156);
     }
 
-    public ExceptionMessage decode(ChannelBuffer buffer, int length) {
+    public ExceptionMessage decode(ByteBuf buffer, int length) {
         throw new UnsupportedOperationException();
     }
 }

@@ -1,6 +1,6 @@
 package org.moparscape.elysium.net.codec.decoder;
 
-import org.jboss.netty.buffer.ChannelBuffer;
+import io.netty.buffer.ByteBuf;
 import org.moparscape.elysium.net.codec.decoder.message.WallObjectPrimaryActionMessage;
 
 /**
@@ -14,7 +14,7 @@ public final class WallObjectPrimaryActionMessageDecoder extends AbstractMessage
         super(WallObjectPrimaryActionMessage.class, 126);
     }
 
-    public WallObjectPrimaryActionMessage decode(ChannelBuffer buffer, int length) {
+    public WallObjectPrimaryActionMessage decode(ByteBuf buffer, int length) {
         throw new UnsupportedOperationException();
     }
 }

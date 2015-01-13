@@ -1,6 +1,6 @@
 package org.moparscape.elysium.net.codec.decoder;
 
-import org.jboss.netty.buffer.ChannelBuffer;
+import io.netty.buffer.ByteBuf;
 import org.moparscape.elysium.net.codec.decoder.message.ItemDoorMessage;
 
 /**
@@ -14,7 +14,7 @@ public final class ItemDoorMessageDecoder extends AbstractMessageDecoder<ItemDoo
         super(ItemDoorMessage.class, 36);
     }
 
-    public ItemDoorMessage decode(ChannelBuffer buffer, int length) {
+    public ItemDoorMessage decode(ByteBuf buffer, int length) {
         throw new UnsupportedOperationException();
     }
 }

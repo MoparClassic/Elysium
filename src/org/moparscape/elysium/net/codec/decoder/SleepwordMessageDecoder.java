@@ -1,6 +1,6 @@
 package org.moparscape.elysium.net.codec.decoder;
 
-import org.jboss.netty.buffer.ChannelBuffer;
+import io.netty.buffer.ByteBuf;
 import org.moparscape.elysium.net.codec.decoder.message.SleepwordMessage;
 
 /**
@@ -14,7 +14,7 @@ public final class SleepwordMessageDecoder extends AbstractMessageDecoder<Sleepw
         super(SleepwordMessage.class, 200);
     }
 
-    public SleepwordMessage decode(ChannelBuffer buffer, int length) {
+    public SleepwordMessage decode(ByteBuf buffer, int length) {
         throw new UnsupportedOperationException();
     }
 }

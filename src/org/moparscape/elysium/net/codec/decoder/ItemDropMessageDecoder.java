@@ -1,6 +1,6 @@
 package org.moparscape.elysium.net.codec.decoder;
 
-import org.jboss.netty.buffer.ChannelBuffer;
+import io.netty.buffer.ByteBuf;
 import org.moparscape.elysium.net.codec.decoder.message.ItemDropMessage;
 
 /**
@@ -14,7 +14,7 @@ public final class ItemDropMessageDecoder extends AbstractMessageDecoder<ItemDro
         super(ItemDropMessage.class, 147);
     }
 
-    public ItemDropMessage decode(ChannelBuffer buffer, int length) {
+    public ItemDropMessage decode(ByteBuf buffer, int length) {
         int index = buffer.readShort();
         return new ItemDropMessage(index);
     }

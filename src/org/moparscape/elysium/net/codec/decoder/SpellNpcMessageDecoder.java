@@ -1,6 +1,6 @@
 package org.moparscape.elysium.net.codec.decoder;
 
-import org.jboss.netty.buffer.ChannelBuffer;
+import io.netty.buffer.ByteBuf;
 import org.moparscape.elysium.net.codec.decoder.message.SpellNpcMessage;
 
 /**
@@ -14,7 +14,7 @@ public final class SpellNpcMessageDecoder extends AbstractMessageDecoder<SpellNp
         super(SpellNpcMessage.class, 71);
     }
 
-    public SpellNpcMessage decode(ChannelBuffer buffer, int length) {
+    public SpellNpcMessage decode(ByteBuf buffer, int length) {
         throw new UnsupportedOperationException();
     }
 }

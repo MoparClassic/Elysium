@@ -1,7 +1,7 @@
 package org.moparscape.elysium.util;
 
-import org.jboss.netty.buffer.ChannelBuffer;
-import org.jboss.netty.buffer.ChannelBuffers;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import org.moparscape.elysium.world.Point;
 
 import java.io.BufferedInputStream;
@@ -116,11 +116,11 @@ public final class DataConversions {
     /**
      * Decrypts an RSA encrypted packet using our private key
      */
-    public static ChannelBuffer decryptRSA(byte[] pData) {
+    public static ByteBuf decryptRSA(byte[] pData) {
         try {
             BigInteger bigInteger = new BigInteger(pData);
             byte[] decrypted = bigInteger.modPow(key, modulus).toByteArray();
-            return ChannelBuffers.wrappedBuffer(decrypted);
+            return Unpooled.wrappedBuffer(decrypted);
         } catch (Exception e) {
             return null;
         }

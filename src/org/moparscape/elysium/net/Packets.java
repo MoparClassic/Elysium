@@ -1,8 +1,8 @@
 package org.moparscape.elysium.net;
 
-import org.jboss.netty.buffer.ChannelBuffer;
-import org.jboss.netty.buffer.ChannelBuffers;
-import org.jboss.netty.channel.ChannelFuture;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelFuture;
 import org.moparscape.elysium.entity.Player;
 import org.moparscape.elysium.entity.component.Combat;
 import org.moparscape.elysium.entity.component.Communication;
@@ -21,14 +21,14 @@ import java.util.concurrent.atomic.AtomicIntegerArray;
 public final class Packets {
 
     public static ChannelFuture sendScreenshot(Player player) {
-        PacketBuilder pb = new PacketBuilder(0, true);
+        PacketBuilder pb = new PacketBuilder(0);
         pb.setId(181);
         return player.getSession().write(pb.toPacket());
     }
 
     public static ChannelFuture sendCombatStyle(Player player) {
         Combat combat = player.getComponent(Combat.class);
-        PacketBuilder pb = new PacketBuilder(1, true);
+        PacketBuilder pb = new PacketBuilder(1);
         pb.setId(129);
         pb.writeByte(combat.getCombatStyle()); // Combat style
         return player.getSession().write(pb.toPacket());
@@ -36,14 +36,14 @@ public final class Packets {
 
     public static ChannelFuture sendFatigue(Player player) {
         Skills skills = player.getComponent(Skills.class);
-        PacketBuilder pb = new PacketBuilder(2, true);
+        PacketBuilder pb = new PacketBuilder(2);
         pb.setId(126);
         pb.writeShort(skills.getFatigue());
         return player.getSession().write(pb.toPacket());
     }
 
     public static ChannelFuture hideMenu(Player player) {
-        PacketBuilder pb = new PacketBuilder(0, true);
+        PacketBuilder pb = new PacketBuilder(0);
         pb.setId(127);
         return player.getSession().write(pb.toPacket());
     }
@@ -64,13 +64,13 @@ public final class Packets {
     }
 
     public static ChannelFuture hideBank(Player player) {
-        PacketBuilder pb = new PacketBuilder(0, true);
+        PacketBuilder pb = new PacketBuilder(0);
         pb.setId(171);
         return player.getSession().write(pb.toPacket());
     }
 
     public static ChannelFuture updateBankItem(Player player, int slot, int newId, int amount) {
-        PacketBuilder pb = new PacketBuilder(7, true);
+        PacketBuilder pb = new PacketBuilder(7);
         pb.setId(139);
         pb.writeByte(slot);
         pb.writeShort(newId);
@@ -83,40 +83,40 @@ public final class Packets {
 //    }
 
     public static ChannelFuture hideShop(Player player) {
-        PacketBuilder pb = new PacketBuilder(0, true);
+        PacketBuilder pb = new PacketBuilder(0);
         pb.setId(220);
         return player.getSession().write(pb.toPacket());
     }
 
     public static ChannelFuture startShutdown(Player player, int seconds) {
-        PacketBuilder pb = new PacketBuilder(2, true);
+        PacketBuilder pb = new PacketBuilder(2);
         pb.setId(172);
         pb.writeShort((int) (((double) seconds / 32D) * 50));
         return player.getSession().write(pb.toPacket());
     }
 
     public static ChannelFuture sendAlert(Player player, String message, boolean big) {
-        PacketBuilder pb = new PacketBuilder(message.length(), true);
+        PacketBuilder pb = new PacketBuilder(message.length());
         pb.setId(big ? 64 : 148);
         pb.writeBytes(message.getBytes());
         return player.getSession().write(pb.toPacket());
     }
 
     public static ChannelFuture sendSound(Player player, String soundName) {
-        PacketBuilder pb = new PacketBuilder(soundName.length(), true);
+        PacketBuilder pb = new PacketBuilder(soundName.length());
         pb.setId(11);
         pb.writeBytes(soundName.getBytes());
         return player.getSession().write(pb.toPacket());
     }
 
     public static ChannelFuture sendDied(Player player) {
-        PacketBuilder pb = new PacketBuilder(0, true);
+        PacketBuilder pb = new PacketBuilder(0);
         pb.setId(11);
         return player.getSession().write(pb.toPacket());
     }
 
     public static ChannelFuture sendPrivateMessage(Player player, long usernameHash, byte[] message) {
-        PacketBuilder pb = new PacketBuilder(8 + message.length, true);
+        PacketBuilder pb = new PacketBuilder(8 + message.length);
         pb.setId(170);
         pb.writeLong(usernameHash);
         pb.writeBytes(message);
@@ -124,7 +124,7 @@ public final class Packets {
     }
 
     public static ChannelFuture sendFriendUpdate(Player player, long usernameHash, int world) {
-        PacketBuilder pb = new PacketBuilder(9, true);
+        PacketBuilder pb = new PacketBuilder(9);
         pb.setId(25);
         pb.writeLong(usernameHash);
         pb.writeByte(99); // World number
@@ -136,7 +136,7 @@ public final class Packets {
         Queue<Long> friendList = com.getFriendList();
         int size = friendList.size();
 
-        PacketBuilder pb = new PacketBuilder(1 + (size * 9), true);
+        PacketBuilder pb = new PacketBuilder(1 + (size * 9));
         pb.setId(249);
         pb.writeByte(size);
         for (long hash : friendList) {
@@ -151,7 +151,7 @@ public final class Packets {
         Queue<Long> ignoreList = com.getIgnoreList();
         int size = ignoreList.size();
 
-        PacketBuilder pb = new PacketBuilder(1 + (size * 8), true);
+        PacketBuilder pb = new PacketBuilder(1 + (size * 8));
         pb.writeByte(size);
         for (long hash : ignoreList) {
             pb.writeLong(hash);
@@ -196,26 +196,26 @@ public final class Packets {
     }
 
     public static ChannelFuture sendTradeWindowClose(Player player) {
-        PacketBuilder pb = new PacketBuilder(0, true);
+        PacketBuilder pb = new PacketBuilder(0);
         pb.setId(187);
         return player.getSession().write(pb.toPacket());
     }
 
     public static ChannelFuture sendDuelWindowClose(Player player) {
-        PacketBuilder pb = new PacketBuilder(0, true);
+        PacketBuilder pb = new PacketBuilder(0);
         pb.setId(160);
         return player.getSession().write(pb.toPacket());
     }
 
     public static ChannelFuture sendAppearanceScreen(Player player) {
-        PacketBuilder pb = new PacketBuilder(0, true);
+        PacketBuilder pb = new PacketBuilder(0);
         pb.setId(207);
         return player.getSession().write(pb.toPacket());
     }
 
     public static ChannelFuture sendServerInfo(Player player) {
         String location = "Australia";
-        PacketBuilder pb = new PacketBuilder(8 + location.length(), true);
+        PacketBuilder pb = new PacketBuilder(8 + location.length());
         pb.setId(110);
         pb.writeLong(System.currentTimeMillis()); // Start time
         pb.writeBytes(location.getBytes());
@@ -224,7 +224,7 @@ public final class Packets {
 
     public static ChannelFuture sendTeleBubble(Player player, int x, int y, boolean grab) {
         Point loc = player.getLocation();
-        PacketBuilder pb = new PacketBuilder(3, true);
+        PacketBuilder pb = new PacketBuilder(3);
         pb.setId(23);
         pb.writeByte(grab ? 1 : 0);
         pb.writeByte(x - loc.getX());
@@ -234,7 +234,7 @@ public final class Packets {
 
     public static ChannelFuture sendMessage(Player player, String message) {
         byte[] msg = message.getBytes();
-        PacketBuilder pb = new PacketBuilder(msg.length, true);
+        PacketBuilder pb = new PacketBuilder(msg.length);
         pb.setId(48);
         pb.writeBytes(msg);
         return player.getSession().write(pb.toPacket());
@@ -246,7 +246,7 @@ public final class Packets {
 
     public static ChannelFuture sendStat(Player player, int stat) {
         Skills skills = player.getComponent(Skills.class);
-        PacketBuilder pb = new PacketBuilder(7, true);
+        PacketBuilder pb = new PacketBuilder(7);
         pb.setId(208);
         pb.writeByte(stat);
         pb.writeByte(skills.getCurStat(stat));
@@ -257,7 +257,7 @@ public final class Packets {
 
     public static ChannelFuture sendStats(Player player) {
         Skills skills = player.getComponent(Skills.class);
-        PacketBuilder pb = new PacketBuilder(108, true);
+        PacketBuilder pb = new PacketBuilder(108);
         pb.setId(180);
 
         AtomicIntegerArray curStats = skills.getCurStats();
@@ -279,7 +279,7 @@ public final class Packets {
     }
 
     public static ChannelFuture sendWorldInfo(Player player) {
-        PacketBuilder pb = new PacketBuilder(10, true);
+        PacketBuilder pb = new PacketBuilder(10);
         pb.setId(131);
         pb.writeShort(player.getIndex());
         pb.writeShort(2304);
@@ -302,19 +302,19 @@ public final class Packets {
     }
 
     public static ChannelFuture sendLogout(Player player) {
-        PacketBuilder pb = new PacketBuilder(0, true);
+        PacketBuilder pb = new PacketBuilder(0);
         pb.setId(222);
         return player.getSession().write(pb.toPacket());
     }
 
     public static ChannelFuture sendCantLogout(Player player) {
-        PacketBuilder pb = new PacketBuilder(0, true);
+        PacketBuilder pb = new PacketBuilder(0);
         pb.setId(136);
         return player.getSession().write(pb.toPacket());
     }
 
     public static ChannelFuture sendLoginBox(Player player) {
-        PacketBuilder pb = new PacketBuilder(20, true);
+        PacketBuilder pb = new PacketBuilder(20);
         pb.setId(248);
         pb.writeShort(0); // Days since last login
         pb.writeShort(0); // Subscription time left
@@ -323,7 +323,7 @@ public final class Packets {
     }
 
     public static ChannelFuture sendLoginResponse(Player player, LoginResponse response) {
-        ChannelBuffer buffer = ChannelBuffers.buffer(1);
+        ByteBuf buffer = Unpooled.buffer(1);
         buffer.writeByte(response.getResponseCode());
         return player.getSession().write(buffer);
     }

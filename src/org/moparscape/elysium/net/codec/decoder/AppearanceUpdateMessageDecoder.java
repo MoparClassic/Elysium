@@ -1,6 +1,6 @@
 package org.moparscape.elysium.net.codec.decoder;
 
-import org.jboss.netty.buffer.ChannelBuffer;
+import io.netty.buffer.ByteBuf;
 import org.moparscape.elysium.net.codec.decoder.message.AppearanceUpdateMessage;
 
 /**
@@ -14,7 +14,7 @@ public final class AppearanceUpdateMessageDecoder extends AbstractMessageDecoder
         super(AppearanceUpdateMessage.class, 218);
     }
 
-    public AppearanceUpdateMessage decode(ChannelBuffer buffer, int length) {
+    public AppearanceUpdateMessage decode(ByteBuf buffer, int length) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 }

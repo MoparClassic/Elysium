@@ -1,6 +1,6 @@
 package org.moparscape.elysium.net.codec.decoder;
 
-import org.jboss.netty.buffer.ChannelBuffer;
+import io.netty.buffer.ByteBuf;
 import org.moparscape.elysium.net.codec.decoder.message.LoginMessage;
 import org.moparscape.elysium.util.BufferUtil;
 import org.moparscape.elysium.util.DataConversions;
@@ -16,14 +16,14 @@ public final class LoginMessageDecoder extends AbstractMessageDecoder<LoginMessa
         super(LoginMessage.class, 0);
     }
 
-    public LoginMessage decode(ChannelBuffer buffer, int length) {
+    public LoginMessage decode(ByteBuf buffer, int length) {
         boolean reconnecting = buffer.readByte() == 1;
         int version = buffer.readShort();
         int loginPacketSize = buffer.readByte();
 
         byte[] encrypted = new byte[loginPacketSize];
         buffer.readBytes(encrypted);
-        ChannelBuffer loginPacket = DataConversions.decryptRSA(encrypted);
+        ByteBuf loginPacket = DataConversions.decryptRSA(encrypted);
 
         // Now that we've got the decrypted login packet, parse its payload
         int[] sessionKeys = new int[4];

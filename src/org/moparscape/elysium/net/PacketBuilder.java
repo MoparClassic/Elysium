@@ -1,7 +1,7 @@
 package org.moparscape.elysium.net;
 
-import org.jboss.netty.buffer.ChannelBuffer;
-import org.jboss.netty.buffer.ChannelBuffers;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 
 /**
  * Created by IntelliJ IDEA.
@@ -10,7 +10,7 @@ import org.jboss.netty.buffer.ChannelBuffers;
  */
 public final class PacketBuilder {
 
-    private final ChannelBuffer buffer;
+    private final ByteBuf buffer;
 
     private int id;
 
@@ -18,7 +18,7 @@ public final class PacketBuilder {
      * Allocates a dynamic buffer with an initial capacity of 256.
      */
     public PacketBuilder() {
-        this.buffer = ChannelBuffers.dynamicBuffer();
+        this.buffer = Unpooled.buffer();
     }
 
     /**
@@ -27,27 +27,7 @@ public final class PacketBuilder {
      * @param initialCapacity The initial capacity
      */
     public PacketBuilder(int initialCapacity) {
-        this(initialCapacity, false);
-    }
-
-    /**
-     * Allocates a buffer with the specified capacity.
-     * <p/>
-     * If fixedCapacity is true then the underlying buffer's capacity will
-     * be static.
-     * If fixedCapacity is false then the underlying buffer's capacity will
-     * be dynamic, and capable of growing to accommodate any number of bytes.
-     *
-     * @param capacity      The capacity of the underlying buffer
-     * @param fixedCapacity True if the underlying buffer's capacity should be
-     *                      fixed, or false if it should be dynamic
-     */
-    public PacketBuilder(int capacity, boolean fixedCapacity) {
-        if (fixedCapacity) {
-            this.buffer = ChannelBuffers.directBuffer(capacity);
-        } else {
-            this.buffer = ChannelBuffers.dynamicBuffer(capacity);
-        }
+        this.buffer = Unpooled.buffer(initialCapacity);
     }
 
     public PacketBuilder setId(int id) {
@@ -85,24 +65,24 @@ public final class PacketBuilder {
         return this;
     }
 
-    public ChannelBuffer toPacket() {
+    public ByteBuf toPacket() {
         int dataLen = buffer.readableBytes(); // Length of payload
         int packetLen = dataLen + 1;          // Length of opcode followed by payload
 
         //System.out.printf("dataLen=%d; packetLen=%d;\n", dataLen, packetLen);
 
-        ChannelBuffer header = ChannelBuffers.buffer(3);
+        ByteBuf header = Unpooled.buffer(3);
         if (dataLen >= 160) {
             header.writeByte(160 + (packetLen / 256));
             header.writeByte(packetLen & 0xff);
             header.writeByte(id);
-            return ChannelBuffers.wrappedBuffer(header, buffer);
+            return Unpooled.wrappedBuffer(header, buffer);
         } else {
             header.writeByte(packetLen);                   // Length byte
             if (dataLen > 0) {
                 header.writeByte(buffer.getByte(dataLen - 1)); // Last byte of payload
                 header.writeByte(id);
-                return ChannelBuffers.wrappedBuffer(header, buffer.slice(0, dataLen - 1));
+                return Unpooled.wrappedBuffer(header, buffer.slice(0, dataLen - 1));
             } else {
                 header.writeByte(id);                          // Opcode
                 return header;

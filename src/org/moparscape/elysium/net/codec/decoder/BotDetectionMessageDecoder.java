@@ -1,6 +1,6 @@
 package org.moparscape.elysium.net.codec.decoder;
 
-import org.jboss.netty.buffer.ChannelBuffer;
+import io.netty.buffer.ByteBuf;
 import org.moparscape.elysium.net.codec.decoder.message.BotDetectionMessage;
 
 /**
@@ -14,7 +14,7 @@ public final class BotDetectionMessageDecoder extends AbstractMessageDecoder<Bot
         super(BotDetectionMessage.class, 69);
     }
 
-    public BotDetectionMessage decode(ChannelBuffer buffer, int length) {
+    public BotDetectionMessage decode(ByteBuf buffer, int length) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 }

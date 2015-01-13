@@ -1,6 +1,6 @@
 package org.moparscape.elysium.entity;
 
-import org.moparscape.elysium.external.ItemDef;
+import org.moparscape.elysium.def.ItemDef;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;

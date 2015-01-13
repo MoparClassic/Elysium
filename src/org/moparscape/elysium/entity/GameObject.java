@@ -1,6 +1,6 @@
 package org.moparscape.elysium.entity;
 
-import org.moparscape.elysium.external.GameObjectLoc;
+import org.moparscape.elysium.def.GameObjectLoc;
 import org.moparscape.elysium.world.Point;
 
 /**

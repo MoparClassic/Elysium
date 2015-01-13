@@ -1,6 +1,6 @@
 package org.moparscape.elysium.net.codec.decoder;
 
-import org.jboss.netty.buffer.ChannelBuffer;
+import io.netty.buffer.ByteBuf;
 import org.moparscape.elysium.net.codec.decoder.message.SpellInvItemMessage;
 
 /**
@@ -14,7 +14,7 @@ public final class SpellInvItemMessageDecoder extends AbstractMessageDecoder<Spe
         super(SpellInvItemMessage.class, 49);
     }
 
-    public SpellInvItemMessage decode(ChannelBuffer buffer, int length) {
+    public SpellInvItemMessage decode(ByteBuf buffer, int length) {
         throw new UnsupportedOperationException();
     }
 }

@@ -1,28 +1,29 @@
 package org.moparscape.elysium.net.codec;
 
-import org.jboss.netty.buffer.ChannelBuffer;
-import org.jboss.netty.buffer.ChannelBuffers;
-import org.jboss.netty.channel.Channel;
-import org.jboss.netty.channel.ChannelHandlerContext;
-import org.jboss.netty.handler.codec.frame.FrameDecoder;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.ByteToMessageDecoder;
 import org.moparscape.elysium.net.codec.decoder.MessageDecoder;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
  *
  * @author lothy
  */
-public final class ElysiumDecoder extends FrameDecoder {
+public final class ElysiumDecoder extends ByteToMessageDecoder {
 
-    public Object decode(ChannelHandlerContext ctx, Channel channel, ChannelBuffer buffer)
+    @Override
+    public void decode(ChannelHandlerContext ctx, ByteBuf buffer, List<Object> out)
             throws Exception {
         buffer.markReaderIndex();
 
         // If there are not enough bytes to read a length, return
         if (buffer.readableBytes() < 2) {
-            return null;
+            return;
         }
 
         boolean shortLen = false;
@@ -36,7 +37,7 @@ public final class ElysiumDecoder extends FrameDecoder {
         // the packet hasn't fully arrived. Rewind the buffer and return.
         if (length > buffer.readableBytes()) {
             buffer.resetReaderIndex();
-            return null;
+            return;
         }
 
         // If the length is a short, or the packet has no payload, then we can just
@@ -44,7 +45,7 @@ public final class ElysiumDecoder extends FrameDecoder {
         // However, if the length is a byte then the next byte is actually the last
         // value of the payload, so we need to put it back in its correct position.
         int opcode;
-        ChannelBuffer payload;
+        ByteBuf payload;
         if (shortLen || length <= 1) {
             opcode = buffer.readUnsignedByte();
             payload = buffer;
@@ -55,7 +56,7 @@ public final class ElysiumDecoder extends FrameDecoder {
             data[length - 2] = buffer.readByte();
             opcode = buffer.readUnsignedByte();
             buffer.readBytes(data, 0, length - 2);
-            payload = ChannelBuffers.wrappedBuffer(data);
+            payload = Unpooled.wrappedBuffer(data);
         }
 
         System.out.println("OPCODE: " + opcode);
@@ -68,10 +69,10 @@ public final class ElysiumDecoder extends FrameDecoder {
         // Reduce length by 1 so that it is only referring to the payload's length, without the opcode
         --length;
 
-        return decoder.decode(payload, length);
+        out.add(decoder.decode(payload, length));
     }
 
-    private void dump(ChannelBuffer buffer, int opcode, int length) {
+    private void dump(ByteBuf buffer, int opcode, int length) {
         buffer.markReaderIndex();
 
         // Dump the contents as a string of unsigned bytes

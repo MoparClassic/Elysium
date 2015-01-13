@@ -1,4 +1,4 @@
-import org.jboss.netty.buffer.ChannelBuffer;
+import io.netty.buffer.ByteBuf;
 import org.moparscape.elysium.net.PacketBuilder;
 
 /**
@@ -28,7 +28,7 @@ public final class BufferTest {
         dump(pb.toPacket());
     }
 
-    public static void dump(ChannelBuffer buffer) {
+    public static void dump(ByteBuf buffer) {
         StringBuilder sb = new StringBuilder(1000);
         sb.append(buffer.getUnsignedByte(0));
         for (int i = 1; i < buffer.readableBytes(); i++) {

@@ -1,6 +1,6 @@
 package org.moparscape.elysium.net.codec.decoder;
 
-import org.jboss.netty.buffer.ChannelBuffer;
+import io.netty.buffer.ByteBuf;
 import org.moparscape.elysium.net.codec.decoder.message.ItemGameObjectMessage;
 
 /**
@@ -14,7 +14,7 @@ public final class ItemGameObjectMessageDecoder extends AbstractMessageDecoder<I
         super(ItemGameObjectMessage.class, 94);
     }
 
-    public ItemGameObjectMessage decode(ChannelBuffer buffer, int length) {
+    public ItemGameObjectMessage decode(ByteBuf buffer, int length) {
         throw new UnsupportedOperationException();
     }
 }

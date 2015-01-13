@@ -1,7 +1,7 @@
 package org.moparscape.elysium.net.handler;
 
-import org.jboss.netty.channel.ChannelFuture;
-import org.jboss.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
 import org.moparscape.elysium.Server;
 import org.moparscape.elysium.entity.Player;
 import org.moparscape.elysium.net.Packets;

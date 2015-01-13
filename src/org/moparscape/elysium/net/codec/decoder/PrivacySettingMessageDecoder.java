@@ -1,6 +1,6 @@
 package org.moparscape.elysium.net.codec.decoder;
 
-import org.jboss.netty.buffer.ChannelBuffer;
+import io.netty.buffer.ByteBuf;
 import org.moparscape.elysium.net.codec.decoder.message.PrivacySettingMessage;
 
 /**
@@ -14,7 +14,7 @@ public final class PrivacySettingMessageDecoder extends AbstractMessageDecoder<P
         super(PrivacySettingMessage.class, 176);
     }
 
-    public PrivacySettingMessage decode(ChannelBuffer buffer, int length) {
+    public PrivacySettingMessage decode(ByteBuf buffer, int length) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 }

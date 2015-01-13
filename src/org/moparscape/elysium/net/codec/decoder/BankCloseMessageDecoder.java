@@ -1,6 +1,6 @@
 package org.moparscape.elysium.net.codec.decoder;
 
-import org.jboss.netty.buffer.ChannelBuffer;
+import io.netty.buffer.ByteBuf;
 import org.moparscape.elysium.net.codec.decoder.message.BankCloseMessage;
 
 /**
@@ -14,7 +14,7 @@ public final class BankCloseMessageDecoder extends AbstractMessageDecoder<BankCl
         super(BankCloseMessage.class, 48);
     }
 
-    public BankCloseMessage decode(ChannelBuffer buffer, int length) {
+    public BankCloseMessage decode(ByteBuf buffer, int length) {
         throw new UnsupportedOperationException();
     }
 }

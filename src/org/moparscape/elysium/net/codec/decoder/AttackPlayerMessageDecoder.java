@@ -1,6 +1,6 @@
 package org.moparscape.elysium.net.codec.decoder;
 
-import org.jboss.netty.buffer.ChannelBuffer;
+import io.netty.buffer.ByteBuf;
 import org.moparscape.elysium.net.codec.decoder.message.AttackPlayerMessage;
 
 /**
@@ -14,7 +14,7 @@ public final class AttackPlayerMessageDecoder extends AbstractMessageDecoder<Att
         super(AttackPlayerMessage.class, 57);
     }
 
-    public AttackPlayerMessage decode(ChannelBuffer buffer, int length) {
+    public AttackPlayerMessage decode(ByteBuf buffer, int length) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 }

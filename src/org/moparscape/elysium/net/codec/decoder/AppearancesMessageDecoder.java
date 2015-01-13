@@ -1,6 +1,6 @@
 package org.moparscape.elysium.net.codec.decoder;
 
-import org.jboss.netty.buffer.ChannelBuffer;
+import io.netty.buffer.ByteBuf;
 import org.moparscape.elysium.net.codec.decoder.message.AppearancesMessage;
 
 /**
@@ -14,7 +14,7 @@ public final class AppearancesMessageDecoder extends AbstractMessageDecoder<Appe
         super(AppearancesMessage.class, 83);
     }
 
-    public AppearancesMessage decode(ChannelBuffer buffer, int length) {
+    public AppearancesMessage decode(ByteBuf buffer, int length) {
         int mobCount = buffer.readShort();
         int[] indicies = new int[mobCount];
         int[] appearanceIds = new int[mobCount];

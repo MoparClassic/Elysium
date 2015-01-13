@@ -1,6 +1,6 @@
 package org.moparscape.elysium.net.codec.decoder;
 
-import org.jboss.netty.buffer.ChannelBuffer;
+import io.netty.buffer.ByteBuf;
 import org.moparscape.elysium.net.codec.decoder.message.WalkTargetMessage;
 
 /**
@@ -14,7 +14,7 @@ public final class WalkTargetMessageDecoder extends AbstractMessageDecoder<WalkT
         super(WalkTargetMessage.class, 246);
     }
 
-    public WalkTargetMessage decode(ChannelBuffer buffer, int length) {
+    public WalkTargetMessage decode(ByteBuf buffer, int length) {
         int startX = buffer.readShort();
         int startY = buffer.readShort();
         int steps = (length - 4) / 2;

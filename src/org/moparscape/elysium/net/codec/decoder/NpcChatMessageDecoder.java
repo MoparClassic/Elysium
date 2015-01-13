@@ -1,6 +1,6 @@
 package org.moparscape.elysium.net.codec.decoder;
 
-import org.jboss.netty.buffer.ChannelBuffer;
+import io.netty.buffer.ByteBuf;
 import org.moparscape.elysium.net.codec.decoder.message.NpcChatMessage;
 
 /**
@@ -14,7 +14,7 @@ public final class NpcChatMessageDecoder extends AbstractMessageDecoder<NpcChatM
         super(NpcChatMessage.class, 177);
     }
 
-    public NpcChatMessage decode(ChannelBuffer buffer, int length) {
+    public NpcChatMessage decode(ByteBuf buffer, int length) {
         throw new UnsupportedOperationException();
     }
 }

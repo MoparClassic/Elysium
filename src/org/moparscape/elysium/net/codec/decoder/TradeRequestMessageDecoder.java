@@ -1,6 +1,6 @@
 package org.moparscape.elysium.net.codec.decoder;
 
-import org.jboss.netty.buffer.ChannelBuffer;
+import io.netty.buffer.ByteBuf;
 import org.moparscape.elysium.net.codec.decoder.message.TradeRequestMessage;
 
 /**
@@ -14,7 +14,7 @@ public final class TradeRequestMessageDecoder extends AbstractMessageDecoder<Tra
         super(TradeRequestMessage.class, 166);
     }
 
-    public TradeRequestMessage decode(ChannelBuffer buffer, int length) {
+    public TradeRequestMessage decode(ByteBuf buffer, int length) {
         throw new UnsupportedOperationException();
     }
 }

@@ -1,6 +1,6 @@
 package org.moparscape.elysium.net.codec.decoder;
 
-import org.jboss.netty.buffer.ChannelBuffer;
+import io.netty.buffer.ByteBuf;
 import org.moparscape.elysium.net.codec.decoder.message.ItemUnwieldMessage;
 
 /**
@@ -14,7 +14,7 @@ public final class ItemUnwieldMessageDecoder extends AbstractMessageDecoder<Item
         super(ItemUnwieldMessage.class, 92);
     }
 
-    public ItemUnwieldMessage decode(ChannelBuffer buffer, int length) {
+    public ItemUnwieldMessage decode(ByteBuf buffer, int length) {
         int itemIndex = buffer.readShort();
         return new ItemUnwieldMessage(itemIndex);
     }

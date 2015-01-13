@@ -107,9 +107,7 @@ public final class CodecLookupService {
     }
 
     public static MessageDecoder<? extends Message> getDecoder(int opcode) {
-        if (opcode < 0 || opcode >= 255) {
-            return null;
-        }
+        if (opcode < 0 || opcode >= 255) throw new IllegalArgumentException("opcode");
 
         return decoders.get(opcode);
     }

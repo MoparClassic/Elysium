@@ -1,6 +1,6 @@
 package org.moparscape.elysium.net.codec.decoder;
 
-import org.jboss.netty.buffer.ChannelBuffer;
+import io.netty.buffer.ByteBuf;
 import org.moparscape.elysium.net.codec.decoder.message.DuelConfirmAcceptMessage;
 
 /**
@@ -14,7 +14,7 @@ public final class DuelConfirmAcceptMessageDecoder extends AbstractMessageDecode
         super(DuelConfirmAcceptMessage.class, 87);
     }
 
-    public DuelConfirmAcceptMessage decode(ChannelBuffer buffer, int length) {
+    public DuelConfirmAcceptMessage decode(ByteBuf buffer, int length) {
         throw new UnsupportedOperationException();
     }
 }

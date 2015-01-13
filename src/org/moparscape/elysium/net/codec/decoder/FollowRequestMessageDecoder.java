@@ -1,6 +1,6 @@
 package org.moparscape.elysium.net.codec.decoder;
 
-import org.jboss.netty.buffer.ChannelBuffer;
+import io.netty.buffer.ByteBuf;
 import org.moparscape.elysium.net.codec.decoder.message.FollowRequestMessage;
 
 /**
@@ -14,7 +14,7 @@ public final class FollowRequestMessageDecoder extends AbstractMessageDecoder<Fo
         super(FollowRequestMessage.class, 68);
     }
 
-    public FollowRequestMessage decode(ChannelBuffer buffer, int length) {
+    public FollowRequestMessage decode(ByteBuf buffer, int length) {
         throw new UnsupportedOperationException();
     }
 }

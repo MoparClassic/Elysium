@@ -1,6 +1,6 @@
 package org.moparscape.elysium.net.codec.decoder;
 
-import org.jboss.netty.buffer.ChannelBuffer;
+import io.netty.buffer.ByteBuf;
 import org.moparscape.elysium.net.codec.decoder.message.SpellDoorMessage;
 
 /**
@@ -14,7 +14,7 @@ public final class SpellDoorMessageDecoder extends AbstractMessageDecoder<SpellD
         super(SpellDoorMessage.class, 67);
     }
 
-    public SpellDoorMessage decode(ChannelBuffer buffer, int length) {
+    public SpellDoorMessage decode(ByteBuf buffer, int length) {
         throw new UnsupportedOperationException();
     }
 }

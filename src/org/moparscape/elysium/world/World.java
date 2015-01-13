@@ -4,7 +4,8 @@ import org.moparscape.elysium.entity.DefaultEntityFactory;
 import org.moparscape.elysium.entity.EntityFactory;
 import org.moparscape.elysium.entity.Npc;
 import org.moparscape.elysium.entity.Player;
-import org.moparscape.elysium.util.IndexableCopyOnWriteArrayList;
+
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by IntelliJ IDEA.
@@ -30,9 +31,10 @@ public final class World {
 
     private final TileValue outsideWorld = new TileValue();
 
-    private final IndexableCopyOnWriteArrayList<Player> playerList = new IndexableCopyOnWriteArrayList<Player>(2000);
+    // TODO: Don't use CopyOnWriteArrayList for the players.
+    private final CopyOnWriteArrayList<Player> playerList = new CopyOnWriteArrayList<Player>();
 
-    private final IndexableCopyOnWriteArrayList<Npc> npcList = new IndexableCopyOnWriteArrayList<Npc>(10000);
+    private final CopyOnWriteArrayList<Npc> npcList = new CopyOnWriteArrayList<Npc>();
 
     static {
         INSTANCE = new World();
@@ -69,11 +71,11 @@ public final class World {
         return npcList.add(npc);
     }
 
-    public IndexableCopyOnWriteArrayList<Npc> getNpcs() {
+    public CopyOnWriteArrayList<Npc> getNpcs() {
         return npcList;
     }
 
-    public IndexableCopyOnWriteArrayList<Player> getPlayers() {
+    public CopyOnWriteArrayList<Player> getPlayers() {
         return playerList;
     }
 

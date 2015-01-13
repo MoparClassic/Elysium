@@ -7,13 +7,10 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="netty-3.2.7.Final" level="project" />
     <orderEntry type="library" name="hex-string" level="project" />
     <orderEntry type="library" name="xpp3" level="project" />
     <orderEntry type="library" name="xstream" level="project" />
     <orderEntry type="library" name="luajava-1.1" level="project" />
-    <orderEntry type="module" module-name="Common" />
-    <orderEntry type="module" module-name="DataAccess" />
+    <orderEntry type="library" name="netty-all-4.0.25.Final" level="project" />
   </component>
 </module>
-

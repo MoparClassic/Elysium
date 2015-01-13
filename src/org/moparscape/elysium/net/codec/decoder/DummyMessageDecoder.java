@@ -1,6 +1,6 @@
 package org.moparscape.elysium.net.codec.decoder;
 
-import org.jboss.netty.buffer.ChannelBuffer;
+import io.netty.buffer.ByteBuf;
 import org.moparscape.elysium.net.codec.decoder.message.DummyMessage;
 
 /**
@@ -14,7 +14,7 @@ public final class DummyMessageDecoder extends AbstractMessageDecoder<DummyMessa
         super(DummyMessage.class, 0);
     }
 
-    public DummyMessage decode(ChannelBuffer buffer, int length) {
+    public DummyMessage decode(ByteBuf buffer, int length) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 }

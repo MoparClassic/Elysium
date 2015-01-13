@@ -1,6 +1,6 @@
 package org.moparscape.elysium.entity.component;
 
-import org.jboss.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFuture;
 import org.moparscape.elysium.entity.Entity;
 import org.moparscape.elysium.entity.InvItem;
 import org.moparscape.elysium.entity.Item;
@@ -290,7 +290,7 @@ public class Inventory extends AbstractComponent {
             int size = items.size();
             int packetSize = (size * 6) + 1;
 
-            PacketBuilder pb = new PacketBuilder(packetSize, true);
+            PacketBuilder pb = new PacketBuilder(packetSize);
             pb.setId(114);
             pb.writeByte(size);
             for (InvItem item : items) {
@@ -308,7 +308,7 @@ public class Inventory extends AbstractComponent {
         Player p = owner.get();
 
         synchronized (items) {
-            PacketBuilder pb = new PacketBuilder(7, true);
+            PacketBuilder pb = new PacketBuilder(7);
             pb.setId(228);
             pb.writeByte(slot);
             pb.writeShort(item.getItemId() + (item.isWielded() ? 32768 : 0));
@@ -324,7 +324,7 @@ public class Inventory extends AbstractComponent {
         Player p = owner.get();
 
         synchronized (items) {
-            PacketBuilder pb = new PacketBuilder(1, true);
+            PacketBuilder pb = new PacketBuilder(1);
             pb.setId(191);
             pb.writeByte(slot);
 

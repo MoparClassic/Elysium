@@ -1,7 +1,7 @@
 package org.moparscape.elysium.net;
 
-import org.jboss.netty.buffer.ChannelBuffer;
-import org.jboss.netty.buffer.ChannelBuffers;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 
 /**
  * Created by IntelliJ IDEA.
@@ -78,22 +78,22 @@ public final class Bitpacker {
         return this;
     }
 
-    public ChannelBuffer toPacket() {
+    public ByteBuf toPacket() {
         int dataLen = (bitPosition + 7) / 8;
         int packetLen = dataLen + 1;
 
-        ChannelBuffer header = ChannelBuffers.buffer(3);
+        ByteBuf header = Unpooled.buffer(3);
         if (dataLen >= 160) {
             header.writeByte(160 + (packetLen / 256));
             header.writeByte(packetLen & 0xff);
             header.writeByte(id);
-            return ChannelBuffers.wrappedBuffer(header, ChannelBuffers.wrappedBuffer(payload, 0, dataLen));
+            return Unpooled.wrappedBuffer(header, Unpooled.wrappedBuffer(payload, 0, dataLen));
         } else {
             header.writeByte(packetLen);            // Length byte
             if (dataLen > 0) {
                 header.writeByte(payload[dataLen - 1]); // Last byte of payload
                 header.writeByte(id);
-                return ChannelBuffers.wrappedBuffer(header, ChannelBuffers.wrappedBuffer(payload, 0, dataLen - 1));
+                return Unpooled.wrappedBuffer(header, Unpooled.wrappedBuffer(payload, 0, dataLen - 1));
             } else {
                 header.writeByte(id);                   // Opcode
                 return header;

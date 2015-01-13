@@ -1,6 +1,6 @@
 package org.moparscape.elysium.net.codec.decoder;
 
-import org.jboss.netty.buffer.ChannelBuffer;
+import io.netty.buffer.ByteBuf;
 import org.moparscape.elysium.net.codec.decoder.message.LogoutMessage;
 
 /**
@@ -14,7 +14,7 @@ public final class LogoutMessageDecoder extends AbstractMessageDecoder<LogoutMes
         super(LogoutMessage.class, 39);
     }
 
-    public LogoutMessage decode(ChannelBuffer buffer, int length) {
+    public LogoutMessage decode(ByteBuf buffer, int length) {
         return new LogoutMessage();
     }
 }

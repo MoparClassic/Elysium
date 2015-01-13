@@ -1,6 +1,6 @@
 package org.moparscape.elysium.net.codec.decoder;
 
-import org.jboss.netty.buffer.ChannelBuffer;
+import io.netty.buffer.ByteBuf;
 import org.moparscape.elysium.net.codec.decoder.message.InvalidMessage;
 
 /**
@@ -18,7 +18,7 @@ public final class InvalidMessageDecoder implements MessageDecoder<InvalidMessag
         return InvalidMessage.class;
     }
 
-    public InvalidMessage decode(ChannelBuffer buffer, int length) {
+    public InvalidMessage decode(ByteBuf buffer, int length) {
         byte[] data = new byte[length];
         buffer.readBytes(data, 0, length);
 

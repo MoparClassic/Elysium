@@ -1,6 +1,6 @@
 package org.moparscape.elysium.net.codec.decoder;
 
-import org.jboss.netty.buffer.ChannelBuffer;
+import io.netty.buffer.ByteBuf;
 import org.moparscape.elysium.net.codec.decoder.message.PingMessage;
 
 /**
@@ -14,7 +14,7 @@ public final class PingMessageDecoder extends AbstractMessageDecoder<PingMessage
         super(PingMessage.class, 5);
     }
 
-    public PingMessage decode(ChannelBuffer buffer, int length) {
+    public PingMessage decode(ByteBuf buffer, int length) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 }
