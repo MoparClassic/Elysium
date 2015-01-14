@@ -172,20 +172,6 @@
       <JAVADOC />
       <SOURCES />
     </library>
-    <library name="luajava-1.1">
-      <CLASSES>
-        <root url="jar://$PROJECT_DIR$/lib/luajava-1.1.jar!/" />
-      </CLASSES>
-      <JAVADOC />
-      <SOURCES />
-    </library>
-    <library name="mysql-connector">
-      <CLASSES>
-        <root url="jar://$PROJECT_DIR$/lib/mysql-connector.jar!/" />
-      </CLASSES>
-      <JAVADOC />
-      <SOURCES />
-    </library>
     <library name="netty-all-4.0.25.Final">
       <CLASSES>
         <root url="jar://$PROJECT_DIR$/lib/netty-all-4.0.25.Final.jar!/" />

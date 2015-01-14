@@ -10,7 +10,6 @@
     <orderEntry type="library" name="hex-string" level="project" />
     <orderEntry type="library" name="xpp3" level="project" />
     <orderEntry type="library" name="xstream" level="project" />
-    <orderEntry type="library" name="luajava-1.1" level="project" />
     <orderEntry type="library" name="netty-all-4.0.25.Final" level="project" />
   </component>
 </module>
