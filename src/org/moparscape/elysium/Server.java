@@ -32,35 +32,27 @@ public class Server {
     private static volatile Server INSTANCE;
 
     private final EventLoopGroup bossGroup = new NioEventLoopGroup();
-    private final EventLoopGroup workerGroup = new NioEventLoopGroup();
-
-    private final ScheduledExecutorService taskExecutorService = Executors.newScheduledThreadPool(TASK_THREADS);
-
     private final ExecutorService dataExecutorService = Executors.newSingleThreadExecutor();
-
     private final ArrayBlockingQueue<Session> sessions = new ArrayBlockingQueue<>(1500);
-
+    private final ScheduledExecutorService taskExecutorService = Executors.newScheduledThreadPool(TASK_THREADS);
     /**
      * We used to use a PriorityBlockingQueue here. But upon inspecting the source code
      * I've learned that it acquires and release a lock EVERY TIME you peek/poll.
      * We're better off just synchronizing externally which is what's done now.
      */
     private final PriorityQueue<TimedTask> taskQueue = new PriorityQueue<>();
-
     private final GameStateUpdater updater = new GameStateUpdater();
-
-    /**
-     * A higher resolution (on most systems) timer that is used to accurately detect
-     * when an update should be performed.
-     */
-    private volatile long highResolutionTimestamp = System.nanoTime() / 1000000;
-
+    private final EventLoopGroup workerGroup = new NioEventLoopGroup();
     /**
      * An epoch timestamp (set using System.currentTimeMillis()) that can be used
      * for storing and comparing database timestamps.
      */
     private volatile long epochTimestamp = System.currentTimeMillis();
-
+    /**
+     * A higher resolution (on most systems) timer that is used to accurately detect
+     * when an update should be performed.
+     */
+    private volatile long highResolutionTimestamp = System.nanoTime() / 1000000;
     private volatile long lastPulse = 0L;
 
     private volatile boolean running = true;
@@ -70,22 +62,30 @@ public class Server {
         System.out.println("CPU cores: " + cores);
     }
 
-    private ChannelFuture listen() {
-        try {
-            ServerBootstrap bootstrap = new ServerBootstrap();
-            bootstrap.group(bossGroup, workerGroup)
-                    .channel(NioServerSocketChannel.class)
-                    .childHandler(new ElysiumChannelInitializer())
-                    .option(ChannelOption.SO_BACKLOG, 128)
-                    .option(ChannelOption.TCP_NODELAY, true)
-                    .childOption(ChannelOption.SO_KEEPALIVE, true)
-                    .childOption(ChannelOption.TCP_NODELAY, true);
-
-            // Bind and start to accept incoming connections.
-            return bootstrap.bind(new InetSocketAddress(43594));
-        } catch (Exception e) {
-            throw new IllegalStateException("netty down");
+    public static Server getInstance() {
+        Server result = INSTANCE;
+        if (result == null) {
+            synchronized (INSTANCE_LOCK) {
+                result = INSTANCE;
+                if (result == null) {
+                    INSTANCE = result = new Server();
+                }
+            }
         }
+
+        return result;
+    }
+
+    public static void main(String[] args) {
+        Server server = Server.getInstance();
+        ChannelFuture cf = server.listen();
+
+        System.out.println("Server has started. :)");
+
+        // Enter the game loop, and stay there until shutdown
+        server.gameLoop();
+
+        System.out.println("Shutdown complete.");
     }
 
     private void gameLoop() {
@@ -140,21 +140,46 @@ public class Server {
         }
     }
 
-    private void pulseSessions() throws Exception {
+    public long getEpochTimestamp() {
+        return epochTimestamp;
+    }
+
+    public long getHighResolutionTimestamp() {
+        return highResolutionTimestamp;
+    }
+
+    private void issueUpdatePackets() throws Exception {
         // TODO: Improve concurrency here. Currently it's sequential.
         CountDownLatch latch = new CountDownLatch(1);
-        taskExecutorService.submit(new CountdownTaskExecutor(new SessionPulseTask(sessions), latch));
+        taskExecutorService.submit(new CountdownTaskExecutor(new IssueUpdatePacketsTask(sessions), latch));
         latch.await();
 
 //        List<Iterable<Session>> sessionPartitions = sessions.divide(TASK_THREADS);
 //        CountDownLatch latch = new CountDownLatch(sessionPartitions.size());
 //
 //        for (Iterable<Session> s : sessionPartitions) {
-//            taskExecutorService.execute(new CountdownTaskExecutor(new SessionPulseTask(s), latch));
+//            taskExecutorService.execute(new CountdownTaskExecutor(new IssueUpdatePacketsTask(s), latch));
 //        }
 //
-//        // Block until session pulsing (and associated updating) has finished
 //        latch.await();
+    }
+
+    private ChannelFuture listen() {
+        try {
+            ServerBootstrap bootstrap = new ServerBootstrap();
+            bootstrap.group(bossGroup, workerGroup)
+                    .channel(NioServerSocketChannel.class)
+                    .childHandler(new ElysiumChannelInitializer())
+                    .option(ChannelOption.SO_BACKLOG, 128)
+                    .option(ChannelOption.TCP_NODELAY, true)
+                    .childOption(ChannelOption.SO_KEEPALIVE, true)
+                    .childOption(ChannelOption.TCP_NODELAY, true);
+
+            // Bind and start to accept incoming connections.
+            return bootstrap.bind(new InetSocketAddress(43594));
+        } catch (Exception e) {
+            throw new IllegalStateException("netty down");
+        }
     }
 
     private void processTasks() throws Exception {
@@ -193,41 +218,29 @@ public class Server {
         }
     }
 
-    private void issueUpdatePackets() throws Exception {
+    private void pulseSessions() throws Exception {
         // TODO: Improve concurrency here. Currently it's sequential.
         CountDownLatch latch = new CountDownLatch(1);
-        taskExecutorService.submit(new CountdownTaskExecutor(new IssueUpdatePacketsTask(sessions), latch));
+        taskExecutorService.submit(new CountdownTaskExecutor(new SessionPulseTask(sessions), latch));
         latch.await();
 
 //        List<Iterable<Session>> sessionPartitions = sessions.divide(TASK_THREADS);
 //        CountDownLatch latch = new CountDownLatch(sessionPartitions.size());
 //
 //        for (Iterable<Session> s : sessionPartitions) {
-//            taskExecutorService.execute(new CountdownTaskExecutor(new IssueUpdatePacketsTask(s), latch));
+//            taskExecutorService.execute(new CountdownTaskExecutor(new SessionPulseTask(s), latch));
 //        }
 //
+//        // Block until session pulsing (and associated updating) has finished
 //        latch.await();
-    }
-
-    private void updateTimestamps() {
-        highResolutionTimestamp = System.nanoTime() / 1000000;
-        epochTimestamp = System.currentTimeMillis();
-    }
-
-    public long getHighResolutionTimestamp() {
-        return highResolutionTimestamp;
-    }
-
-    public long getEpochTimestamp() {
-        return epochTimestamp;
     }
 
     public void registerSession(Session session) {
         sessions.add(session);
     }
 
-    public void unregisterSession(Session session) {
-        System.out.println("Session removed: " + sessions.remove(session));
+    public void shutdown() {
+        running = false;
     }
 
     public Future<?> submitTask(Runnable r) {
@@ -240,33 +253,12 @@ public class Server {
         }
     }
 
-    public void shutdown() {
-        running = false;
+    public void unregisterSession(Session session) {
+        System.out.println("Session removed: " + sessions.remove(session));
     }
 
-    public static Server getInstance() {
-        Server result = INSTANCE;
-        if (result == null) {
-            synchronized (INSTANCE_LOCK) {
-                result = INSTANCE;
-                if (result == null) {
-                    INSTANCE = result = new Server();
-                }
-            }
-        }
-
-        return result;
-    }
-
-    public static void main(String[] args) {
-        Server server = Server.getInstance();
-        ChannelFuture cf = server.listen();
-
-        System.out.println("Server has started. :)");
-
-        // Enter the game loop, and stay there until shutdown
-        server.gameLoop();
-
-        System.out.println("Shutdown complete.");
+    private void updateTimestamps() {
+        highResolutionTimestamp = System.nanoTime() / 1000000;
+        epochTimestamp = System.currentTimeMillis();
     }
 }

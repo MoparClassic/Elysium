@@ -20,15 +20,16 @@ import java.util.concurrent.atomic.AtomicReference;
 public final class Session {
 
     private final Channel channel;
-
-    private final AtomicReference<Player> player = new AtomicReference<Player>();
-
-    private final AtomicBoolean removing = new AtomicBoolean(false);
-
     private final Queue<Message> messageQueue = new ConcurrentLinkedQueue<Message>();
+    private final AtomicReference<Player> player = new AtomicReference<Player>();
+    private final AtomicBoolean removing = new AtomicBoolean(false);
 
     public Session(Channel channel) {
         this.channel = channel;
+    }
+
+    public ChannelFuture close() {
+        return channel.close();
     }
 
     public Player getPlayer() {
@@ -39,12 +40,26 @@ public final class Session {
         this.player.getAndSet(player);
     }
 
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return o == this;
+    }
+
     public boolean isRemoving() {
         return removing.get();
     }
 
     public void setRemoving(boolean removing) {
         this.removing.getAndSet(removing);
+    }
+
+    public <T extends Message> void messageReceived(T message) {
+        messageQueue.offer(message);
     }
 
     @SuppressWarnings("unchecked")
@@ -74,25 +89,7 @@ public final class Session {
         return true;
     }
 
-    public <T extends Message> void messageReceived(T message) {
-        messageQueue.offer(message);
-    }
-
     public ChannelFuture write(Object o) {
         return channel.write(o);
-    }
-
-    public ChannelFuture close() {
-        return channel.close();
-    }
-
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        return o == this;
     }
 }

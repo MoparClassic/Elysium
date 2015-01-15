@@ -22,6 +22,20 @@ public final class PersistenceManager {
         setupAliases();
     }
 
+    public static Object load(String filename) {
+        try {
+            InputStream is = new FileInputStream(new File(Config.CONF_DIR, filename));
+            if (filename.endsWith(".gz")) {
+                is = new GZIPInputStream(is);
+            }
+            Object rv = xstream.fromXML(is);
+            return rv;
+        } catch (IOException ioe) {
+            System.out.println(ioe);
+        }
+        return null;
+    }
+
     public static void setupAliases() {
         try {
             Properties aliases = new Properties();
@@ -35,20 +49,6 @@ public final class PersistenceManager {
         } catch (Exception ioe) {
             System.out.println(ioe);
         }
-    }
-
-    public static Object load(String filename) {
-        try {
-            InputStream is = new FileInputStream(new File(Config.CONF_DIR, filename));
-            if (filename.endsWith(".gz")) {
-                is = new GZIPInputStream(is);
-            }
-            Object rv = xstream.fromXML(is);
-            return rv;
-        } catch (IOException ioe) {
-            System.out.println(ioe);
-        }
-        return null;
     }
 
     public static void write(String filename, Object o) {

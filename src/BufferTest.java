@@ -8,6 +8,15 @@ import org.moparscape.elysium.net.PacketBuilder;
  */
 public final class BufferTest {
 
+    public static void dump(ByteBuf buffer) {
+        StringBuilder sb = new StringBuilder(1000);
+        sb.append(buffer.getUnsignedByte(0));
+        for (int i = 1; i < buffer.readableBytes(); i++) {
+            sb.append(", ").append(buffer.getUnsignedByte(i));
+        }
+        System.out.println(sb);
+    }
+
     public static void main(String[] args) {
         PacketBuilder pb = new PacketBuilder(8);
         pb.setId(100);
@@ -26,14 +35,5 @@ public final class BufferTest {
         }
         pb.writeLong(0xAAAAAAAAAAAAAAAAL);
         dump(pb.toPacket());
-    }
-
-    public static void dump(ByteBuf buffer) {
-        StringBuilder sb = new StringBuilder(1000);
-        sb.append(buffer.getUnsignedByte(0));
-        for (int i = 1; i < buffer.readableBytes(); i++) {
-            sb.append(", ").append(buffer.getUnsignedByte(i));
-        }
-        System.out.println(sb);
     }
 }

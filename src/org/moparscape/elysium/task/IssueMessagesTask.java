@@ -21,7 +21,7 @@ public class IssueMessagesTask implements Runnable {
     public void run() {
         try {
             for (Player p : players) {
-                UpdateProxy proxy = p.getComponent(UpdateProxy.class);
+                UpdateProxy proxy = p.getUpdateProxy();
                 ChatMessage message = proxy.getNextChatMessage();
 
                 if (message == null || !p.isLoggedIn()) {
@@ -29,7 +29,7 @@ public class IssueMessagesTask implements Runnable {
                 }
 
                 for (Player target : Region.getViewablePlayers(p, 16)) {
-                    UpdateProxy targetProxy = target.getComponent(UpdateProxy.class);
+                    UpdateProxy targetProxy = target.getUpdateProxy();
 
                     targetProxy.informOfChatMessage(message);
                 }

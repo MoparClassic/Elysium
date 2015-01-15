@@ -9,21 +9,20 @@ import org.moparscape.elysium.net.codec.AbstractMessage;
  */
 public final class AppearancesMessage extends AbstractMessage {
 
-    private final int[] indicies;
-
     private final int[] appearanceIds;
+    private final int[] indicies;
 
     public AppearancesMessage(int[] indicies, int[] appearanceIds) {
         this.indicies = indicies;
         this.appearanceIds = appearanceIds;
     }
 
-    public int[] getIndicies() {
-        return indicies;
-    }
-
     public int[] getAppearanceIds() {
         return appearanceIds;
+    }
+
+    public int[] getIndicies() {
+        return indicies;
     }
 
     public String toString() {

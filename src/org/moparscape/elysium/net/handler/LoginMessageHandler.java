@@ -29,7 +29,7 @@ public final class LoginMessageHandler extends MessageHandler<LoginMessage> {
                 message.getUsername(), message.getPassword());
 
         Player p = DefaultEntityFactory.getInstance().newPlayer(session);
-        Credentials creds = p.getComponent(Credentials.class);
+        Credentials creds = p.getCredentials();
         creds.setUsername(message.getUsername());
         creds.setPassword(message.getPassword());
 

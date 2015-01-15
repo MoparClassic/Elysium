@@ -17,48 +17,6 @@ public final class WorldLoader {
     private ZipFile tileArchive;
 //	private ZipOutputStream out;
 
-    @SuppressWarnings("unchecked")
-    public void loadWorld(World world) {
-        try {
-            tileArchive = new ZipFile(new File(Config.CONF_DIR, "data/Landscape.rscd"));
-//			out = new ZipOutputStream(new FileOutputStream(new File(Config.CONF_DIR, "data/new_Landscape.rscd")));
-//			out.setLevel(9);
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-
-        for (int lvl = 0; lvl < 4; lvl++) {
-            int wildX = 2304;
-            int wildY = 1776 - (lvl * 944);
-            for (int sx = 0; sx < 1000; sx += 48) {
-                for (int sy = 0; sy < 1000; sy += 48) {
-                    int x = (sx + wildX) / 48;
-                    int y = (sy + (lvl * 944) + wildY) / 48;
-                    loadSection(x, y, lvl, world, sx, sy + (944 * lvl));
-                }
-            }
-        }
-
-//		try { out.close(); } catch(Exception e) { Logger.error(e); }
-
-        EntityFactory efactory = World.getEntityFactory();
-
-//        for (GameObjectLoc gameObject : (List<GameObjectLoc>) PersistenceManager.load("locs/org.moparscape.elysium.def.GameObjectLoc.xml.gz")) {
-//            world.registerGameObject(new GameObject(gameObject));
-//        }
-//        for (ItemLoc item : (List<ItemLoc>) PersistenceManager.load("locs/org.moparscape.elysium.entity.component.ItemLoc.xml.gz")) {
-//            world.registerItem(new Item(item));
-//        }
-//        for (NpcLoc npc : (List<NpcLoc>) PersistenceManager.load("locs/NpcLoc.xml.gz")) {
-//            //world.registerNpc(efactory.newNpc(npc));
-//        }
-//        for (Shop shop : (List<Shop>) PersistenceManager.load("locs/Shops.xml.gz")) {
-//            world.registerShop(shop);
-//        }
-
-        System.gc();
-    }
-
     private void loadSection(int sectionX, int sectionY, int height, World world, int bigX, int bigY) {
 //        Sector s = null;
 //        try {
@@ -114,5 +72,47 @@ public final class WorldLoader {
 //                /** end of shit **/
 //            }
 //        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public void loadWorld(World world) {
+        try {
+            tileArchive = new ZipFile(new File(Config.CONF_DIR, "data/Landscape.rscd"));
+//			out = new ZipOutputStream(new FileOutputStream(new File(Config.CONF_DIR, "data/new_Landscape.rscd")));
+//			out.setLevel(9);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        for (int lvl = 0; lvl < 4; lvl++) {
+            int wildX = 2304;
+            int wildY = 1776 - (lvl * 944);
+            for (int sx = 0; sx < 1000; sx += 48) {
+                for (int sy = 0; sy < 1000; sy += 48) {
+                    int x = (sx + wildX) / 48;
+                    int y = (sy + (lvl * 944) + wildY) / 48;
+                    loadSection(x, y, lvl, world, sx, sy + (944 * lvl));
+                }
+            }
+        }
+
+//		try { out.close(); } catch(Exception e) { Logger.error(e); }
+
+        EntityFactory efactory = World.getEntityFactory();
+
+//        for (GameObjectLoc gameObject : (List<GameObjectLoc>) PersistenceManager.load("locs/org.moparscape.elysium.def.GameObjectLoc.xml.gz")) {
+//            world.registerGameObject(new GameObject(gameObject));
+//        }
+//        for (ItemLoc item : (List<ItemLoc>) PersistenceManager.load("locs/org.moparscape.elysium.entity.component.ItemLoc.xml.gz")) {
+//            world.registerItem(new Item(item));
+//        }
+//        for (NpcLoc npc : (List<NpcLoc>) PersistenceManager.load("locs/NpcLoc.xml.gz")) {
+//            //world.registerNpc(efactory.newNpc(npc));
+//        }
+//        for (Shop shop : (List<Shop>) PersistenceManager.load("locs/Shops.xml.gz")) {
+//            world.registerShop(shop);
+//        }
+
+        System.gc();
     }
 }

@@ -14,10 +14,6 @@ public class ItemWieldableDef {
      */
     public int armourPoints;
     /**
-     * If the item can only be worn by females (used for female plates)
-     */
-    private boolean femaleOnly;
-    /**
      * How many magic points should be given
      */
     public int magicPoints;
@@ -49,6 +45,10 @@ public class ItemWieldableDef {
      * How many weapon power points should be given
      */
     public int weaponPowerPoints;
+    /**
+     * If the item can only be worn by females (used for female plates)
+     */
+    private boolean femaleOnly;
     /**
      * Body position the item is drawn on
      */

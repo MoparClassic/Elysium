@@ -17,7 +17,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Created by IntelliJ IDEA.
@@ -29,25 +28,19 @@ public class Inventory extends AbstractComponent {
     private static final World world = World.getInstance();
 
     private final int MAX_INVENTORY_ITEMS = 30;
-
+    private final List<InvItem> items = new ArrayList<InvItem>();
     private final int maxItems;
-
-    private final AtomicReference<Player> owner = new AtomicReference<Player>();
-
+    private final Player owner;
     private final AtomicInteger reserved = new AtomicInteger(0);
 
-    private final List<InvItem> items = new ArrayList<InvItem>();
-
-    public Inventory() {
+    public Inventory(Player owner) {
+        this.owner = owner;
         this.maxItems = MAX_INVENTORY_ITEMS;
     }
 
-    public Inventory(int maxItems) {
+    public Inventory(Player owner, int maxItems) {
+        this.owner = owner;
         this.maxItems = maxItems;
-    }
-
-    public void setOwner(Player owner) {
-        this.owner.getAndSet(owner);
     }
 
     public int add(InvItem item) {
@@ -76,7 +69,7 @@ public class Inventory extends AbstractComponent {
         }
 
         if (isFull()) {
-            Player p = owner.get();
+            Player p = owner;
             Point loc = p.getLocation();
             Packets.sendMessage(p, "Your inventory is full, the " +
                     item.getDef().getName() + " drops to the ground!");
@@ -92,6 +85,147 @@ public class Inventory extends AbstractComponent {
             items.add(item);
             sendInventory();
             return items.size() - 1;
+        }
+    }
+
+    public final boolean canHold(InvItem item) {
+        synchronized (items) {
+            return (maxItems - items.size()) >= getRequiredSlots(item);
+        }
+
+    }
+
+    public final boolean contains(InvItem item) {
+        synchronized (items) {
+            return items.contains(item);
+        }
+    }
+
+    public final int countById(int id) {
+        synchronized (items) {
+            int count = 0;
+            for (InvItem item : items) {
+                if (item.getItemId() == id) {
+                    count += item.getAmount();
+                }
+            }
+            return count;
+        }
+    }
+
+    public void dropOnDeath(Entity killer, boolean skulled, boolean protectItem) {
+        int keep = skulled ? 0 : 3;
+
+        // If they have protect item enabled, increase the number of items
+        // to be protected by one
+        if (protectItem) {
+            keep++;
+        }
+
+        Player pkiller = null;
+        if (killer instanceof Player) {
+            pkiller = (Player) killer;
+        }
+
+        Point victimLoc = owner.getLocation();
+        Region region = Region.getRegion(victimLoc);
+
+        synchronized (items) {
+            InvItem item = null;
+
+            if (keep == 0) {
+                // We aren't keeping any, so don't worry about sorting them
+                Iterator<InvItem> it = items.iterator();
+                while (it.hasNext()) {
+                    item = it.next();
+
+                    region.addItem(new Item(item.getItemId(), item.getAmount(), victimLoc, pkiller));
+                    it.remove();
+                }
+            } else {
+                // Sort the list so that the most expensive are first
+                Collections.sort(items, new ItemByValueComparator());
+
+                int saved = 0;
+                Iterator<InvItem> it = items.iterator();
+                while (it.hasNext()) {
+                    item = it.next();
+                    if (saved++ < keep) {
+                        continue;
+                    }
+
+                    region.addItem(new Item(item.getItemId(), item.getAmount(), victimLoc, pkiller));
+                    it.remove();
+                }
+            }
+        }
+    }
+
+    public final InvItem get(int index) {
+        synchronized (items) {
+            return items.get(index);
+        }
+    }
+
+    public final InvItem getById(int itemId) {
+        synchronized (items) {
+            for (InvItem item : items) {
+                if (item.getItemId() == itemId) {
+                    return item;
+                }
+            }
+            return null;
+        }
+    }
+
+    public int getFreedSlots(InvItem item) {
+        synchronized (items) {
+            return item.getDef().isStackable() &&
+                    countById(item.getItemId()) > item.getAmount() ? 0 : 1;
+        }
+    }
+
+    public final int getFreedSlots(List<InvItem> items) {
+        synchronized (items) {
+            int count = 0;
+            for (InvItem item : items) {
+                count += getFreedSlots(item);
+            }
+            return count;
+        }
+    }
+
+    public int getRequiredSlots(InvItem item) {
+        synchronized (items) {
+            return item.getDef().isStackable() && items.contains(item) ? 0 : 1;
+        }
+    }
+
+    public final int getRequiredSlots(List<InvItem> items) {
+        synchronized (items) {
+            int requiredSlots = 0;
+            for (InvItem item : items) {
+                requiredSlots += getRequiredSlots(item);
+            }
+            return requiredSlots;
+        }
+    }
+
+    public final int indexOf(InvItem item) {
+        synchronized (items) {
+            return items.indexOf(item);
+        }
+    }
+
+    public final boolean isEmpty() {
+        synchronized (items) {
+            return items.isEmpty();
+        }
+    }
+
+    public final boolean isFull() {
+        synchronized (items) {
+            return items.size() >= maxItems;
         }
     }
 
@@ -136,155 +270,8 @@ public class Inventory extends AbstractComponent {
         }
     }
 
-    public void dropOnDeath(Entity killer, boolean skulled, boolean protectItem) {
-        int keep = skulled ? 0 : 3;
-
-        // If they have protect item enabled, increase the number of items
-        // to be protected by one
-        if (protectItem) {
-            keep++;
-        }
-
-        Player pkiller = null;
-        if (killer instanceof Player) {
-            pkiller = (Player) killer;
-        }
-
-        Point victimLoc = owner.get().getLocation();
-        Region region = Region.getRegion(victimLoc);
-
-        synchronized (items) {
-            InvItem item = null;
-
-            if (keep == 0) {
-                // We aren't keeping any, so don't worry about sorting them
-                Iterator<InvItem> it = items.iterator();
-                while (it.hasNext()) {
-                    item = it.next();
-
-                    region.addItem(new Item(item.getItemId(), item.getAmount(), victimLoc, pkiller));
-                    it.remove();
-                }
-            } else {
-                // Sort the list so that the most expensive are first
-                Collections.sort(items, new ItemByValueComparator());
-
-                int saved = 0;
-                Iterator<InvItem> it = items.iterator();
-                while (it.hasNext()) {
-                    item = it.next();
-                    if (saved++ < keep) {
-                        continue;
-                    }
-
-                    region.addItem(new Item(item.getItemId(), item.getAmount(), victimLoc, pkiller));
-                    it.remove();
-                }
-            }
-        }
-    }
-
-    public int getRequiredSlots(InvItem item) {
-        synchronized (items) {
-            return item.getDef().isStackable() && items.contains(item) ? 0 : 1;
-        }
-    }
-
-    public int getFreedSlots(InvItem item) {
-        synchronized (items) {
-            return item.getDef().isStackable() &&
-                    countById(item.getItemId()) > item.getAmount() ? 0 : 1;
-        }
-    }
-
-    public final boolean canHold(InvItem item) {
-        synchronized (items) {
-            return (maxItems - items.size()) >= getRequiredSlots(item);
-        }
-
-    }
-
-    public final int getFreedSlots(List<InvItem> items) {
-        synchronized (items) {
-            int count = 0;
-            for (InvItem item : items) {
-                count += getFreedSlots(item);
-            }
-            return count;
-        }
-    }
-
-    public final int getRequiredSlots(List<InvItem> items) {
-        synchronized (items) {
-            int requiredSlots = 0;
-            for (InvItem item : items) {
-                requiredSlots += getRequiredSlots(item);
-            }
-            return requiredSlots;
-        }
-    }
-
-    public final InvItem getById(int itemId) {
-        synchronized (items) {
-            for (InvItem item : items) {
-                if (item.getItemId() == itemId) {
-                    return item;
-                }
-            }
-            return null;
-        }
-    }
-
-    public final InvItem get(int index) {
-        synchronized (items) {
-            return items.get(index);
-        }
-    }
-
-    public final int countById(int id) {
-        synchronized (items) {
-            int count = 0;
-            for (InvItem item : items) {
-                if (item.getItemId() == id) {
-                    count += item.getAmount();
-                }
-            }
-            return count;
-        }
-    }
-
-    public final boolean contains(InvItem item) {
-        synchronized (items) {
-            return items.contains(item);
-        }
-    }
-
-    public final int indexOf(InvItem item) {
-        synchronized (items) {
-            return items.indexOf(item);
-        }
-    }
-
-    public final boolean isEmpty() {
-        synchronized (items) {
-            return items.isEmpty();
-        }
-    }
-
-    public final boolean isFull() {
-        synchronized (items) {
-            return items.size() >= maxItems;
-        }
-    }
-
-    public final int size() {
-        synchronized (items) {
-            return items.size();
-        }
-    }
-
     public final ChannelFuture sendInventory() {
-        Player p = owner.get();
+        Player p = owner;
 
         synchronized (items) {
             int size = items.size();
@@ -304,8 +291,41 @@ public class Inventory extends AbstractComponent {
         }
     }
 
+    public final ChannelFuture sendRemoveItem(int slot) {
+        Player p = owner;
+
+        synchronized (items) {
+            PacketBuilder pb = new PacketBuilder(1);
+            pb.setId(191);
+            pb.writeByte(slot);
+
+            return p.getSession().write(pb.toPacket());
+        }
+    }
+
+    public final int size() {
+        synchronized (items) {
+            return items.size();
+        }
+    }
+
+    public String toString() {
+        Credentials creds = owner.getCredentials();
+        StringBuilder sb = new StringBuilder(1000);
+        sb.append("Inventory contents for ");
+        sb.append(creds.getUsername()).append("\n");
+
+        synchronized (items) {
+            for (InvItem item : items) {
+                sb.append("\t").append(item).append("\n");
+            }
+            sb.append("INVENTORY END");
+            return sb.toString();
+        }
+    }
+
     public final ChannelFuture updateInventoryItem(int slot, InvItem item) {
-        Player p = owner.get();
+        Player p = owner;
 
         synchronized (items) {
             PacketBuilder pb = new PacketBuilder(7);
@@ -317,33 +337,6 @@ public class Inventory extends AbstractComponent {
             }
 
             return p.getSession().write(pb.toPacket());
-        }
-    }
-
-    public final ChannelFuture sendRemoveItem(int slot) {
-        Player p = owner.get();
-
-        synchronized (items) {
-            PacketBuilder pb = new PacketBuilder(1);
-            pb.setId(191);
-            pb.writeByte(slot);
-
-            return p.getSession().write(pb.toPacket());
-        }
-    }
-
-    public String toString() {
-        Credentials creds = owner.get().getComponent(Credentials.class);
-        StringBuilder sb = new StringBuilder(1000);
-        sb.append("Inventory contents for ");
-        sb.append(creds.getUsername()).append("\n");
-
-        synchronized (items) {
-            for (InvItem item : items) {
-                sb.append("\t").append(item).append("\n");
-            }
-            sb.append("INVENTORY END");
-            return sb.toString();
         }
     }
 }

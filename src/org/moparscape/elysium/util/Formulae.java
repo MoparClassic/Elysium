@@ -15,12 +15,29 @@ import java.util.Random;
  */
 public final class Formulae {
 
-    public static final Point[] noremoveTiles = {new Point(341, 487),
-            new Point(343, 581), new Point(92, 649), new Point(434, 682),
-            new Point(660, 551), new Point(196, 3266), new Point(59, 573),
-            new Point(560, 472), new Point(140, 180), new Point(285, 195),
-            new Point(243, 178), new Point(394, 851), new Point(388, 851),
-            new Point(512, 550)};
+    public final static int[] ADDY = {111, 107, 116, 120, 131, 127, 123, 65,
+            1079, 69, 74, 86, 80, 204, 1261, 92, 97, 673, 1066};
+    public final static int[] BRONZE = {108, 104, 113, 117, 128, 124, 206, 62,
+            1076, 66, 70, 82, 76, 87, 156, 87, 205, 669, 1062};
+    /**
+     * Cubic P2P boundaries. MinX, MinY - MaxX, MaxY
+     */
+    public static final Point[][] F2PWILD_LOCS = {{
+            new Point(48, 96), new Point(335, 142)}};
+    public final static int[] IRON = {6, 5, 7, 8, 2, 3, 9, 28, 1075, 1, 71,
+            83, 77, 12, 1258, 89, 0, 670, 1063};
+    public final static int[] MITH = {110, 106, 115, 119, 130, 126, 122, 64,
+            1078, 68, 73, 85, 79, 203, 1260, 91, 96, 672, 1065};
+    public static final Point[][] P2P_LOCS = {
+            {new Point(436, 432), new Point(719, 906)},
+            {new Point(48, 96), new Point(335, 142)},
+            {new Point(343, 567), new Point(457, 432)},
+            {new Point(203, 3206), new Point(233, 3265)},
+            {new Point(397, 525), new Point(441, 579),}};
+    public final static int[] RUNE = {112, 399, 400, 401, 404, 403, 402, 396,
+            1080, 397, 75, 398, 81, 405, 1262, 93, 98, 674, 1067};
+    public final static int[] STEEL = {109, 105, 114, 118, 129, 125, 121, 63,
+            1077, 67, 72, 84, 78, 88, 1259, 90, 95, 671, 1064};
     public static final int[] arrowIDs = {723, 647, 646, 645, 644, 643, 642,
             641, 640, 639, 638, 574, 11};
     public static final int[] bodySprites = {2, 5};
@@ -45,18 +62,12 @@ public final class Formulae {
     public static final int[] miningAxeIDs = {1262, 1261, 1260, 1259, 1258,
             156};
     public static final int[] miningAxeLvls = {41, 31, 21, 6, 1, 1};
-
-    /**
-     * Cubic P2P boundaries. MinX, MinY - MaxX, MaxY
-     */
-    public static final Point[][] F2PWILD_LOCS = {{
-            new Point(48, 96), new Point(335, 142)}};
-    public static final Point[][] P2P_LOCS = {
-            {new Point(436, 432), new Point(719, 906)},
-            {new Point(48, 96), new Point(335, 142)},
-            {new Point(343, 567), new Point(457, 432)},
-            {new Point(203, 3206), new Point(233, 3265)},
-            {new Point(397, 525), new Point(441, 579),}};
+    public static final Point[] noremoveTiles = {new Point(341, 487),
+            new Point(343, 581), new Point(92, 649), new Point(434, 682),
+            new Point(660, 551), new Point(196, 3266), new Point(59, 573),
+            new Point(560, 472), new Point(140, 180), new Point(285, 195),
+            new Point(243, 178), new Point(394, 851), new Point(388, 851),
+            new Point(512, 550)};
     public static final int[] potions1Dose = {224, 476, 479, 482, 485, 488,
             491, 494, 497, 500, 568, 571};
     public static final int[] potions2Dose = {223, 475, 478, 481, 484, 487,
@@ -65,8 +76,6 @@ public final class Formulae {
             489, 492, 495, 498, 566, 569};
     public static final int[] potionsUnfinished = {454, 455, 456, 457, 458,
             459, 460, 461, 462, 463};
-
-    private static Random r = new Random();
     public static final int[] runeIDs = {31, 32, 33, 34, 35, 36, 37, 38, 40,
             41, 42, 46, 619, 825};
     /**
@@ -80,151 +89,12 @@ public final class Formulae {
             "hits", "ranged", "prayer", "magic", "cooking", "woodcut",
             "fletching", "fishing", "firemaking", "crafting", "smithing",
             "mining", "herblaw", "agility", "thieving"};
-
     public static final int[] woodcuttingAxeIDs = {405, 204, 203, 428, 88, 12,
             87};
-
     public static final int[] xbowIDs = {59, 60};
-
     public static ArrayList<Point> dray2edge = new ArrayList<Point>();
-    /**
-     * Array of items that cannot be telegrabbed.
-     */
-    public static int[] telegrabBlocked = {828, 831, 832, 1289, 422, 1315,
-            1314, 1316, 971};
-
-    static {
-        dray2edge.add(new Point(114, 638));
-        dray2edge.add(new Point(120, 621));
-        dray2edge.add(new Point(131, 612));
-        dray2edge.add(new Point(159, 596));
-        dray2edge.add(new Point(195, 583));
-        dray2edge.add(new Point(201, 562));
-        dray2edge.add(new Point(200, 540));
-        dray2edge.add(new Point(227, 501));
-        dray2edge.add(new Point(225, 460));
-        dray2edge.add(new Point(206, 448));
-    }
-
-    /**
-     * Adds the prayers together to calculate what perecntage the stat should be
-     * increased
-     */
-    public static double addPrayers(boolean first, boolean second, boolean third) {
-        if (third) {
-            return 1.15D;
-        }
-        if (second) {
-            return 1.1D;
-        }
-        if (first) {
-            return 1.05D;
-        }
-        return 1.0D;
-    }
-
-    /**
-     * Returns a power to assosiate with each arrow
-     */
-    private static double arrowPower(int arrowID) {
-        switch (arrowID) {
-            case 11: // bronze arrows
-            case 574: // poison bronze arrows
-            case 190: // crossbow bolts
-            case 592: // poison cross bow bolts
-            case 1013: // bronze throwing dart
-            case 1122: // poison bronze throwing dart
-                return 0;
-            case 638:// iron arrows
-            case 639:// poison iron arrows
-            case 1015: // iron throwing dart
-            case 1123:// poison iron throwing dart
-                return 0.5;
-            case 640:// steel arrows
-            case 641:// poison steel arrows
-            case 1024: // steel throwing dart
-            case 1124: // poison steel throwing dart
-            case 1076:// bronze throwing dart
-            case 1128:// poison bronze throwing knife
-            case 827:// bronze spear
-            case 1135:// poison bronze spear
-                return 1;
-            case 642:// mith arrows
-            case 643:// poison mith arrows
-            case 786:// pearle crossbow bolts
-            case 1068:// mith throwing dart
-            case 1125: // poison mith throwing dart
-            case 1075:// iron throwing dart
-            case 1129:// poison iron throwing knife
-            case 1088:// iron spear
-            case 1136:// poison iron spear
-                return 1.5;
-            case 644:// addy arrows
-            case 645:// poison addy arrows
-            case 1069:// addy throwing dart
-            case 1126:// poison addy throwing dart
-            case 1077:// steel throwing knife
-            case 1130:// poison steel throwing knife
-            case 1089:// steel spear
-            case 1137:// poison steel spear
-                return 1.75;
-            case 1081:// black throwing knife
-            case 1132:// poison black throwing knife
-                return 2;
-            case 646:// rune arrows
-            case 647:// poison rune arrows
-            case 1070:// rune throwing dart
-            case 1127:// poison rune throwing dart
-            case 1078:// mith throwing knife
-            case 1131:// poison mith throwing knife
-            case 1090:// mith spear
-            case 1138:// poison mith spear
-                return 5;
-            case 723:// ice arrows
-            case 1079:// addy throwing knife
-            case 1133:// poison addy throwing knife
-            case 1091:// addy spear
-            case 1139:// poison addy spear
-                return 6;
-            case 1080:// rune throwing knife
-            case 1134:// poison rune throwing knife
-            case 1092:// rune spear
-            case 1140:// poison rune spear
-                return 7;
-            case 785:// lit arrow (not stackable, why not?)
-                return 10;
-            default:
-                return 0;
-        }
-    }
-
-    public static int bitToDoorDir(int bit) {
-        switch (bit) {
-            case 1:
-                return 0;
-            case 2:
-                return 1;
-            case 4:
-                return -1;
-            case 8:
-                return -1;
-        }
-        return -1;
-    }
-
-    public static int bitToObjectDir(int bit) {
-        switch (bit) {
-            case 1:
-                return 6;
-            case 2:
-                return 0;
-            case 4:
-                return 2;
-            case 8:
-                return 4;
-        }
-        return -1;
-    }
+    public static int[] rares = new int[]{828, 831, 832, 575, 576, 577, 578,
+            579, 580, 581, 971, 1316, 1315, 1314, 422, 1289, 1156, 677};
 
     /**
      * Decide if the food we are cooking should be burned or not
@@ -470,6 +340,159 @@ public final class Formulae {
 //        }
 //        return 0;
 //    }
+    /**
+     * Array of items that cannot be telegrabbed.
+     */
+    public static int[] telegrabBlocked = {828, 831, 832, 1289, 422, 1315,
+            1314, 1316, 971};
+
+    static {
+        dray2edge.add(new Point(114, 638));
+        dray2edge.add(new Point(120, 621));
+        dray2edge.add(new Point(131, 612));
+        dray2edge.add(new Point(159, 596));
+        dray2edge.add(new Point(195, 583));
+        dray2edge.add(new Point(201, 562));
+        dray2edge.add(new Point(200, 540));
+        dray2edge.add(new Point(227, 501));
+        dray2edge.add(new Point(225, 460));
+        dray2edge.add(new Point(206, 448));
+    }
+
+    private static Random r = new Random();
+
+    public static int Rand(int low, int high) {
+        return low + r.nextInt(high - low);
+    }
+
+    /**
+     * Adds the prayers together to calculate what perecntage the stat should be
+     * increased
+     */
+    public static double addPrayers(boolean first, boolean second, boolean third) {
+        if (third) {
+            return 1.15D;
+        }
+        if (second) {
+            return 1.1D;
+        }
+        if (first) {
+            return 1.05D;
+        }
+        return 1.0D;
+    }
+
+//    public static boolean doorAtFacing(Entity e, int x, int y, int dir) {
+//        if (dir >= 0 && e instanceof GameObject) {
+//            GameObject obj = (GameObject) e;
+//            return obj.getType() == 1 && obj.getDirection() == dir
+//                    && obj.isOn(x, y);
+//        }
+//        return false;
+//    }
+
+    /**
+     * Returns a power to assosiate with each arrow
+     */
+    private static double arrowPower(int arrowID) {
+        switch (arrowID) {
+            case 11: // bronze arrows
+            case 574: // poison bronze arrows
+            case 190: // crossbow bolts
+            case 592: // poison cross bow bolts
+            case 1013: // bronze throwing dart
+            case 1122: // poison bronze throwing dart
+                return 0;
+            case 638:// iron arrows
+            case 639:// poison iron arrows
+            case 1015: // iron throwing dart
+            case 1123:// poison iron throwing dart
+                return 0.5;
+            case 640:// steel arrows
+            case 641:// poison steel arrows
+            case 1024: // steel throwing dart
+            case 1124: // poison steel throwing dart
+            case 1076:// bronze throwing dart
+            case 1128:// poison bronze throwing knife
+            case 827:// bronze spear
+            case 1135:// poison bronze spear
+                return 1;
+            case 642:// mith arrows
+            case 643:// poison mith arrows
+            case 786:// pearle crossbow bolts
+            case 1068:// mith throwing dart
+            case 1125: // poison mith throwing dart
+            case 1075:// iron throwing dart
+            case 1129:// poison iron throwing knife
+            case 1088:// iron spear
+            case 1136:// poison iron spear
+                return 1.5;
+            case 644:// addy arrows
+            case 645:// poison addy arrows
+            case 1069:// addy throwing dart
+            case 1126:// poison addy throwing dart
+            case 1077:// steel throwing knife
+            case 1130:// poison steel throwing knife
+            case 1089:// steel spear
+            case 1137:// poison steel spear
+                return 1.75;
+            case 1081:// black throwing knife
+            case 1132:// poison black throwing knife
+                return 2;
+            case 646:// rune arrows
+            case 647:// poison rune arrows
+            case 1070:// rune throwing dart
+            case 1127:// poison rune throwing dart
+            case 1078:// mith throwing knife
+            case 1131:// poison mith throwing knife
+            case 1090:// mith spear
+            case 1138:// poison mith spear
+                return 5;
+            case 723:// ice arrows
+            case 1079:// addy throwing knife
+            case 1133:// poison addy throwing knife
+            case 1091:// addy spear
+            case 1139:// poison addy spear
+                return 6;
+            case 1080:// rune throwing knife
+            case 1134:// poison rune throwing knife
+            case 1092:// rune spear
+            case 1140:// poison rune spear
+                return 7;
+            case 785:// lit arrow (not stackable, why not?)
+                return 10;
+            default:
+                return 0;
+        }
+    }
+
+    public static int bitToDoorDir(int bit) {
+        switch (bit) {
+            case 1:
+                return 0;
+            case 2:
+                return 1;
+            case 4:
+                return -1;
+            case 8:
+                return -1;
+        }
+        return -1;
+    }
+
+    public static int bitToObjectDir(int bit) {
+        switch (bit) {
+            case 1:
+                return 6;
+            case 2:
+                return 0;
+            case 4:
+                return 2;
+            case 8:
+                return 4;
+        }
+        return -1;
+    }
 
     /**
      * Calculates what one mob should hit on another with range
@@ -527,6 +550,35 @@ public final class Formulae {
     }
 
     /**
+     * gets the new sprite direction to face
+     *
+     */
+//    public static int getDirection(Mob you, Mob them) {
+//
+//        if (you.getX() == them.getX() + 1 && you.getY() == them.getY() + 1) // bottom
+//            // left
+//            return 3;
+//        else if (you.getX() == them.getX() + 1 && you.getY() == them.getY() - 1) // top
+//            // left
+//            return 1;
+//        else if (you.getX() == them.getX() - 1 && you.getY() == them.getY() - 1) // right
+//            // up
+//            return 7;
+//        else if (you.getX() == them.getX() - 1 && you.getY() == them.getY() + 1) // right/down
+//            return 5;
+//        else if (you.getX() == them.getX() - 1) // face right
+//            return 6;
+//        else if (you.getX() == them.getX() + 1) // face left
+//            return 2;
+//        else if (you.getY() == them.getY() + 1) // face down
+//            return 4;
+//        else if (you.getY() == them.getY() - 1) // face up
+//            return 0;
+//
+//        return -1;
+//    }
+
+    /**
      * Calculate how much experience a Mob gives
      */
 //    public static int combatExperience(Mob mob) {
@@ -549,20 +601,35 @@ public final class Formulae {
     }
 
     /**
+     * Decide what fish, if any, we should get from the water
+     */
+//    public static ObjectFishDef getFish(int waterId, int fishingLevel, int click) {
+//        ArrayList<ObjectFishDef> fish = new ArrayList<ObjectFishDef>();
+//        for (ObjectFishDef def : EntityHandler.getObjectFishingDef(waterId,
+//                click).getFishDefs()) {
+//            if (fishingLevel >= def.getReqLevel()) {
+//                fish.add(def);
+//            }
+//        }
+//        if (fish.size() <= 0) {
+//            return null;
+//        }
+//        ObjectFishDef thisFish = fish.get(DataConversions.random(0,
+//                fish.size() - 1));
+//        int levelDiff = fishingLevel - thisFish.getReqLevel();
+//        if (levelDiff < 0) {
+//            return null;
+//        }
+//        return DataConversions.percentChance(offsetToPercent(levelDiff)) ? thisFish
+//                : null;
+//    }
+
+    /**
      * Should the web be cut?
      */
     public static boolean cutWeb() {
         return DataConversions.random(0, 4) != 0;
     }
-
-//    public static boolean doorAtFacing(Entity e, int x, int y, int dir) {
-//        if (dir >= 0 && e instanceof GameObject) {
-//            GameObject obj = (GameObject) e;
-//            return obj.getType() == 1 && obj.getDirection() == dir
-//                    && obj.isOn(x, y);
-//        }
-//        return false;
-//    }
 
     /**
      * Check what level the given experience corresponds to
@@ -598,157 +665,6 @@ public final class Formulae {
         return DataConversions.roundUp(baseExp + (level * 1.75D));
     }
 
-    /**
-     * Generates a session id
-     */
-    public static long generateSessionKey(byte userByte) {
-        return DataConversions.getRandom().nextLong();
-    }
-
-    /**
-     * Gets the type of bar we have
-     */
-    public static int getBarType(int barID) {
-        switch (barID) {
-            case 169:
-                return 0;
-            case 170:
-                return 1;
-            case 171:
-                return 2;
-            case 173:
-                return 3;
-            case 174:
-                return 4;
-            case 408:
-                return 5;
-        }
-        return -1;
-    }
-
-    /**
-     * Calculate a mobs combat level based on their stats
-     */
-    public static int getCombatlevel(int[] stats) {
-        return getCombatLevel(stats[0], stats[1], stats[2], stats[3], stats[6],
-                stats[5], stats[4]);
-    }
-
-    /**
-     * Calculate a mobs combat level based on their stats
-     */
-    public static int getCombatLevel(int att, int def, int str, int hits,
-                                     int magic, int pray, int range) {
-        double attack = att + str;
-        double defense = def + hits;
-        double mage = pray + magic;
-        mage /= 8D;
-
-        if (attack < ((double) range * 1.5D)) {
-            return (int) ((defense / 4D) + ((double) range * 0.375D) + mage);
-        } else {
-            return (int) ((attack / 4D) + (defense / 4D) + mage);
-        }
-    }
-
-    /**
-     * gets the new sprite direction to face
-     *
-     */
-//    public static int getDirection(Mob you, Mob them) {
-//
-//        if (you.getX() == them.getX() + 1 && you.getY() == them.getY() + 1) // bottom
-//            // left
-//            return 3;
-//        else if (you.getX() == them.getX() + 1 && you.getY() == them.getY() - 1) // top
-//            // left
-//            return 1;
-//        else if (you.getX() == them.getX() - 1 && you.getY() == them.getY() - 1) // right
-//            // up
-//            return 7;
-//        else if (you.getX() == them.getX() - 1 && you.getY() == them.getY() + 1) // right/down
-//            return 5;
-//        else if (you.getX() == them.getX() - 1) // face right
-//            return 6;
-//        else if (you.getX() == them.getX() + 1) // face left
-//            return 2;
-//        else if (you.getY() == them.getY() + 1) // face down
-//            return 4;
-//        else if (you.getY() == them.getY() - 1) // face up
-//            return 0;
-//
-//        return -1;
-//    }
-
-    /**
-     * Gets the empty jug ID
-     */
-    public static int getEmptyJug(int fullJug) {
-        switch (fullJug) {
-            case 50:
-                return 21;
-            case 141:
-                return 140;
-            case 342:
-                return 341;
-        }
-        return -1;
-    }
-
-    /**
-     * Decide what fish, if any, we should get from the water
-     */
-//    public static ObjectFishDef getFish(int waterId, int fishingLevel, int click) {
-//        ArrayList<ObjectFishDef> fish = new ArrayList<ObjectFishDef>();
-//        for (ObjectFishDef def : EntityHandler.getObjectFishingDef(waterId,
-//                click).getFishDefs()) {
-//            if (fishingLevel >= def.getReqLevel()) {
-//                fish.add(def);
-//            }
-//        }
-//        if (fish.size() <= 0) {
-//            return null;
-//        }
-//        ObjectFishDef thisFish = fish.get(DataConversions.random(0,
-//                fish.size() - 1));
-//        int levelDiff = fishingLevel - thisFish.getReqLevel();
-//        if (levelDiff < 0) {
-//            return null;
-//        }
-//        return DataConversions.percentChance(offsetToPercent(levelDiff)) ? thisFish
-//                : null;
-//    }
-
-    /**
-     * Returns a gem ID
-     */
-    public static int getGem() {
-        int rand = DataConversions.random(0, 100);
-        if (rand < 10) {
-            return 157;
-        } else if (rand < 30) {
-            return 158;
-        } else if (rand < 60) {
-            return 159;
-        } else {
-            return 160;
-        }
-    }
-
-    /**
-     * Check what height we are currently at on the map
-     */
-    public static int getHeight(int y) {
-        return (int) (y / 944);
-    }
-
-    /**
-     * Check what height we are currently at on the map
-     */
-    public static int getHeight(Point location) {
-        return getHeight(location.getY());
-    }
-
 //    public static int getItemPos(Shop shop, int id) {
 //        for (int i = 0; i < shop.getItems().size(); i++) {
 //            if (shop.getItems().get(i).getID() == id)
@@ -766,41 +682,10 @@ public final class Formulae {
 //    }
 
     /**
-     * Should we get a log from the tree?
+     * Generates a session id
      */
-    public static boolean getLog(ObjectWoodcuttingDef def, int woodcutLevel,
-                                 int axeId) {
-        int levelDiff = woodcutLevel - def.getReqLevel();
-        if (levelDiff < 0) {
-            return false;
-        }
-        switch (axeId) {
-            case 87:
-                levelDiff += 0;
-                break;
-            case 12:
-                levelDiff += 2;
-                break;
-            case 428:
-                levelDiff += 4;
-                break;
-            case 88:
-                levelDiff += 6;
-                break;
-            case 203:
-                levelDiff += 8;
-                break;
-            case 204:
-                levelDiff += 10;
-                break;
-            case 405:
-                levelDiff += 12;
-                break;
-        }
-        if (def.getReqLevel() == 1 && levelDiff >= 40) {
-            return true;
-        }
-        return DataConversions.percentChance(offsetToPercent(levelDiff));
+    public static long generateSessionKey(byte userByte) {
+        return DataConversions.getRandom().nextLong();
     }
 
     /*
@@ -843,97 +728,66 @@ public final class Formulae {
       * (DataConversions.random(0, 95) * 0.01D))))); } } return 0; }
       */
 
-    public static String getLvlDiffColour(int lvlDiff) {
-        if (lvlDiff < -9) {
-            return "@red@";
-        } else if (lvlDiff < -6) {
-            return "@or3@";
-        } else if (lvlDiff < -3) {
-            return "@or2@";
-        } else if (lvlDiff < 0) {
-            return "@or1@";
-        } else if (lvlDiff > 9) {
-            return "@gre@";
-        } else if (lvlDiff > 6) {
-            return "@gr3@";
-        } else if (lvlDiff > 3) {
-            return "@gr2@";
-        } else if (lvlDiff > 0) {
-            return "@gr1@";
-        }
-        return "@whi@";
-    }
-
-    public static int getNewY(int currentY, boolean up) {
-        int height = getHeight(currentY);
-        int newHeight;
-        if (up) {
-            if (height == 3) {
-                newHeight = 0;
-            } else if (height >= 2) {
-                return currentY;
-            } else {
-                newHeight = height + 1;
-            }
-        } else {
-            if (height == 0) {
-                newHeight = 3;
-            } else if (height >= 3) {
-                return currentY;
-            } else {
-                newHeight = height - 1;
-            }
-        }
-        return (newHeight * 944) + (currentY % 944);
+    public static int getBarIdFromItem(int itemID) {
+        if (DataConversions.inArray(BRONZE, itemID))
+            return 169;
+        if (DataConversions.inArray(IRON, itemID))
+            return 170;
+        if (DataConversions.inArray(STEEL, itemID))
+            return 171;
+        if (DataConversions.inArray(MITH, itemID))
+            return 173;
+        if (DataConversions.inArray(ADDY, itemID))
+            return 174;
+        if (DataConversions.inArray(RUNE, itemID))
+            return 408;
+        return -1;
     }
 
     /**
-     * Should we can get an ore from the rock?
+     * Gets the type of bar we have
      */
-    public static boolean getOre(ObjectMiningDef def, int miningLevel, int axeId) {
-
-        int levelDiff = miningLevel - def.getReqLevel();
-        if (levelDiff > 50)
-            return Formulae.Rand(0, 9) != 1;
-        if (levelDiff < 0) {
-            return false;
+    public static int getBarType(int barID) {
+        switch (barID) {
+            case 169:
+                return 0;
+            case 170:
+                return 1;
+            case 171:
+                return 2;
+            case 173:
+                return 3;
+            case 174:
+                return 4;
+            case 408:
+                return 5;
         }
-        int bonus = 0;
-        switch (axeId) {
-            case 156:
-                bonus = 0;
-                break;
-            case 1258:
-                bonus = 2;
-                break;
-            case 1259:
-                bonus = 6;
-                break;
-            case 1260:
-                bonus = 8;
-                break;
-            case 1261:
-                bonus = 10;
-                break;
-            case 1262:
-                bonus = 12;
-                break;
-        }
-        return DataConversions
-                .percentChance(offsetToPercent(levelDiff + bonus));
+        return -1;
     }
 
-    public static int getPotionDose(int id) {
-        if (DataConversions.inArray(potions1Dose, id)) {
-            return 1;
+    /**
+     * Calculate a mobs combat level based on their stats
+     */
+    public static int getCombatLevel(int att, int def, int str, int hits,
+                                     int magic, int pray, int range) {
+        double attack = att + str;
+        double defense = def + hits;
+        double mage = pray + magic;
+        mage /= 8D;
+
+        if (attack < ((double) range * 1.5D)) {
+            return (int) ((defense / 4D) + ((double) range * 0.375D) + mage);
+        } else {
+            return (int) ((attack / 4D) + (defense / 4D) + mage);
         }
-        if (DataConversions.inArray(potions2Dose, id)) {
-            return 2;
-        }
-        if (DataConversions.inArray(potions3Dose, id)) {
-            return 3;
-        }
-        return 0;
+    }
+
+    /**
+     * Calculate a mobs combat level based on their stats
+     */
+    public static int getCombatlevel(int[] stats) {
+        return getCombatLevel(stats[0], stats[1], stats[2], stats[3], stats[6],
+                stats[5], stats[4]);
     }
 
     /**
@@ -1077,6 +931,207 @@ public final class Formulae {
 //    }
 
     /**
+     * Gets the empty jug ID
+     */
+    public static int getEmptyJug(int fullJug) {
+        switch (fullJug) {
+            case 50:
+                return 21;
+            case 141:
+                return 140;
+            case 342:
+                return 341;
+        }
+        return -1;
+    }
+
+    /**
+     * Returns a gem ID
+     */
+    public static int getGem() {
+        int rand = DataConversions.random(0, 100);
+        if (rand < 10) {
+            return 157;
+        } else if (rand < 30) {
+            return 158;
+        } else if (rand < 60) {
+            return 159;
+        } else {
+            return 160;
+        }
+    }
+
+    /**
+     * Check what height we are currently at on the map
+     */
+    public static int getHeight(int y) {
+        return (int) (y / 944);
+    }
+
+    /**
+     * Check what height we are currently at on the map
+     */
+    public static int getHeight(Point location) {
+        return getHeight(location.getY());
+    }
+
+    /**
+     * Should we get a log from the tree?
+     */
+    public static boolean getLog(ObjectWoodcuttingDef def, int woodcutLevel,
+                                 int axeId) {
+        int levelDiff = woodcutLevel - def.getReqLevel();
+        if (levelDiff < 0) {
+            return false;
+        }
+        switch (axeId) {
+            case 87:
+                levelDiff += 0;
+                break;
+            case 12:
+                levelDiff += 2;
+                break;
+            case 428:
+                levelDiff += 4;
+                break;
+            case 88:
+                levelDiff += 6;
+                break;
+            case 203:
+                levelDiff += 8;
+                break;
+            case 204:
+                levelDiff += 10;
+                break;
+            case 405:
+                levelDiff += 12;
+                break;
+        }
+        if (def.getReqLevel() == 1 && levelDiff >= 40) {
+            return true;
+        }
+        return DataConversions.percentChance(offsetToPercent(levelDiff));
+    }
+
+    /**
+     * Should the fire light or fail?
+     */
+//    public static boolean lightLogs(FiremakingDef def, int firemakingLvl) {
+//        int levelDiff = firemakingLvl - def.getRequiredLevel();
+//        if (levelDiff < 0) {
+//            return false;
+//        }
+//        if (levelDiff >= 20) {
+//            return true;
+//        }
+//        return DataConversions.random(0, levelDiff + 1) != 0;
+//    }
+
+    // maxHit
+
+    public static String getLvlDiffColour(int lvlDiff) {
+        if (lvlDiff < -9) {
+            return "@red@";
+        } else if (lvlDiff < -6) {
+            return "@or3@";
+        } else if (lvlDiff < -3) {
+            return "@or2@";
+        } else if (lvlDiff < 0) {
+            return "@or1@";
+        } else if (lvlDiff > 9) {
+            return "@gre@";
+        } else if (lvlDiff > 6) {
+            return "@gr3@";
+        } else if (lvlDiff > 3) {
+            return "@gr2@";
+        } else if (lvlDiff > 0) {
+            return "@gr1@";
+        }
+        return "@whi@";
+    }
+
+    public static int getNewY(int currentY, boolean up) {
+        int height = getHeight(currentY);
+        int newHeight;
+        if (up) {
+            if (height == 3) {
+                newHeight = 0;
+            } else if (height >= 2) {
+                return currentY;
+            } else {
+                newHeight = height + 1;
+            }
+        } else {
+            if (height == 0) {
+                newHeight = 3;
+            } else if (height >= 3) {
+                return currentY;
+            } else {
+                newHeight = height - 1;
+            }
+        }
+        return (newHeight * 944) + (currentY % 944);
+    }
+
+    /**
+     * Should we can get an ore from the rock?
+     */
+    public static boolean getOre(ObjectMiningDef def, int miningLevel, int axeId) {
+
+        int levelDiff = miningLevel - def.getReqLevel();
+        if (levelDiff > 50)
+            return Formulae.Rand(0, 9) != 1;
+        if (levelDiff < 0) {
+            return false;
+        }
+        int bonus = 0;
+        switch (axeId) {
+            case 156:
+                bonus = 0;
+                break;
+            case 1258:
+                bonus = 2;
+                break;
+            case 1259:
+                bonus = 6;
+                break;
+            case 1260:
+                bonus = 8;
+                break;
+            case 1261:
+                bonus = 10;
+                break;
+            case 1262:
+                bonus = 12;
+                break;
+        }
+        return DataConversions
+                .percentChance(offsetToPercent(levelDiff + bonus));
+    }
+
+//    public static boolean objectAtFacing(Entity e, int x, int y, int dir) {
+//        if (dir >= 0 && e instanceof GameObject) {
+//            GameObject obj = (GameObject) e;
+//            return obj.getType() == 0 && obj.getDirection() == dir
+//                    && obj.isOn(x, y);
+//        }
+//        return false;
+//    }
+
+    public static int getPotionDose(int id) {
+        if (DataConversions.inArray(potions1Dose, id)) {
+            return 1;
+        }
+        if (DataConversions.inArray(potions2Dose, id)) {
+            return 2;
+        }
+        if (DataConversions.inArray(potions3Dose, id)) {
+            return 3;
+        }
+        return 0;
+    }
+
+    /**
      * Gets the smithing exp for the given amount of the right bars
      */
     public static int getSmithingExp(int barID, int barCount) {
@@ -1097,6 +1152,15 @@ public final class Formulae {
         return -1;
     }
 
+//    public static int styleBonus(Mob mob, int skill) {
+//        int style = mob.getCombatStyle();
+//        if (style == 0) {
+//            return 1;
+//        }
+//        return (skill == 0 && style == 2) || (skill == 1 && style == 3)
+//                || (skill == 2 && style == 1) ? 3 : 0;
+//    }
+
     /**
      * Given a stat string get its index returns -1 on failure
      */
@@ -1111,6 +1175,10 @@ public final class Formulae {
 
     public static boolean isP2P(Object... objs) {
         return isP2P(false, objs);
+    }
+
+    public static boolean isRareItem(int id) {
+        return DataConversions.inArray(rares, id);
     }
 
     /**
@@ -1175,22 +1243,6 @@ public final class Formulae {
     }
 
     /**
-     * Should the fire light or fail?
-     */
-//    public static boolean lightLogs(FiremakingDef def, int firemakingLvl) {
-//        int levelDiff = firemakingLvl - def.getRequiredLevel();
-//        if (levelDiff < 0) {
-//            return false;
-//        }
-//        if (levelDiff >= 20) {
-//            return true;
-//        }
-//        return DataConversions.random(0, levelDiff + 1) != 0;
-//    }
-
-    // maxHit
-
-    /**
      * Should the arrow be dropped or disappear
      */
     public static boolean looseArrow(int damage) {
@@ -1225,15 +1277,6 @@ public final class Formulae {
         return levels[type];
     }
 
-//    public static boolean objectAtFacing(Entity e, int x, int y, int dir) {
-//        if (dir >= 0 && e instanceof GameObject) {
-//            GameObject obj = (GameObject) e;
-//            return obj.getType() == 0 && obj.getDirection() == dir
-//                    && obj.isOn(x, y);
-//        }
-//        return false;
-//    }
-
     private static int offsetToPercent(int levelDiff) {
         return levelDiff > 40 ? 70 : 30 + levelDiff;
     }
@@ -1246,54 +1289,5 @@ public final class Formulae {
         return Double.valueOf(numberString.substring(0,
                 numberString.indexOf(".") + 2));
     }
-
-    public static int Rand(int low, int high) {
-        return low + r.nextInt(high - low);
-    }
-
-//    public static int styleBonus(Mob mob, int skill) {
-//        int style = mob.getCombatStyle();
-//        if (style == 0) {
-//            return 1;
-//        }
-//        return (skill == 0 && style == 2) || (skill == 1 && style == 3)
-//                || (skill == 2 && style == 1) ? 3 : 0;
-//    }
-
-    public static int[] rares = new int[]{828, 831, 832, 575, 576, 577, 578,
-            579, 580, 581, 971, 1316, 1315, 1314, 422, 1289, 1156, 677};
-
-    public static boolean isRareItem(int id) {
-        return DataConversions.inArray(rares, id);
-    }
-
-    public static int getBarIdFromItem(int itemID) {
-        if (DataConversions.inArray(BRONZE, itemID))
-            return 169;
-        if (DataConversions.inArray(IRON, itemID))
-            return 170;
-        if (DataConversions.inArray(STEEL, itemID))
-            return 171;
-        if (DataConversions.inArray(MITH, itemID))
-            return 173;
-        if (DataConversions.inArray(ADDY, itemID))
-            return 174;
-        if (DataConversions.inArray(RUNE, itemID))
-            return 408;
-        return -1;
-    }
-
-    public final static int[] IRON = {6, 5, 7, 8, 2, 3, 9, 28, 1075, 1, 71,
-            83, 77, 12, 1258, 89, 0, 670, 1063};
-    public final static int[] RUNE = {112, 399, 400, 401, 404, 403, 402, 396,
-            1080, 397, 75, 398, 81, 405, 1262, 93, 98, 674, 1067};
-    public final static int[] ADDY = {111, 107, 116, 120, 131, 127, 123, 65,
-            1079, 69, 74, 86, 80, 204, 1261, 92, 97, 673, 1066};
-    public final static int[] MITH = {110, 106, 115, 119, 130, 126, 122, 64,
-            1078, 68, 73, 85, 79, 203, 1260, 91, 96, 672, 1065};
-    public final static int[] STEEL = {109, 105, 114, 118, 129, 125, 121, 63,
-            1077, 67, 72, 84, 78, 88, 1259, 90, 95, 671, 1064};
-    public final static int[] BRONZE = {108, 104, 113, 117, 128, 124, 206, 62,
-            1076, 66, 70, 82, 76, 87, 156, 87, 205, 669, 1062};
 
 }

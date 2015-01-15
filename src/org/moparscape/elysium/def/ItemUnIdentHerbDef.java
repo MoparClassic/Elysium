@@ -10,13 +10,13 @@ public class ItemUnIdentHerbDef {
      */
     public int exp;
     /**
-     * The id of the herb this turns into
-     */
-    private int newId;
-    /**
      * Herblaw level required to identify
      */
     public int requiredLvl;
+    /**
+     * The id of the herb this turns into
+     */
+    private int newId;
 
     public int getExp() {
         return exp;

@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 public final class Region {
 
-    private static final int REGION_SIZE = 40;
+    private static final int REGION_SIZE = 64;
 
     private static final int LOWER_BOUND = (REGION_SIZE / 2) - 1;
 
@@ -27,13 +27,9 @@ public final class Region {
     private static final int VERTICAL_REGIONS = (World.MAX_HEIGHT / REGION_SIZE) + 1;
 
     private static final Region[][] regions = new Region[HORIZONTAL_REGIONS][VERTICAL_REGIONS];
-
-    private final Queue<GameObject> objects = new ConcurrentLinkedQueue<GameObject>();
-
     private final Queue<Item> items = new ConcurrentLinkedQueue<Item>();
-
     private final Queue<Npc> npcs = new ConcurrentLinkedQueue<Npc>();
-
+    private final Queue<GameObject> objects = new ConcurrentLinkedQueue<GameObject>();
     private final Queue<Player> players = new ConcurrentLinkedQueue<Player>();
 
     static {
@@ -55,8 +51,80 @@ public final class Region {
         return regions[regionX][regionY];
     }
 
-    public static Region[] getViewableRegions(Point p) {
-        return getViewableRegions(p.getX(), p.getY());
+    public static Iterable<Item> getViewableItems(Point p, int radius) {
+        Region[] regions = getViewableRegions(p);
+        List<Item> items = new LinkedList<Item>();
+
+        for (Region r : regions) {
+            for (Item i : r.getItems()) {
+                if (!i.isRemoved() && p.withinRange(i.getLocation(), radius)) {
+                    items.add(i);
+                }
+            }
+        }
+
+        return items;
+    }
+
+    public static Iterable<Npc> getViewableNpcs(Point p, int radius) {
+        Region[] regions = getViewableRegions(p);
+        List<Npc> npcs = new LinkedList<Npc>();
+
+        for (Region r : regions) {
+            for (Npc n : r.getNpcs()) {
+                if (p.withinRange(n.getLocation(), radius)) {
+                    npcs.add(n);
+                }
+            }
+        }
+
+        return npcs;
+    }
+
+    public static Iterable<GameObject> getViewableObjects(Point p, int radius) {
+        Region[] regions = getViewableRegions(p);
+        List<GameObject> objects = new LinkedList<GameObject>();
+
+        for (Region r : regions) {
+            for (GameObject go : r.getObjects()) {
+                if (!go.isRemoved() && p.withinRange(go.getLocation(), radius)) {
+                    objects.add(go);
+                }
+            }
+        }
+
+        return objects;
+    }
+
+    public static Iterable<Player> getViewablePlayers(Point p, int radius) {
+        Region[] regions = getViewableRegions(p);
+        List<Player> players = new LinkedList<Player>();
+
+        for (Region r : regions) {
+            for (Player player : r.getPlayers()) {
+                if (player.isLoggedIn() && p.withinRange(player.getLocation(), radius)) {
+                    players.add(player);
+                }
+            }
+        }
+
+        return players;
+    }
+
+    public static Iterable<Player> getViewablePlayers(Player player, int radius) {
+        Point loc = player.getLocation();
+        Region[] regions = getViewableRegions(loc);
+        List<Player> players = new LinkedList<Player>();
+
+        for (Region r : regions) {
+            for (Player p : r.getPlayers()) {
+                if (p != player && p.isLoggedIn() && loc.withinRange(p.getLocation(), radius)) {
+                    players.add(p);
+                }
+            }
+        }
+
+        return players;
     }
 
     private static Region[] getViewableRegions(int x, int y) {
@@ -93,100 +161,24 @@ public final class Region {
         return neighbours;
     }
 
-    public static Iterable<GameObject> getViewableObjects(Point p, int radius) {
-        Region[] regions = getViewableRegions(p);
-        List<GameObject> objects = new LinkedList<GameObject>();
-
-        for (Region r : regions) {
-            for (GameObject go : r.getObjects()) {
-                if (!go.isRemoved() && p.withinRange(go.getLocation(), radius)) {
-                    objects.add(go);
-                }
-            }
-        }
-
-        return objects;
+    public static Region[] getViewableRegions(Point p) {
+        return getViewableRegions(p.getX(), p.getY());
     }
 
-    public static Iterable<Item> getViewableItems(Point p, int radius) {
-        Region[] regions = getViewableRegions(p);
-        List<Item> items = new LinkedList<Item>();
-
-        for (Region r : regions) {
-            for (Item i : r.getItems()) {
-                if (!i.isRemoved() && p.withinRange(i.getLocation(), radius)) {
-                    items.add(i);
-                }
-            }
-        }
-
-        return items;
+    public void addItem(Item item) {
+        items.add(item);
     }
 
-    public static Iterable<Npc> getViewableNpcs(Point p, int radius) {
-        Region[] regions = getViewableRegions(p);
-        List<Npc> npcs = new LinkedList<Npc>();
-
-        for (Region r : regions) {
-            for (Npc n : r.getNpcs()) {
-                if (p.withinRange(n.getLocation(), radius)) {
-                    npcs.add(n);
-                }
-            }
-        }
-
-        return npcs;
+    public void addNpc(Npc npc) {
+        npcs.add(npc);
     }
 
-    public static Iterable<Player> getViewablePlayers(Point p, int radius) {
-        Region[] regions = getViewableRegions(p);
-        List<Player> players = new LinkedList<Player>();
-
-        for (Region r : regions) {
-            for (Player player : r.getPlayers()) {
-                if (player.isLoggedIn() && p.withinRange(player.getLocation(), radius)) {
-                    players.add(player);
-                }
-            }
-        }
-
-        return players;
+    public void addObject(GameObject go) {
+        objects.add(go);
     }
 
-    public static Iterable<Player> getViewablePlayers(Player player, int radius) {
-        Point loc = player.getLocation();
-        Region[] regions = getViewableRegions(loc);
-        List<Player> players = new LinkedList<Player>();
-
-        for (Region r : regions) {
-            for (Player p : r.getPlayers()) {
-                if (p != player && p.isLoggedIn() && loc.withinRange(p.getLocation(), radius)) {
-                    players.add(p);
-                }
-            }
-        }
-
-        return players;
-    }
-
-    public Iterable<GameObject> getObjects() {
-        return Collections.unmodifiableCollection(objects);
-    }
-
-    public Iterable<Item> getItems() {
-        return Collections.unmodifiableCollection(items);
-    }
-
-    public Iterable<Npc> getNpcs() {
-        return Collections.unmodifiableCollection(npcs);
-    }
-
-    public Iterable<Player> getPlayers() {
-        return Collections.unmodifiableCollection(players);
-    }
-
-    public GameObject getObject() {
-        throw new UnsupportedOperationException();
+    public void addPlayer(Player player) {
+        players.add(player);
     }
 
     public Item getItem(int itemId, Point location) {
@@ -199,32 +191,32 @@ public final class Region {
         return null;
     }
 
+    public Iterable<Item> getItems() {
+        return Collections.unmodifiableCollection(items);
+    }
+
     public Npc getNpc() {
         throw new UnsupportedOperationException();
+    }
+
+    public Iterable<Npc> getNpcs() {
+        return Collections.unmodifiableCollection(npcs);
+    }
+
+    public GameObject getObject() {
+        throw new UnsupportedOperationException();
+    }
+
+    public Iterable<GameObject> getObjects() {
+        return Collections.unmodifiableCollection(objects);
     }
 
     public Player getPlayer() {
         throw new UnsupportedOperationException();
     }
 
-    public void addObject(GameObject go) {
-        objects.add(go);
-    }
-
-    public void addItem(Item item) {
-        items.add(item);
-    }
-
-    public void addNpc(Npc npc) {
-        npcs.add(npc);
-    }
-
-    public void addPlayer(Player player) {
-        players.add(player);
-    }
-
-    public void removeObject(GameObject go) {
-        objects.remove(go);
+    public Iterable<Player> getPlayers() {
+        return Collections.unmodifiableCollection(players);
     }
 
     public void removeItem(Item item) {
@@ -233,6 +225,10 @@ public final class Region {
 
     public void removeNpc(Npc npc) {
         npcs.remove(npc);
+    }
+
+    public void removeObject(GameObject go) {
+        objects.remove(go);
     }
 
     public void removePlayer(Player player) {

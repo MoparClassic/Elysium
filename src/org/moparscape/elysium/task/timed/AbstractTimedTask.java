@@ -18,37 +18,6 @@ public abstract class AbstractTimedTask implements TimedTask {
         this.recurringTime = recurringTime;
     }
 
-    public long getExecutionTime() {
-        return execTime.get();
-    }
-
-    /**
-     * Returns true if this task should be repeated in the future.
-     * <p>
-     * This implementation returns false by default. If a task should
-     * be executed repeatedly then it is up to the implementor of the
-     * task in question to override this method such that it returns
-     * true when appropriate.
-     *
-     * @return True if this task should be repeated
-     */
-    public boolean shouldRepeat() {
-        return false;
-    }
-
-    /**
-     * Sets the next time that this task should be executed.
-     * <p>
-     * This implementation sets the task to re-execute immediately
-     * at the next chance.
-     *
-     * @param lastExecuted The current time (possibly estimate) that the
-     *                     task was last executed
-     */
-    public final void setNextRunningTime(long lastExecuted) {
-        execTime.set(lastExecuted + recurringTime);
-    }
-
     /**
      * Compares this task to the specified task.
      * This compareTo function works such that tasks which should be
@@ -65,5 +34,36 @@ public abstract class AbstractTimedTask implements TimedTask {
             return diff > 0 ? 1 : -1;
         }
         return 0;
+    }
+
+    public long getExecutionTime() {
+        return execTime.get();
+    }
+
+    /**
+     * Sets the next time that this task should be executed.
+     * <p>
+     * This implementation sets the task to re-execute immediately
+     * at the next chance.
+     *
+     * @param lastExecuted The current time (possibly estimate) that the
+     *                     task was last executed
+     */
+    public final void setNextRunningTime(long lastExecuted) {
+        execTime.set(lastExecuted + recurringTime);
+    }
+
+    /**
+     * Returns true if this task should be repeated in the future.
+     * <p>
+     * This implementation returns false by default. If a task should
+     * be executed repeatedly then it is up to the implementor of the
+     * task in question to override this method such that it returns
+     * true when appropriate.
+     *
+     * @return True if this task should be repeated
+     */
+    public boolean shouldRepeat() {
+        return false;
     }
 }

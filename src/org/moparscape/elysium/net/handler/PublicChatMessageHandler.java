@@ -2,7 +2,6 @@ package org.moparscape.elysium.net.handler;
 
 import org.moparscape.elysium.entity.ChatMessage;
 import org.moparscape.elysium.entity.Player;
-import org.moparscape.elysium.entity.component.Communication;
 import org.moparscape.elysium.net.Session;
 import org.moparscape.elysium.net.codec.decoder.message.PublicChatMessage;
 
@@ -17,6 +16,6 @@ public final class PublicChatMessageHandler extends MessageHandler<PublicChatMes
         //To change body of implemented methods use File | Settings | File Templates.
         System.out.println("Public chat message received!");
         ChatMessage cm = new ChatMessage(player, message.getMessagePayload());
-        player.getComponent(Communication.class).addChatMessage(cm);
+        player.getCommunication().addChatMessage(cm);
     }
 }

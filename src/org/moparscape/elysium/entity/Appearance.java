@@ -10,20 +10,18 @@ import org.moparscape.elysium.util.Formulae;
  */
 public final class Appearance {
 
+    private static final int DEFAULT_BODY = 2;
     private static final byte DEFAULT_HAIR_COLOUR = 2;
+    private static final int DEFAULT_HEAD = 1;
+    private static final byte DEFAULT_SKIN_COLOUR = 0;
     private static final byte DEFAULT_TOP_COLOUR = 8;
     private static final byte DEFAULT_TROUSER_COLOUR = 14;
-    private static final byte DEFAULT_SKIN_COLOUR = 0;
-    private static final int DEFAULT_HEAD = 1;
-    private static final int DEFAULT_BODY = 2;
-
+    private final int body;
     private final byte hairColour;
+    private final int head;
+    private final byte skinColour;
     private final byte topColour;
     private final byte trouserColour;
-    private final byte skinColour;
-
-    private final int head;
-    private final int body;
 
     public Appearance() {
         this(DEFAULT_HAIR_COLOUR, DEFAULT_TOP_COLOUR, DEFAULT_TROUSER_COLOUR,

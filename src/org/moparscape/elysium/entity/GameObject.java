@@ -11,17 +11,21 @@ import org.moparscape.elysium.world.Point;
 public final class GameObject implements Locatable {
 
     private final GameObjectLoc loc;
-
-    private Point location;
-
-    private int id;
-
     private int direction;
-
+    private int id;
+    private Point location;
     private int type;
 
     public GameObject(GameObjectLoc loc) {
         this.loc = loc;
+    }
+
+    public int getDirection() {
+        return direction;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public Point getLocation() {
@@ -30,14 +34,6 @@ public final class GameObject implements Locatable {
 
     public void setLocation(Point location) {
         this.location = location;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public int getDirection() {
-        return direction;
     }
 
     public int getType() {

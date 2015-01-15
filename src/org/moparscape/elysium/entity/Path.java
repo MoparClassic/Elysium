@@ -35,16 +35,16 @@ public final class Path {
         this.waypointYOffsets = waypointYOffsets;
     }
 
+    public int getPathLength() {
+        return waypointXOffsets == null ? 0 : waypointXOffsets.length;
+    }
+
     public int getStartX() {
         return startX;
     }
 
     public int getStartY() {
         return startY;
-    }
-
-    public int getPathLength() {
-        return waypointXOffsets == null ? 0 : waypointXOffsets.length;
     }
 
     /**
@@ -55,17 +55,17 @@ public final class Path {
     }
 
     /**
-     * Gets the Y coord of the given waypoint
-     */
-    public int getWaypointY(int wayPoint) {
-        return startY + getWaypointYoffset(wayPoint);
-    }
-
-    /**
      * Gets the X offset of the given waypoint
      */
     public byte getWaypointXoffset(int wayPoint) {
         return wayPoint >= getPathLength() ? 0 : waypointXOffsets[wayPoint];
+    }
+
+    /**
+     * Gets the Y coord of the given waypoint
+     */
+    public int getWaypointY(int wayPoint) {
+        return startY + getWaypointYoffset(wayPoint);
     }
 
     /**

@@ -11,9 +11,8 @@ import java.util.*;
  */
 public final class CodecLookupService {
 
-    private static final List<MessageDecoder<? extends Message>> decoders;
-
     private static final Map<Class<? extends Message>, MessageDecoder<? extends Message>> decoderMap;
+    private static final List<MessageDecoder<? extends Message>> decoders;
 
     // Empty constructor to enforce singleton property
     private CodecLookupService() {
@@ -118,11 +117,10 @@ public final class CodecLookupService {
 
     private static final class ImmutableBindingBuilder {
 
-        private final List<MessageDecoder<? extends Message>> decoders =
-                new ArrayList<MessageDecoder<? extends Message>>(255);
-
         private final Map<Class<? extends Message>, MessageDecoder<? extends Message>> decoderMap =
                 new HashMap<Class<? extends Message>, MessageDecoder<? extends Message>>(100, 0.50f);
+        private final List<MessageDecoder<? extends Message>> decoders =
+                new ArrayList<MessageDecoder<? extends Message>>(255);
 
         public ImmutableBindingBuilder() {
             // Add dummy invalid message handlers to the list.
@@ -147,12 +145,12 @@ public final class CodecLookupService {
             this.decoderMap.put(decoder.getMessageType(), decoder);
         }
 
-        public Map<Class<? extends Message>, MessageDecoder<? extends Message>> messageToDecoderMap() {
-            return Collections.unmodifiableMap(this.decoderMap);
-        }
-
         public List<MessageDecoder<? extends Message>> decoderList() {
             return Collections.unmodifiableList(this.decoders);
+        }
+
+        public Map<Class<? extends Message>, MessageDecoder<? extends Message>> messageToDecoderMap() {
+            return Collections.unmodifiableMap(this.decoderMap);
         }
     }
 }

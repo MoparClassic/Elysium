@@ -19,58 +19,35 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 public final class Observer extends AbstractComponent {
 
-    private final Map<Integer, Integer> knownPlayerAppearanceIds = new ConcurrentHashMap<Integer, Integer>();
-
-    private final StatefulEntityCollection<GameObject> watchedObjects = new StatefulEntityCollection<GameObject>();
-
-    private final StatefulEntityCollection<Item> watchedItems = new StatefulEntityCollection<Item>();
-
-    private final StatefulEntityCollection<Npc> watchedNpcs = new StatefulEntityCollection<Npc>();
-
-    private final StatefulEntityCollection<Player> watchedPlayers = new StatefulEntityCollection<Player>();
-
-    private final Queue<Projectile> projectiles = new ConcurrentLinkedQueue<Projectile>();
-
-    private final Queue<Player> playerHitUpdates = new ConcurrentLinkedQueue<Player>();
-
-    private final Queue<Npc> npcHitUpdates = new ConcurrentLinkedQueue<Npc>();
-
     private final Queue<Bubble> bubbles = new ConcurrentLinkedQueue<Bubble>();
-
+    private final Map<Integer, Integer> knownPlayerAppearanceIds = new ConcurrentHashMap<Integer, Integer>();
+    private final Queue<Npc> npcHitUpdates = new ConcurrentLinkedQueue<Npc>();
+    private final Queue<Player> playerHitUpdates = new ConcurrentLinkedQueue<Player>();
+    private final Queue<Projectile> projectiles = new ConcurrentLinkedQueue<Projectile>();
+    private final StatefulEntityCollection<Item> watchedItems = new StatefulEntityCollection<Item>();
+    private final StatefulEntityCollection<Npc> watchedNpcs = new StatefulEntityCollection<Npc>();
+    private final StatefulEntityCollection<GameObject> watchedObjects = new StatefulEntityCollection<GameObject>();
+    private final StatefulEntityCollection<Player> watchedPlayers = new StatefulEntityCollection<Player>();
     private Player owner;
 
     private Sprite sprite;
 
-    public void setOwner(Player player) {
-        if (owner != null) {
-            throw new IllegalStateException("Observer's player is already set");
+    public Observer(Player owner, Sprite sprite) {
+        this.owner = owner;
+        this.sprite = sprite;
+    }
+
+    public void addPlayerAppearanceIds(int[] indices, int[] appearanceIds) {
+        for (int i = 0; i < indices.length; i++) {
+            knownPlayerAppearanceIds.put(indices[i], appearanceIds[i]);
         }
-        this.owner = player;
     }
 
-    @Override
-    public void resolveDependencies(Map<Class<? extends Component>, Component> components) {
-        this.sprite = Sprite.class.cast(components.get(Sprite.class));
-    }
-
-    public StatefulEntityCollection<GameObject> getWatchedObjects() {
-        return watchedObjects;
-    }
-
-    public StatefulEntityCollection<Item> getWatchedItems() {
-        return watchedItems;
-    }
-
-    public StatefulEntityCollection<Npc> getWatchedNpcs() {
-        return watchedNpcs;
-    }
-
-    public StatefulEntityCollection<Player> getWatchedPlayers() {
-        return watchedPlayers;
-    }
-
-    public Queue<Projectile> getProjectilesNeedingDisplayed() {
-        return projectiles;
+    public void clearDisplayLists() {
+        projectiles.clear();
+        playerHitUpdates.clear();
+        npcHitUpdates.clear();
+        bubbles.clear();
     }
 
     public Queue<Bubble> getBubblesNeedingDisplayed() {
@@ -79,27 +56,6 @@ public final class Observer extends AbstractComponent {
 
     public Queue<Npc> getNpcHitUpdates() {
         return npcHitUpdates;
-    }
-
-    public Queue<Player> getPlayerHitUpdates() {
-        return playerHitUpdates;
-    }
-
-    private boolean needsAppearanceUpdateFor(Player target) {
-        int targetIndex = target.getIndex();
-        Sprite targetSprite = target.getComponent(Sprite.class);
-        if (knownPlayerAppearanceIds.containsKey(targetIndex)) {
-            int knownAppearanceId = knownPlayerAppearanceIds.get(targetIndex);
-            if (knownAppearanceId != targetSprite.getAppearanceId()) {
-                knownPlayerAppearanceIds.put(targetIndex, targetSprite.getAppearanceId());
-                return true;
-            }
-        } else {
-            knownPlayerAppearanceIds.put(targetIndex, targetSprite.getAppearanceId());
-            return true;
-        }
-
-        return false;
     }
 
     public List<Player> getPlayerAppearanceUpdates() {
@@ -118,10 +74,50 @@ public final class Observer extends AbstractComponent {
         return needingUpdates;
     }
 
-    public void addPlayerAppearanceIds(int[] indices, int[] appearanceIds) {
-        for (int i = 0; i < indices.length; i++) {
-            knownPlayerAppearanceIds.put(indices[i], appearanceIds[i]);
+    public Queue<Player> getPlayerHitUpdates() {
+        return playerHitUpdates;
+    }
+
+    public Queue<Projectile> getProjectilesNeedingDisplayed() {
+        return projectiles;
+    }
+
+    public StatefulEntityCollection<Item> getWatchedItems() {
+        return watchedItems;
+    }
+
+    public StatefulEntityCollection<Npc> getWatchedNpcs() {
+        return watchedNpcs;
+    }
+
+    public StatefulEntityCollection<GameObject> getWatchedObjects() {
+        return watchedObjects;
+    }
+
+    public StatefulEntityCollection<Player> getWatchedPlayers() {
+        return watchedPlayers;
+    }
+
+    private boolean needsAppearanceUpdateFor(Player target) {
+        int targetIndex = target.getIndex();
+        Sprite targetSprite = target.getSprite();
+        if (knownPlayerAppearanceIds.containsKey(targetIndex)) {
+            int knownAppearanceId = knownPlayerAppearanceIds.get(targetIndex);
+            if (knownAppearanceId != targetSprite.getAppearanceId()) {
+                knownPlayerAppearanceIds.put(targetIndex, targetSprite.getAppearanceId());
+                return true;
+            }
+        } else {
+            knownPlayerAppearanceIds.put(targetIndex, targetSprite.getAppearanceId());
+            return true;
         }
+
+        return false;
+    }
+
+    @Override
+    public void resolveDependencies(Map<Class<? extends Component>, Component> components) {
+        this.sprite = Sprite.class.cast(components.get(Sprite.class));
     }
 
     public void revalidateWatchedEntities() {
@@ -129,36 +125,6 @@ public final class Observer extends AbstractComponent {
         revalidateWatchedObjects();
         revalidateWatchedItems();
         revalidateWatchedNpcs();
-    }
-
-    public void updateWatchedEntities() {
-        updateWatchedPlayers();
-        updateWatchedObjects();
-        updateWatchedItems();
-        updateWatchedNpcs();
-    }
-
-    public void updateEntityLists() {
-        watchedPlayers.update();
-        watchedObjects.update();
-        watchedItems.update();
-        watchedNpcs.update();
-    }
-
-    public void clearDisplayLists() {
-        projectiles.clear();
-        playerHitUpdates.clear();
-        npcHitUpdates.clear();
-        bubbles.clear();
-    }
-
-    private void revalidateWatchedObjects() {
-        Point loc = owner.getLocation();
-        for (GameObject o : watchedObjects.getKnownEntities()) {
-            if (!loc.withinRange(o.getLocation(), 21) || o.isRemoved()) {
-                watchedObjects.remove(o);
-            }
-        }
     }
 
     private void revalidateWatchedItems() {
@@ -179,6 +145,15 @@ public final class Observer extends AbstractComponent {
         }
     }
 
+    private void revalidateWatchedObjects() {
+        Point loc = owner.getLocation();
+        for (GameObject o : watchedObjects.getKnownEntities()) {
+            if (!loc.withinRange(o.getLocation(), 21) || o.isRemoved()) {
+                watchedObjects.remove(o);
+            }
+        }
+    }
+
     private void revalidateWatchedPlayers() {
         Point loc = owner.getLocation();
         for (Player p : watchedPlayers.getKnownEntities()) {
@@ -189,14 +164,25 @@ public final class Observer extends AbstractComponent {
         }
     }
 
-    private void updateWatchedObjects() {
-        Iterable<GameObject> objects = Region.getViewableObjects(owner.getLocation(), 21);
-
-        for (GameObject go : objects) {
-            if (!watchedObjects.contains(go)) {
-                watchedObjects.add(go);
-            }
+    public void setOwner(Player player) {
+        if (owner != null) {
+            throw new IllegalStateException("Observer's player is already set");
         }
+        this.owner = player;
+    }
+
+    public void updateEntityLists() {
+        watchedPlayers.update();
+        watchedObjects.update();
+        watchedItems.update();
+        watchedNpcs.update();
+    }
+
+    public void updateWatchedEntities() {
+        updateWatchedPlayers();
+        updateWatchedObjects();
+        updateWatchedItems();
+        updateWatchedNpcs();
     }
 
     private void updateWatchedItems() {
@@ -215,6 +201,16 @@ public final class Observer extends AbstractComponent {
         for (Npc npc : npcs) {
             if (!watchedNpcs.contains(npc) || watchedNpcs.isRemoving(npc)) {
                 watchedNpcs.add(npc);
+            }
+        }
+    }
+
+    private void updateWatchedObjects() {
+        Iterable<GameObject> objects = Region.getViewableObjects(owner.getLocation(), 21);
+
+        for (GameObject go : objects) {
+            if (!watchedObjects.contains(go)) {
+                watchedObjects.add(go);
             }
         }
     }

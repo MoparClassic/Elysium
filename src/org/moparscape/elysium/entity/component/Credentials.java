@@ -21,24 +21,24 @@ public final class Credentials extends AbstractComponent {
     private final AtomicReference<UsernameHashPair> usernameAndHash =
             new AtomicReference<UsernameHashPair>();
 
-    public String getUsername() {
-        return usernameAndHash.get().username;
-    }
-
     public String getPassword() {
         return password.get();
     }
 
-    public long getUsernameHash() {
-        return usernameAndHash.get().hash;
+    public void setPassword(String password) {
+        this.password.getAndSet(password);
+    }
+
+    public String getUsername() {
+        return usernameAndHash.get().username;
     }
 
     public void setUsername(String username) {
         this.usernameAndHash.getAndSet(new UsernameHashPair(username));
     }
 
-    public void setPassword(String password) {
-        this.password.getAndSet(password);
+    public long getUsernameHash() {
+        return usernameAndHash.get().hash;
     }
 
     @Override
@@ -69,8 +69,8 @@ public final class Credentials extends AbstractComponent {
 
     private static final class UsernameHashPair {
 
-        private final String username;
         private final long hash;
+        private final String username;
 
         public UsernameHashPair(String username) {
             this.username = username;

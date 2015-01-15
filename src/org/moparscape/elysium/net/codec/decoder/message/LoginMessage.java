@@ -9,12 +9,12 @@ import org.moparscape.elysium.net.codec.AbstractMessage;
  */
 public final class LoginMessage extends AbstractMessage {
 
-    private final String username;
     private final String password;
-    private final int uid;
-    private final int version;
-    private final int[] sessionKeys;
     private final boolean reconnecting;
+    private final int[] sessionKeys;
+    private final int uid;
+    private final String username;
+    private final int version;
 
     public LoginMessage(String username, String password, int uid,
                         int version, int[] sessionKeys, boolean reconnecting) {
@@ -26,24 +26,24 @@ public final class LoginMessage extends AbstractMessage {
         this.reconnecting = reconnecting;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
     public String getPassword() {
         return password;
+    }
+
+    public int[] getSessionKeys() {
+        return sessionKeys;
     }
 
     public int getUid() {
         return uid;
     }
 
-    public int getVersion() {
-        return version;
+    public String getUsername() {
+        return username;
     }
 
-    public int[] getSessionKeys() {
-        return sessionKeys;
+    public int getVersion() {
+        return version;
     }
 
     public boolean isReconnecting() {

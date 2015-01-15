@@ -28,10 +28,8 @@ public final class Bitpacker {
     };
 
     private int bitPosition = 0;
-
-    private byte[] payload;
-
     private int id = -1;
+    private byte[] payload;
 
     public Bitpacker() {
         this(DEFAULT_CAPACITY);
@@ -39,21 +37,6 @@ public final class Bitpacker {
 
     public Bitpacker(int initialCapacity) {
         this.payload = new byte[initialCapacity];
-    }
-
-    private void ensureCapacity(int minCapacity) {
-        if (minCapacity >= payload.length) {
-            int newCapacity = (payload.length + 1) * 2;
-            byte[] newPayload = new byte[newCapacity];
-            System.arraycopy(payload, 0, newPayload, 0, payload.length);
-
-            payload = newPayload;
-        }
-    }
-
-    public Bitpacker setId(int id) {
-        this.id = id;
-        return this;
     }
 
     public Bitpacker addBits(int value, int numBits) {
@@ -75,6 +58,21 @@ public final class Bitpacker {
             payload[bytePos] &= ~(bitmasks[numBits] << (bitOffset - numBits));
             payload[bytePos] |= (value & bitmasks[numBits]) << (bitOffset - numBits);
         }
+        return this;
+    }
+
+    private void ensureCapacity(int minCapacity) {
+        if (minCapacity >= payload.length) {
+            int newCapacity = (payload.length + 1) * 2;
+            byte[] newPayload = new byte[newCapacity];
+            System.arraycopy(payload, 0, newPayload, 0, payload.length);
+
+            payload = newPayload;
+        }
+    }
+
+    public Bitpacker setId(int id) {
+        this.id = id;
         return this;
     }
 

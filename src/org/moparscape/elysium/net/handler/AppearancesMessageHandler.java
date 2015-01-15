@@ -13,7 +13,7 @@ import org.moparscape.elysium.net.codec.decoder.message.AppearancesMessage;
 public final class AppearancesMessageHandler extends MessageHandler<AppearancesMessage> {
 
     public void handle(Session session, Player player, AppearancesMessage message) {
-        Observer o = player.getComponent(Observer.class);
+        Observer o = player.getObserver();
         o.addPlayerAppearanceIds(message.getIndicies(), message.getAppearanceIds());
         System.out.println(message);
     }

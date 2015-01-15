@@ -7,14 +7,14 @@ package org.moparscape.elysium.def;
  */
 public class ItemDef extends EntityDef {
 
-    private final String command;
     private final int basePrice;
-    private final int sprite;
-    private final boolean stackable;
-    private final boolean wieldable;
+    private final String command;
     private final int mask;
     private final boolean members;
+    private final int sprite;
+    private final boolean stackable;
     private final boolean tradable;
+    private final boolean wieldable;
 
     public ItemDef(String name, String description,
                    String command, int basePrice, int sprite,
@@ -31,35 +31,35 @@ public class ItemDef extends EntityDef {
         this.tradable = tradable;
     }
 
-    public String getCommand() {
-        return command;
-    }
-
-    public int getSprite() {
-        return sprite;
-    }
-
     public int getBasePrice() {
         return basePrice;
     }
 
-    public boolean isStackable() {
-        return stackable;
-    }
-
-    public boolean isWieldable() {
-        return wieldable;
+    public String getCommand() {
+        return command;
     }
 
     public int getPictureMask() {
         return mask;
     }
 
+    public int getSprite() {
+        return sprite;
+    }
+
     public boolean isMembers() {
         return members;
     }
 
+    public boolean isStackable() {
+        return stackable;
+    }
+
     public boolean isTradable() {
         return tradable;
+    }
+
+    public boolean isWieldable() {
+        return wieldable;
     }
 }

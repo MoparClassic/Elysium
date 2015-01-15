@@ -14,10 +14,6 @@ public class ObjectWoodcuttingDef {
      */
     public int fell;
     /**
-     * The id of the ore this turns into
-     */
-    private int logId;
-    /**
      * Herblaw level required to identify
      */
     public int requiredLvl;
@@ -25,6 +21,10 @@ public class ObjectWoodcuttingDef {
      * How long the tree takes to respawn afterwards
      */
     public int respawnTime;
+    /**
+     * The id of the ore this turns into
+     */
+    private int logId;
 
     public int getExp() {
         return exp;

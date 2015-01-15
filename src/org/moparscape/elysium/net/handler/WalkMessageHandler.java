@@ -17,7 +17,7 @@ public final class WalkMessageHandler extends MessageHandler<WalkMessage> {
     public void handle(Session session, Player player, WalkMessage message) {
         player.incrementActionCount();
 
-        Movement movement = player.getComponent(Movement.class);
+        Movement movement = player.getMovement();
         Path path = new Path(message);
         movement.setPath(path);
     }

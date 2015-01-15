@@ -9,21 +9,20 @@ import org.moparscape.elysium.net.codec.AbstractMessage;
  */
 public final class CommandMessage extends AbstractMessage {
 
-    private final String command;
-
     private final String[] args;
+    private final String command;
 
     public CommandMessage(String command, String[] args) {
         this.command = command.toLowerCase();
         this.args = args;
     }
 
-    public String getCommand() {
-        return command;
-    }
-
     public String[] getArguments() {
         return args;
+    }
+
+    public String getCommand() {
+        return command;
     }
 
     public boolean hasArguments() {

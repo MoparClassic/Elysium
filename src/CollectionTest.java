@@ -12,21 +12,11 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public final class CollectionTest {
 
-    private static final LinkedList<Object> list = new LinkedList<Object>();
-    private static final Queue<Object> queue = new ConcurrentLinkedQueue<Object>();
     private static final ExecutorService exec = Executors.newFixedThreadPool(4);
+    private static final LinkedList<Object> list = new LinkedList<Object>();
     private static final Lock lock = new ReentrantLock();
     private static final Object object = new Object();
-
-    public static void main(String[] args) throws Exception {
-        Future<Void> f1 = exec.submit(new ListTestExecutor());
-        f1.get(); // Block until completion
-        list.clear();
-
-        Future<Void> f2 = exec.submit(new QueueTestExecutor());
-        f2.get();
-        exec.shutdown();
-    }
+    private static final Queue<Object> queue = new ConcurrentLinkedQueue<Object>();
 
     private static void addList(Object o) {
         lock.lock();
@@ -39,6 +29,30 @@ public final class CollectionTest {
 
     private static void addQueue(Object o) {
         queue.add(o);
+    }
+
+    public static void main(String[] args) throws Exception {
+        Future<Void> f1 = exec.submit(new ListTestExecutor());
+        f1.get(); // Block until completion
+        list.clear();
+
+        Future<Void> f2 = exec.submit(new QueueTestExecutor());
+        f2.get();
+        exec.shutdown();
+    }
+
+    private static long time() {
+        return System.nanoTime() / 1000000;
+    }
+
+    private static class ListTest implements Callable<Void> {
+
+        public Void call() {
+            for (int i = 0; i < 1000000; i++) {
+                addList(object);
+            }
+            return null;
+        }
     }
 
     public static class ListTestExecutor implements Callable<Void> {
@@ -64,6 +78,16 @@ public final class CollectionTest {
         }
     }
 
+    private static class QueueTest implements Callable<Void> {
+
+        public Void call() {
+            for (int i = 0; i < 1000000; i++) {
+                addQueue(object);
+            }
+            return null;
+        }
+    }
+
     public static class QueueTestExecutor implements Callable<Void> {
 
         public Void call() {
@@ -85,29 +109,5 @@ public final class CollectionTest {
             System.out.println("QueueTest time: " + (end - start));
             return null;
         }
-    }
-
-    private static class ListTest implements Callable<Void> {
-
-        public Void call() {
-            for (int i = 0; i < 1000000; i++) {
-                addList(object);
-            }
-            return null;
-        }
-    }
-
-    private static class QueueTest implements Callable<Void> {
-
-        public Void call() {
-            for (int i = 0; i < 1000000; i++) {
-                addQueue(object);
-            }
-            return null;
-        }
-    }
-
-    private static long time() {
-        return System.nanoTime() / 1000000;
     }
 }

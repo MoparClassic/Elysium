@@ -1,7 +1,6 @@
 package org.moparscape.elysium.task;
 
 import org.moparscape.elysium.entity.*;
-import org.moparscape.elysium.entity.component.Credentials;
 import org.moparscape.elysium.entity.component.UpdateProxy;
 import org.moparscape.elysium.net.Bitpacker;
 import org.moparscape.elysium.net.PacketBuilder;
@@ -40,7 +39,7 @@ public final class IssueUpdatePacketsTask implements Runnable {
                     System.out.println("Player not logged in");
                     continue;
                 }
-                UpdateProxy proxy = p.getComponent(UpdateProxy.class);
+                UpdateProxy proxy = p.getUpdateProxy();
 
                 updateTimeouts(s, p, proxy);
 
@@ -55,120 +54,6 @@ public final class IssueUpdatePacketsTask implements Runnable {
             }
         } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
-
-    private void updateTimeouts(Session s, Player p, UpdateProxy proxy) {
-
-    }
-
-    private void updateNpcPositions(Session s, Player p, UpdateProxy proxy) {
-        StatefulEntityCollection<Npc> npcs = proxy.getWatchedNpcs();
-        Collection<Npc> newNpcs = npcs.getNewEntities();
-        Collection<Npc> knownNpcs = npcs.getKnownEntities();
-        Point loc = p.getLocation();
-        Bitpacker pb = new Bitpacker();
-
-        pb.setId(77);
-        pb.addBits(knownNpcs.size(), 8);
-        for (Npc n : knownNpcs) {
-            pb.addBits(n.getIndex(), 16);
-            if (npcs.isRemoving(n)) {
-                pb.addBits(1, 1);
-                pb.addBits(1, 1);
-                pb.addBits(12, 4);
-            } else if (n.hasMoved()) {
-                pb.addBits(1, 1);
-                pb.addBits(0, 1);
-                pb.addBits(n.getSprite(), 3);
-            } else if (n.spriteChanged()) {
-                pb.addBits(1, 1);
-                pb.addBits(1, 1);
-                pb.addBits(n.getSprite(), 4);
-            } else {
-                pb.addBits(0, 1);
-            }
-        }
-
-        for (Npc n : newNpcs) {
-            byte[] offsets = DataConversions.getMobPositionOffsets(n.getLocation(), loc);
-            pb.addBits(n.getIndex(), 16);
-            pb.addBits(offsets[0], 5);
-            pb.addBits(offsets[1], 5);
-            pb.addBits(n.getSprite(), 4);
-            pb.addBits(n.getId(), 10);
-        }
-
-        s.write(pb.toPacket());
-    }
-
-    private void updateNpcAppearances(Session s, Player p, UpdateProxy proxy) {
-        Queue<ChatMessage> messages = proxy.getNpcMessagesNeedingDisplayed();
-        Queue<Npc> hitUpdates = proxy.getNpcHitUpdates();
-
-        int messageCount = messages.size();
-        int hitUpdateCount = hitUpdates.size();
-        int updateSize = messageCount + hitUpdateCount;
-
-        if (updateSize > 0) {
-            PacketBuilder pb = new PacketBuilder();
-            pb.setId(190);
-            pb.writeShort(updateSize);
-            for (ChatMessage cm : messages) {
-                pb.writeShort(cm.getSender().getIndex());
-                pb.writeByte(1);
-                pb.writeShort(cm.getRecipient().getIndex());
-                pb.writeByte(cm.getLength());
-                pb.writeBytes(cm.getMessage());
-            }
-            for (Npc n : hitUpdates) {
-                pb.writeShort(n.getIndex());
-                pb.writeByte(2);
-                pb.writeByte(n.getLastDamage());
-                pb.writeByte(n.getHits());
-                pb.writeByte(n.getMaxHits());
-            }
-
-            s.write(pb.toPacket());
-        }
-    }
-
-    private void updateWallObjects(Session s, Player p, UpdateProxy proxy) {
-        StatefulEntityCollection<GameObject> objects = proxy.getWatchedObjects();
-
-        if (objects.changed()) {
-            Collection<GameObject> newObjects = objects.getNewEntities();
-            Collection<GameObject> knownObjects = objects.getKnownEntities();
-            Point loc = p.getLocation();
-            PacketBuilder pb = new PacketBuilder();
-
-            pb.setId(95);
-            for (GameObject o : knownObjects) {
-                if (o.getType() != 1) {
-                    continue;
-                }
-
-                if (objects.isRemoving(o)) {
-                    byte[] offsets = DataConversions.getObjectPositionOffsets(o.getLocation(), loc);
-                    pb.writeShort(60000);
-                    pb.writeByte(offsets[0]);
-                    pb.writeByte(offsets[1]);
-                    pb.writeByte(o.getDirection());
-                }
-            }
-            for (GameObject o : newObjects) {
-                if (o.getType() != 1) {
-                    continue;
-                }
-
-                byte[] offsets = DataConversions.getObjectPositionOffsets(o.getLocation(), loc);
-                pb.writeShort(o.getId());
-                pb.writeByte(offsets[0]);
-                pb.writeByte(offsets[1]);
-                pb.writeByte(o.getDirection());
-            }
-
-            s.write(pb.toPacket());
         }
     }
 
@@ -240,50 +125,72 @@ public final class IssueUpdatePacketsTask implements Runnable {
         }
     }
 
-    private void updatePlayerPositions(Session s, Player player, UpdateProxy proxy) {
-        StatefulEntityCollection<Player> players = proxy.getWatchedPlayers();
-        Collection<Player> newPlayers = players.getNewEntities();
-        Collection<Player> knownPlayers = players.getKnownEntities();
-        Point loc = player.getLocation();
+    private void updateNpcAppearances(Session s, Player p, UpdateProxy proxy) {
+        Queue<ChatMessage> messages = proxy.getNpcMessagesNeedingDisplayed();
+        Queue<Npc> hitUpdates = proxy.getNpcHitUpdates();
+
+        int messageCount = messages.size();
+        int hitUpdateCount = hitUpdates.size();
+        int updateSize = messageCount + hitUpdateCount;
+
+        if (updateSize > 0) {
+            PacketBuilder pb = new PacketBuilder();
+            pb.setId(190);
+            pb.writeShort(updateSize);
+            for (ChatMessage cm : messages) {
+                pb.writeShort(cm.getSender().getIndex());
+                pb.writeByte(1);
+                pb.writeShort(cm.getRecipient().getIndex());
+                pb.writeByte(cm.getLength());
+                pb.writeBytes(cm.getMessage());
+            }
+            for (Npc n : hitUpdates) {
+                pb.writeShort(n.getIndex());
+                pb.writeByte(2);
+                pb.writeByte(n.getLastDamage());
+                pb.writeByte(n.getHits());
+                pb.writeByte(n.getMaxHits());
+            }
+
+            s.write(pb.toPacket());
+        }
+    }
+
+    private void updateNpcPositions(Session s, Player p, UpdateProxy proxy) {
+        StatefulEntityCollection<Npc> npcs = proxy.getWatchedNpcs();
+        Collection<Npc> newNpcs = npcs.getNewEntities();
+        Collection<Npc> knownNpcs = npcs.getKnownEntities();
+        Point loc = p.getLocation();
         Bitpacker pb = new Bitpacker();
 
-        // Set packet id to 145
-        pb.setId(145);
-        pb.addBits(loc.getX(), 11);
-        pb.addBits(loc.getY(), 13);
-        pb.addBits(proxy.getSprite(), 4);
-        pb.addBits(knownPlayers.size(), 8);
-        for (Player p : knownPlayers) {
-            UpdateProxy targetProxy = p.getComponent(UpdateProxy.class);
-            pb.addBits(p.getIndex(), 16);
-            if (players.isRemoving(p)) {
-                System.out.println("Removing: " + targetProxy.getUsername() + " removed from view of " + proxy.getUsername());
+        pb.setId(77);
+        pb.addBits(knownNpcs.size(), 8);
+        for (Npc n : knownNpcs) {
+            pb.addBits(n.getIndex(), 16);
+            if (npcs.isRemoving(n)) {
                 pb.addBits(1, 1);
                 pb.addBits(1, 1);
                 pb.addBits(12, 4);
-            } else if (targetProxy.hasMoved()) {
-                System.out.println("Moving: " + targetProxy.getUsername() + " has moved for " + proxy.getUsername());
+            } else if (n.hasMoved()) {
                 pb.addBits(1, 1);
                 pb.addBits(0, 1);
-                pb.addBits(targetProxy.getSprite(), 3);
-            } else if (targetProxy.spriteChanged()) {
-                System.out.println("Sprite changed: " + targetProxy.getUsername() + " sprite changed in view of " + proxy.getUsername());
+                pb.addBits(n.getSprite(), 3);
+            } else if (n.spriteChanged()) {
                 pb.addBits(1, 1);
                 pb.addBits(1, 1);
-                pb.addBits(targetProxy.getSprite(), 4);
+                pb.addBits(n.getSprite(), 4);
             } else {
                 pb.addBits(0, 1);
             }
         }
-        for (Player p : newPlayers) {
-            UpdateProxy targetProxy = p.getComponent(UpdateProxy.class);
-            System.out.println("New player: " + targetProxy.getUsername() + " added to world view of " + proxy.getUsername());
-            byte[] offsets = DataConversions.getMobPositionOffsets(p.getLocation(), loc);
-            pb.addBits(p.getIndex(), 16);
+
+        for (Npc n : newNpcs) {
+            byte[] offsets = DataConversions.getMobPositionOffsets(n.getLocation(), loc);
+            pb.addBits(n.getIndex(), 16);
             pb.addBits(offsets[0], 5);
             pb.addBits(offsets[1], 5);
-            pb.addBits(targetProxy.getSprite(), 4);
-            pb.addBits(0, 1);
+            pb.addBits(n.getSprite(), 4);
+            pb.addBits(n.getId(), 10);
         }
 
         s.write(pb.toPacket());
@@ -320,7 +227,7 @@ public final class IssueUpdatePacketsTask implements Runnable {
             }
 
             for (Player p : playerHitUpdates) {
-                UpdateProxy targetProxy = p.getComponent(UpdateProxy.class);
+                UpdateProxy targetProxy = p.getUpdateProxy();
                 pb.writeShort(p.getIndex());
                 pb.writeByte(2);
                 pb.writeByte(targetProxy.getLastDamage());
@@ -337,13 +244,13 @@ public final class IssueUpdatePacketsTask implements Runnable {
             }
 
             for (Player p : playerAppearanceUpdates) {
-                UpdateProxy targetProxy = p.getComponent(UpdateProxy.class);
+                UpdateProxy targetProxy = p.getUpdateProxy();
                 pb.writeShort(p.getIndex());
                 pb.writeByte(5);
                 pb.writeShort(targetProxy.getAppearanceId());
                 pb.writeLong(targetProxy.getUsernameHash());
 
-                System.out.println("Sending appearance update to " + player.getComponent(Credentials.class).getUsername() +
+                System.out.println("Sending appearance update to " + player.getCredentials().getUsername() +
                         " for player " + targetProxy.getUsername() + " (Target AID: " + targetProxy.getAppearanceId() + ")");
 
                 AtomicIntegerArray wornItems = targetProxy.getWornItems();
@@ -360,6 +267,98 @@ public final class IssueUpdatePacketsTask implements Runnable {
                 pb.writeByte(targetProxy.getCombatLevel());
                 pb.writeByte(targetProxy.isSkulled() ? 1 : 0);
                 pb.writeByte(0); // 3: Admin 2: Mod 1; Pmod 0: None
+            }
+
+            s.write(pb.toPacket());
+        }
+    }
+
+    private void updatePlayerPositions(Session s, Player player, UpdateProxy proxy) {
+        StatefulEntityCollection<Player> players = proxy.getWatchedPlayers();
+        Collection<Player> newPlayers = players.getNewEntities();
+        Collection<Player> knownPlayers = players.getKnownEntities();
+        Point loc = player.getLocation();
+        Bitpacker pb = new Bitpacker();
+
+        // Set packet id to 145
+        pb.setId(145);
+        pb.addBits(loc.getX(), 11);
+        pb.addBits(loc.getY(), 13);
+        pb.addBits(proxy.getSprite(), 4);
+        pb.addBits(knownPlayers.size(), 8);
+        for (Player p : knownPlayers) {
+            UpdateProxy targetProxy = p.getUpdateProxy();
+            pb.addBits(p.getIndex(), 16);
+            if (players.isRemoving(p)) {
+                System.out.println("Removing: " + targetProxy.getUsername() + " removed from view of " + proxy.getUsername());
+                pb.addBits(1, 1);
+                pb.addBits(1, 1);
+                pb.addBits(12, 4);
+            } else if (targetProxy.hasMoved()) {
+                System.out.println("Moving: " + targetProxy.getUsername() + " has moved for " + proxy.getUsername());
+                pb.addBits(1, 1);
+                pb.addBits(0, 1);
+                pb.addBits(targetProxy.getSprite(), 3);
+            } else if (targetProxy.spriteChanged()) {
+                System.out.println("Sprite changed: " + targetProxy.getUsername() + " sprite changed in view of " + proxy.getUsername());
+                pb.addBits(1, 1);
+                pb.addBits(1, 1);
+                pb.addBits(targetProxy.getSprite(), 4);
+            } else {
+                pb.addBits(0, 1);
+            }
+        }
+        for (Player p : newPlayers) {
+            UpdateProxy targetProxy = p.getUpdateProxy();
+            System.out.println("New player: " + targetProxy.getUsername() + " added to world view of " + proxy.getUsername());
+            byte[] offsets = DataConversions.getMobPositionOffsets(p.getLocation(), loc);
+            pb.addBits(p.getIndex(), 16);
+            pb.addBits(offsets[0], 5);
+            pb.addBits(offsets[1], 5);
+            pb.addBits(targetProxy.getSprite(), 4);
+            pb.addBits(0, 1);
+        }
+
+        s.write(pb.toPacket());
+    }
+
+    private void updateTimeouts(Session s, Player p, UpdateProxy proxy) {
+
+    }
+
+    private void updateWallObjects(Session s, Player p, UpdateProxy proxy) {
+        StatefulEntityCollection<GameObject> objects = proxy.getWatchedObjects();
+
+        if (objects.changed()) {
+            Collection<GameObject> newObjects = objects.getNewEntities();
+            Collection<GameObject> knownObjects = objects.getKnownEntities();
+            Point loc = p.getLocation();
+            PacketBuilder pb = new PacketBuilder();
+
+            pb.setId(95);
+            for (GameObject o : knownObjects) {
+                if (o.getType() != 1) {
+                    continue;
+                }
+
+                if (objects.isRemoving(o)) {
+                    byte[] offsets = DataConversions.getObjectPositionOffsets(o.getLocation(), loc);
+                    pb.writeShort(60000);
+                    pb.writeByte(offsets[0]);
+                    pb.writeByte(offsets[1]);
+                    pb.writeByte(o.getDirection());
+                }
+            }
+            for (GameObject o : newObjects) {
+                if (o.getType() != 1) {
+                    continue;
+                }
+
+                byte[] offsets = DataConversions.getObjectPositionOffsets(o.getLocation(), loc);
+                pb.writeShort(o.getId());
+                pb.writeByte(offsets[0]);
+                pb.writeByte(offsets[1]);
+                pb.writeByte(o.getDirection());
             }
 
             s.write(pb.toPacket());

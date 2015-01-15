@@ -19,9 +19,36 @@ public final class GameStateUpdater {
 
     private final CopyOnWriteArrayList<Player> playerList = World.getInstance().getPlayers();
 
-    public void updateState() throws Exception {
-        updateNpcPositions();
-        updatePlayers();
+    public void updateCollections() throws Exception {
+        Server server = Server.getInstance();
+        CountDownLatch latch;
+
+        // TODO: Unregister any players that have logged out
+//        latch = new CountDownLatch(playerPartitions.size());
+//        for (Iterable<Player> p : playerPartitions) {
+//
+//        }
+//        latch.await();
+
+        // TODO: Improve concurrency here.
+        // Update the player collections, and clear their display lists
+        final CountDownLatch updatePlayerCollectionsLatch = new CountDownLatch(1);
+        server.submitTask(new CountdownTaskExecutor(
+                new UpdatePlayerCollections(playerList), updatePlayerCollectionsLatch));
+        updatePlayerCollectionsLatch.await();
+
+//        latch = new CountDownLatch(playerPartitions.size());
+//        for (Iterable<Player> p : playerPartitions) {
+//            server.submitTask(new CountdownTaskExecutor(new UpdatePlayerCollections(p), latch));
+//        }
+//        latch.await();
+
+        // TODO: Reset the npcs
+//        latch = new CountDownLatch(npcPartitions.size());
+//        for (Iterable<Npc> n : npcPartitions) {
+//
+//        }
+//        latch.await();
     }
 
     private void updateNpcPositions() throws Exception {
@@ -82,35 +109,8 @@ public final class GameStateUpdater {
 //        latch.await();
     }
 
-    public void updateCollections() throws Exception {
-        Server server = Server.getInstance();
-        CountDownLatch latch;
-
-        // TODO: Unregister any players that have logged out
-//        latch = new CountDownLatch(playerPartitions.size());
-//        for (Iterable<Player> p : playerPartitions) {
-//
-//        }
-//        latch.await();
-
-        // TODO: Improve concurrency here.
-        // Update the player collections, and clear their display lists
-        final CountDownLatch updatePlayerCollectionsLatch = new CountDownLatch(1);
-        server.submitTask(new CountdownTaskExecutor(
-                new UpdatePlayerCollections(playerList), updatePlayerCollectionsLatch));
-        updatePlayerCollectionsLatch.await();
-
-//        latch = new CountDownLatch(playerPartitions.size());
-//        for (Iterable<Player> p : playerPartitions) {
-//            server.submitTask(new CountdownTaskExecutor(new UpdatePlayerCollections(p), latch));
-//        }
-//        latch.await();
-
-        // TODO: Reset the npcs
-//        latch = new CountDownLatch(npcPartitions.size());
-//        for (Iterable<Npc> n : npcPartitions) {
-//
-//        }
-//        latch.await();
+    public void updateState() throws Exception {
+        updateNpcPositions();
+        updatePlayers();
     }
 }

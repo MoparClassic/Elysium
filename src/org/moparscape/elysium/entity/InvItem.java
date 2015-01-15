@@ -12,19 +12,13 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public final class InvItem {
 
-    private final int id;
-
     private final AtomicInteger amount = new AtomicInteger();
-
+    private final int id;
     private final AtomicBoolean wielded = new AtomicBoolean(false);
 
     public InvItem(int itemId, int amount) {
         this.id = itemId;
         this.amount.getAndSet(amount);
-    }
-
-    public int getItemId() {
-        return id;
     }
 
     public int getAmount() {
@@ -35,16 +29,12 @@ public final class InvItem {
         this.amount.getAndSet(amount);
     }
 
-    public boolean isWielded() {
-        return wielded.get();
-    }
-
-    public void setWielded(boolean wield) {
-        wielded.getAndSet(wield);
-    }
-
     public ItemDef getDef() {
         return DefinitionHandler.getItemDef(id);
+    }
+
+    public int getItemId() {
+        return id;
     }
 
     @Override
@@ -69,5 +59,13 @@ public final class InvItem {
     @Override
     public String toString() {
         return "ID: " + id + " Amount: " + amount;
+    }
+
+    public boolean isWielded() {
+        return wielded.get();
+    }
+
+    public void setWielded(boolean wield) {
+        wielded.getAndSet(wield);
     }
 }

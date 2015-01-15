@@ -46,6 +46,29 @@ public final class DataConversions {
         }
     }
 
+    public static long IPToLong(String ip) {
+        String[] octets = ip.split("\\.");
+        long result = 0L;
+        for (int x = 0; x < 4; x++) {
+            result += Integer.parseInt(octets[x]) * Math.pow(256, 3 - x);
+        }
+        return result;
+    }
+
+    public static String IPToString(long ip) {
+        String result = "0.0.0.0";
+        for (int x = 0; x < 4; x++) {
+            int octet = (int) (ip / Math.pow(256, 3 - x));
+            ip -= octet * Math.pow(256, 3 - x);
+            if (x == 0) {
+                result = String.valueOf(octet);
+            } else {
+                result += ("." + octet);
+            }
+        }
+        return result;
+    }
+
     /**
      * Calculates the average of all values in the array
      */
@@ -219,29 +242,6 @@ public final class DataConversions {
             }
         }
         return false;
-    }
-
-    public static long IPToLong(String ip) {
-        String[] octets = ip.split("\\.");
-        long result = 0L;
-        for (int x = 0; x < 4; x++) {
-            result += Integer.parseInt(octets[x]) * Math.pow(256, 3 - x);
-        }
-        return result;
-    }
-
-    public static String IPToString(long ip) {
-        String result = "0.0.0.0";
-        for (int x = 0; x < 4; x++) {
-            int octet = (int) (ip / Math.pow(256, 3 - x));
-            ip -= octet * Math.pow(256, 3 - x);
-            if (x == 0) {
-                result = String.valueOf(octet);
-            } else {
-                result += ("." + octet);
-            }
-        }
-        return result;
     }
 
     public static void main(String[] argv) throws Exception {

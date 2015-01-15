@@ -31,12 +31,12 @@ public final class ElysiumConnectionHandler extends SimpleChannelInboundHandler<
     }
 
     @Override
-    public void channelRead0(ChannelHandlerContext ctx, Message message) {
-        session.messageReceived(message);
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        throw new IllegalStateException(cause);
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        throw new IllegalStateException(cause);
+    public void channelRead0(ChannelHandlerContext ctx, Message message) {
+        session.messageReceived(message);
     }
 }

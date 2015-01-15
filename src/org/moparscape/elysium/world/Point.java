@@ -32,13 +32,6 @@ public class Point {
         return y;
     }
 
-    public boolean withinRange(Point target, int radius) {
-        int xDiff = this.x - target.x;
-        int yDiff = this.y - target.y;
-
-        return xDiff <= radius && xDiff > -radius && yDiff <= radius && yDiff > -radius;
-    }
-
     @Override
     public int hashCode() {
         return (x << 16) | y;
@@ -61,5 +54,12 @@ public class Point {
     @Override
     public String toString() {
         return "(" + x + ", " + y + ")";
+    }
+
+    public boolean withinRange(Point target, int radius) {
+        int xDiff = this.x - target.x;
+        int yDiff = this.y - target.y;
+
+        return xDiff <= radius && xDiff > -radius && yDiff <= radius && yDiff > -radius;
     }
 }

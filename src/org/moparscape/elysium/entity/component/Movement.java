@@ -6,8 +6,6 @@ import org.moparscape.elysium.world.Point;
 import org.moparscape.elysium.world.TileValue;
 import org.moparscape.elysium.world.World;
 
-import java.util.Map;
-
 /**
  * Created by IntelliJ IDEA.
  *
@@ -16,89 +14,57 @@ import java.util.Map;
 public final class Movement extends AbstractComponent {
 
     private static final World world = World.getInstance();
+    private volatile int curWaypoint;
+    private volatile boolean hasMoved = false;
 
-    private Sprite sprite;
-
-    private boolean hasMoved = false;
-
-    private Locatable owner;
+    private volatile Locatable owner;
 
     private volatile Path path;
+    private Sprite sprite;
 
-    private volatile int curWaypoint;
-
-    public Movement() {
-
-    }
-
-    public void resolveDependencies(Map<Class<? extends Component>, Component> components) {
-        this.sprite = Sprite.class.cast(components.get(Sprite.class));
-    }
-
-    public void setOwner(Locatable owner) {
+    public Movement(Locatable owner, Sprite sprite) {
         this.owner = owner;
+        this.sprite = sprite;
     }
 
-    public void setPath(Path path) {
-        this.curWaypoint = -1;
-        this.path = path;
-    }
-
-    /**
-     * Updates the point in the path to the next one
-     * assuming we are not finished
-     */
-    public void updatePosition() {
-        if (!finishedPath()) {
-            setNextPosition();
-        }
-    }
-
-    /**
-     * Resets the path (stops movement)
-     */
-    protected void resetPath() {
-        path = null;
-        curWaypoint = -1;
-    }
-
-    /**
-     * Updates our position to the next in the path
-     */
-    protected void setNextPosition() {
+    protected boolean atStart() {
         Point loc = owner.getLocation();
-        int[] newCoords = {-1, -1};
-        if (curWaypoint == -1) {
-            if (atStart()) {
-                curWaypoint = 0;
-            } else {
-                newCoords = getNextCoords(loc.getX(), path.getStartX(), loc.getY(), path.getStartY());
-            }
+        return loc.getX() == path.getStartX() && loc.getY() == path.getStartY();
+    }
+
+    /**
+     * Checks if we are at the given waypoint
+     */
+    protected boolean atWaypoint(int waypoint) {
+        Point loc = owner.getLocation();
+        return path.getWaypointX(waypoint) == loc.getX() && path.getWaypointY(waypoint) == loc.getY();
+    }
+
+    private int[] cancelCoords() {
+        resetPath();
+        return new int[]{-1, -1};
+    }
+
+    /**
+     * Checks if we have reached the end of our path
+     */
+    public boolean finishedPath() {
+        if (path == null) {
+            return true;
         }
-        if (curWaypoint > -1) {
-            if (atWaypoint(curWaypoint)) {
-                curWaypoint++;
-            }
-            if (curWaypoint < path.getPathLength()) {
-                newCoords = getNextCoords(loc.getX(), path.getWaypointX(curWaypoint), loc.getY(), path.getWaypointY(curWaypoint));
-            } else {
-                resetPath();
-            }
-        }
-        if (newCoords[0] > -1 && newCoords[1] > -1) {
-            setLocation(new Point(newCoords[0], newCoords[1]));
+        if (path.getPathLength() > 0) {
+            return atWaypoint(path.getPathLength() - 1);
+        } else {
+            return atStart();
         }
     }
 
-    private boolean isBlocking(int x, int y, int bit) {
-        TileValue t = world.getTileValue(x, y);
-        return isBlocking(t.mapValue, (byte) bit) || isBlocking(t.objectValue, (byte) bit);
+    public Point getLocation() {
+        return owner.getLocation();
     }
 
-    private boolean isBlocking(byte val, byte bit) {
-        // 0x70, or 112, is 16 OR 32 OR 64. If ANDing this mask with the val != 0 then the tile is blocked
-        int mask = 0x70 | bit;
-        return (val & mask) != 0;
+    public void setLocation(Point location) {
+        this.setLocation(location, false);
     }
 
     /**
@@ -153,52 +119,31 @@ public final class Movement extends AbstractComponent {
         return coords;
     }
 
-    private int[] cancelCoords() {
-        resetPath();
-        return new int[]{-1, -1};
-    }
-
-    /**
-     * Checks if we have reached the end of our path
-     */
-    public boolean finishedPath() {
-        if (path == null) {
-            return true;
-        }
-        if (path.getPathLength() > 0) {
-            return atWaypoint(path.getPathLength() - 1);
-        } else {
-            return atStart();
-        }
-    }
-
-    protected boolean atStart() {
-        Point loc = owner.getLocation();
-        return loc.getX() == path.getStartX() && loc.getY() == path.getStartY();
-    }
-
-    /**
-     * Checks if we are at the given waypoint
-     */
-    protected boolean atWaypoint(int waypoint) {
-        Point loc = owner.getLocation();
-        return path.getWaypointX(waypoint) == loc.getX() && path.getWaypointY(waypoint) == loc.getY();
-    }
-
     public boolean hasMoved() {
         return hasMoved;
+    }
+
+    private boolean isBlocking(int x, int y, int bit) {
+        TileValue t = world.getTileValue(x, y);
+        return isBlocking(t.mapValue, (byte) bit) || isBlocking(t.objectValue, (byte) bit);
+    }
+
+    private boolean isBlocking(byte val, byte bit) {
+        // 0x70, or 112, is 16 OR 32 OR 64. If ANDing this mask with the val != 0 then the tile is blocked
+        int mask = 0x70 | bit;
+        return (val & mask) != 0;
     }
 
     public void resetMoved() {
         this.hasMoved = false;
     }
 
-    public Point getLocation() {
-        return owner.getLocation();
-    }
-
-    public void setLocation(Point location) {
-        this.setLocation(location, false);
+    /**
+     * Resets the path (stops movement)
+     */
+    protected void resetPath() {
+        path = null;
+        curWaypoint = -1;
     }
 
     public void setLocation(Point location, boolean teleport) {
@@ -207,5 +152,48 @@ public final class Movement extends AbstractComponent {
             sprite.updateSprite(location);
         }
         owner.setLocation(location);
+    }
+
+    /**
+     * Updates our position to the next in the path
+     */
+    protected void setNextPosition() {
+        Point loc = owner.getLocation();
+        int[] newCoords = {-1, -1};
+        if (curWaypoint == -1) {
+            if (atStart()) {
+                curWaypoint = 0;
+            } else {
+                newCoords = getNextCoords(loc.getX(), path.getStartX(), loc.getY(), path.getStartY());
+            }
+        }
+        if (curWaypoint > -1) {
+            if (atWaypoint(curWaypoint)) {
+                curWaypoint++;
+            }
+            if (curWaypoint < path.getPathLength()) {
+                newCoords = getNextCoords(loc.getX(), path.getWaypointX(curWaypoint), loc.getY(), path.getWaypointY(curWaypoint));
+            } else {
+                resetPath();
+            }
+        }
+        if (newCoords[0] > -1 && newCoords[1] > -1) {
+            setLocation(new Point(newCoords[0], newCoords[1]));
+        }
+    }
+
+    public void setPath(Path path) {
+        this.curWaypoint = -1;
+        this.path = path;
+    }
+
+    /**
+     * Updates the point in the path to the next one
+     * assuming we are not finished
+     */
+    public void updatePosition() {
+        if (!finishedPath()) {
+            setNextPosition();
+        }
     }
 }

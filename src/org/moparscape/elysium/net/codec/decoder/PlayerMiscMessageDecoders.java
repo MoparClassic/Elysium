@@ -8,6 +8,17 @@ import org.moparscape.elysium.net.codec.decoder.message.*;
  */
 public final class PlayerMiscMessageDecoders {
 
+    public final class AppearanceUpdateMessageDecoder extends AbstractMessageDecoder<AppearanceUpdateMessage> {
+
+        public AppearanceUpdateMessageDecoder() {
+            super(AppearanceUpdateMessage.class, 218);
+        }
+
+        public AppearanceUpdateMessage decode(ByteBuf buffer, int length) {
+            throw new UnsupportedOperationException("Not yet implemented");
+        }
+    }
+
     public final class AppearancesMessageDecoder extends AbstractMessageDecoder<AppearancesMessage> {
 
         public AppearancesMessageDecoder() {
@@ -25,17 +36,6 @@ public final class PlayerMiscMessageDecoders {
             }
 
             return new AppearancesMessage(indicies, appearanceIds);
-        }
-    }
-
-    public final class AppearanceUpdateMessageDecoder extends AbstractMessageDecoder<AppearanceUpdateMessage> {
-
-        public AppearanceUpdateMessageDecoder() {
-            super(AppearanceUpdateMessage.class, 218);
-        }
-
-        public AppearanceUpdateMessage decode(ByteBuf buffer, int length) {
-            throw new UnsupportedOperationException("Not yet implemented");
         }
     }
 

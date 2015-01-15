@@ -11,9 +11,9 @@ import java.util.Set;
  */
 public final class StatefulEntityCollection<T> {
 
-    private Set<T> newEntities = new HashSet<T>();
-    private Set<T> knownEntities = new HashSet<T>();
     private Set<T> entitiesToRemove = new HashSet<T>();
+    private Set<T> knownEntities = new HashSet<T>();
+    private Set<T> newEntities = new HashSet<T>();
 
     // We need to keep these in the order they logged in, currently it doesn't seem to?
 
@@ -25,39 +25,12 @@ public final class StatefulEntityCollection<T> {
         newEntities.addAll(entities);
     }
 
-    public boolean contains(T entity) {
-        return newEntities.contains(entity) || knownEntities.contains(entity);
-    }
-
-    public void remove(T entity) {
-        entitiesToRemove.add(entity);
-    }
-
-    public boolean isRemoving(T entity) {
-        return entitiesToRemove.contains(entity);
-    }
-
-    public void update() {
-        knownEntities.removeAll(entitiesToRemove);
-        knownEntities.addAll(newEntities);
-        newEntities.clear();
-        entitiesToRemove.clear();
-    }
-
     public boolean changed() {
         return !entitiesToRemove.isEmpty() || !newEntities.isEmpty();
     }
 
-    public Collection<T> getRemovingEntities() {
-        return entitiesToRemove;
-    }
-
-    public Collection<T> getNewEntities() {
-        return newEntities;
-    }
-
-    public Collection<T> getKnownEntities() {
-        return knownEntities;
+    public boolean contains(T entity) {
+        return newEntities.contains(entity) || knownEntities.contains(entity);
     }
 
     public Collection<T> getAllEntities() {
@@ -65,5 +38,32 @@ public final class StatefulEntityCollection<T> {
         temp.addAll(newEntities);
         temp.addAll(knownEntities);
         return temp;
+    }
+
+    public Collection<T> getKnownEntities() {
+        return knownEntities;
+    }
+
+    public Collection<T> getNewEntities() {
+        return newEntities;
+    }
+
+    public Collection<T> getRemovingEntities() {
+        return entitiesToRemove;
+    }
+
+    public boolean isRemoving(T entity) {
+        return entitiesToRemove.contains(entity);
+    }
+
+    public void remove(T entity) {
+        entitiesToRemove.add(entity);
+    }
+
+    public void update() {
+        knownEntities.removeAll(entitiesToRemove);
+        knownEntities.addAll(newEntities);
+        newEntities.clear();
+        entitiesToRemove.clear();
     }
 }

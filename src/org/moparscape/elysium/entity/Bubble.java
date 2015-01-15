@@ -7,21 +7,20 @@ package org.moparscape.elysium.entity;
  */
 public final class Bubble {
 
-    private final Entity owner;
-
     private final int itemId;
+    private final Entity owner;
 
     public Bubble(Entity owner, int itemId) {
         this.itemId = itemId;
         this.owner = owner;
     }
 
-    public Entity getOwner() {
-        return owner;
-    }
-
     public int getItemId() {
         return itemId;
+    }
+
+    public Entity getOwner() {
+        return owner;
     }
 
     @Override

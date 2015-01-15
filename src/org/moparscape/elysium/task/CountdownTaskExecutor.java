@@ -9,9 +9,8 @@ import java.util.concurrent.CountDownLatch;
  */
 public final class CountdownTaskExecutor implements Runnable {
 
-    private final Runnable r;
-
     private final CountDownLatch latch;
+    private final Runnable r;
 
     public CountdownTaskExecutor(Runnable r, CountDownLatch latch) {
         this.r = r;

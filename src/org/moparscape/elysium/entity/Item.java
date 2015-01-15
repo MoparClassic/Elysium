@@ -18,24 +18,18 @@ public final class Item implements Locatable {
     private static final Unsafe unsafe = UnsafeWrapper.getUnsafe();
 
     private static final long valueOffset;
-
-    private final int itemId;
-
     private final int amount;
-
+    private final int itemId;
     private final Point location;
 
     private final Player owner;
-
-    private final long spawned;
-
     /**
      * The respawn time, in seconds. A negative value indicates
      * that this item should not be respawned, and a zero value
      * will cause immediate respawning of this item.
      */
     private final int respawnTime;
-
+    private final long spawned;
     private volatile int removed;
 
     static {
@@ -61,12 +55,22 @@ public final class Item implements Locatable {
         this.respawnTime = respawnTime;
     }
 
-    public int getId() {
-        return itemId;
+    private final boolean compareAndSet(boolean expect, boolean update) {
+        int e = expect ? 1 : 0;
+        int u = update ? 1 : 0;
+        return unsafe.compareAndSwapInt(this, valueOffset, e, u);
     }
 
     public int getAmount() {
         return amount;
+    }
+
+    public ItemDef getDef() {
+        return DefinitionHandler.getItemDef(itemId);
+    }
+
+    public int getId() {
+        return itemId;
     }
 
     public Point getLocation() {
@@ -77,18 +81,47 @@ public final class Item implements Locatable {
         throw new UnsupportedOperationException("Item is immutable");
     }
 
-    public boolean shouldRespawn() {
-        return respawnTime >= 0;
+    @Override
+    public int hashCode() {
+        int ownerHash = owner != null ? owner.hashCode() : 0;
+        return itemId | amount | location.hashCode() | ownerHash;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+
+        if (o == null) {
+            return false;
+        }
+
+        Item i = (Item) o;
+        return this.itemId == i.itemId && this.amount == i.amount &&
+                this.owner == i.owner && this.location.equals(i.location);
+    }
+
+    @Override
+    public String toString() {
+        return "ID: " + itemId + " Amount: " + amount +
+                "(" + location.getX() + ", " + location.getY() + ")";
     }
 
     public boolean isRemoved() {
         return removed == 1;
     }
 
-    private final boolean compareAndSet(boolean expect, boolean update) {
-        int e = expect ? 1 : 0;
-        int u = update ? 1 : 0;
-        return unsafe.compareAndSwapInt(this, valueOffset, e, u);
+    public boolean isVisibleTo(Player p) {
+        if (owner == null || p.equals(owner)) {
+            return true;
+        }
+
+        if (!getDef().isTradable()) {
+            return false;
+        }
+
+        return Server.getInstance().getHighResolutionTimestamp() - spawned > 60000;
     }
 
     public void reinstate() {
@@ -133,46 +166,7 @@ public final class Item implements Locatable {
         return true;
     }
 
-    public ItemDef getDef() {
-        return DefinitionHandler.getItemDef(itemId);
-    }
-
-    public boolean isVisibleTo(Player p) {
-        if (owner == null || p.equals(owner)) {
-            return true;
-        }
-
-        if (!getDef().isTradable()) {
-            return false;
-        }
-
-        return Server.getInstance().getHighResolutionTimestamp() - spawned > 60000;
-    }
-
-    @Override
-    public int hashCode() {
-        int ownerHash = owner != null ? owner.hashCode() : 0;
-        return itemId | amount | location.hashCode() | ownerHash;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o == this) {
-            return true;
-        }
-
-        if (o == null) {
-            return false;
-        }
-
-        Item i = (Item) o;
-        return this.itemId == i.itemId && this.amount == i.amount &&
-                this.owner == i.owner && this.location.equals(i.location);
-    }
-
-    @Override
-    public String toString() {
-        return "ID: " + itemId + " Amount: " + amount +
-                "(" + location.getX() + ", " + location.getY() + ")";
+    public boolean shouldRespawn() {
+        return respawnTime >= 0;
     }
 }

@@ -14,12 +14,9 @@ import org.moparscape.elysium.world.Point;
  */
 public final class ItemPickupTask extends AbstractTimedTask {
 
-    private final Player owner;
-
-    private final Item item;
-
     private final int expectedActionCount;
-
+    private final Item item;
+    private final Player owner;
     private volatile boolean finished = false;
 
     public ItemPickupTask(Player owner, Item item, int actionCount) {
@@ -54,7 +51,7 @@ public final class ItemPickupTask extends AbstractTimedTask {
         // has the item on it, attempt to take the item
         if (ownerLoc.equals(itemLoc)) {
             InvItem invitem = new InvItem(item.getId(), item.getAmount());
-            Inventory invent = owner.getComponent(Inventory.class);
+            Inventory invent = owner.getInventory();
 
             // TODO: Run scripts here for any special cases (such as wine of zamorak)
             // These scripts should have the ability to stop the rest of this process

@@ -10,10 +10,6 @@ public class ObjectMiningDef {
      */
     public int exp;
     /**
-     * The id of the ore this turns into
-     */
-    private int oreId;
-    /**
      * Herblaw level required to identify
      */
     public int requiredLvl;
@@ -21,6 +17,10 @@ public class ObjectMiningDef {
      * How long the rock takes to respawn afterwards
      */
     public int respawnTime;
+    /**
+     * The id of the ore this turns into
+     */
+    private int oreId;
 
     public int getExp() {
         return exp;

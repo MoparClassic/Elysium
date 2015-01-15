@@ -19,7 +19,7 @@ public final class UpdatePlayerCollections implements Runnable {
     public void run() {
         try {
             for (Player p : players) {
-                UpdateProxy proxy = p.getComponent(UpdateProxy.class);
+                UpdateProxy proxy = p.getUpdateProxy();
 
                 proxy.updateEntityLists();
                 proxy.clearDisplayLists();

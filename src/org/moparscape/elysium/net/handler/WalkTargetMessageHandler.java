@@ -17,7 +17,7 @@ public final class WalkTargetMessageHandler extends MessageHandler<WalkTargetMes
     public void handle(Session session, Player player, WalkTargetMessage message) {
         player.incrementActionCount();
 
-        Movement movement = player.getComponent(Movement.class);
+        Movement movement = player.getMovement();
         Path path = new Path(message);
         movement.setPath(path);
     }

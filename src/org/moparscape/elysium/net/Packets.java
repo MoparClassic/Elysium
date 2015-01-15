@@ -20,31 +20,157 @@ import java.util.concurrent.atomic.AtomicIntegerArray;
  */
 public final class Packets {
 
-    public static ChannelFuture sendScreenshot(Player player) {
+    public static ChannelFuture hideBank(Player player) {
         PacketBuilder pb = new PacketBuilder(0);
-        pb.setId(181);
-        return player.getSession().write(pb.toPacket());
-    }
-
-    public static ChannelFuture sendCombatStyle(Player player) {
-        Combat combat = player.getComponent(Combat.class);
-        PacketBuilder pb = new PacketBuilder(1);
-        pb.setId(129);
-        pb.writeByte(combat.getCombatStyle()); // Combat style
-        return player.getSession().write(pb.toPacket());
-    }
-
-    public static ChannelFuture sendFatigue(Player player) {
-        Skills skills = player.getComponent(Skills.class);
-        PacketBuilder pb = new PacketBuilder(2);
-        pb.setId(126);
-        pb.writeShort(skills.getFatigue());
+        pb.setId(171);
         return player.getSession().write(pb.toPacket());
     }
 
     public static ChannelFuture hideMenu(Player player) {
         PacketBuilder pb = new PacketBuilder(0);
         pb.setId(127);
+        return player.getSession().write(pb.toPacket());
+    }
+
+    public static ChannelFuture hideShop(Player player) {
+        PacketBuilder pb = new PacketBuilder(0);
+        pb.setId(220);
+        return player.getSession().write(pb.toPacket());
+    }
+
+    public static ChannelFuture sendAlert(Player player, String message, boolean big) {
+        PacketBuilder pb = new PacketBuilder(message.length());
+        pb.setId(big ? 64 : 148);
+        pb.writeBytes(message.getBytes());
+        return player.getSession().write(pb.toPacket());
+    }
+
+    public static ChannelFuture sendAppearanceScreen(Player player) {
+        PacketBuilder pb = new PacketBuilder(0);
+        pb.setId(207);
+        return player.getSession().write(pb.toPacket());
+    }
+
+    public static ChannelFuture sendCantLogout(Player player) {
+        PacketBuilder pb = new PacketBuilder(0);
+        pb.setId(136);
+        return player.getSession().write(pb.toPacket());
+    }
+
+    public static ChannelFuture sendCombatStyle(Player player) {
+        Combat combat = player.getCombat();
+        PacketBuilder pb = new PacketBuilder(1);
+        pb.setId(129);
+        pb.writeByte(combat.getCombatStyle()); // Combat style
+        return player.getSession().write(pb.toPacket());
+    }
+
+    public static ChannelFuture sendDied(Player player) {
+        PacketBuilder pb = new PacketBuilder(0);
+        pb.setId(11);
+        return player.getSession().write(pb.toPacket());
+    }
+
+//    public static ChannelFuture showShop(Player player, Shop shop) {
+//        throw new UnsupportedOperationException();
+//    }
+
+    public static ChannelFuture sendDuelAccept(Player player) {
+        throw new UnsupportedOperationException();
+    }
+
+    public static ChannelFuture sendDuelAcceptUpdate(Player player) {
+        throw new UnsupportedOperationException();
+    }
+
+    public static ChannelFuture sendDuelItems(Player player) {
+        throw new UnsupportedOperationException();
+    }
+
+    public static ChannelFuture sendDuelSettingUpdate(Player player) {
+        throw new UnsupportedOperationException();
+    }
+
+    public static ChannelFuture sendDuelWindowClose(Player player) {
+        PacketBuilder pb = new PacketBuilder(0);
+        pb.setId(160);
+        return player.getSession().write(pb.toPacket());
+    }
+
+    public static ChannelFuture sendDuelWindowOpen(Player player) {
+        throw new UnsupportedOperationException();
+    }
+
+    public static ChannelFuture sendEquipmentStats(Player player) {
+        throw new UnsupportedOperationException();
+    }
+
+    public static ChannelFuture sendFatigue(Player player) {
+        Skills skills = player.getSkills();
+        PacketBuilder pb = new PacketBuilder(2);
+        pb.setId(126);
+        pb.writeShort(skills.getFatigue());
+        return player.getSession().write(pb.toPacket());
+    }
+
+    public static ChannelFuture sendFriendList(Player player) {
+        Communication com = player.getCommunication();
+        Queue<Long> friendList = com.getFriendList();
+        int size = friendList.size();
+
+        PacketBuilder pb = new PacketBuilder(1 + (size * 9));
+        pb.setId(249);
+        pb.writeByte(size);
+        for (long hash : friendList) {
+            pb.writeLong(hash);
+            pb.writeByte(99); // The world they're on
+        }
+        return player.getSession().write(pb.toPacket());
+    }
+
+    public static ChannelFuture sendFriendUpdate(Player player, long usernameHash, int world) {
+        PacketBuilder pb = new PacketBuilder(9);
+        pb.setId(25);
+        pb.writeLong(usernameHash);
+        pb.writeByte(99); // World number
+        return player.getSession().write(pb.toPacket());
+    }
+
+    public static ChannelFuture sendGameSettings(Player player) {
+        throw new UnsupportedOperationException();
+    }
+
+    public static ChannelFuture sendIgnoreList(Player player) {
+        Communication com = player.getCommunication();
+        Queue<Long> ignoreList = com.getIgnoreList();
+        int size = ignoreList.size();
+
+        PacketBuilder pb = new PacketBuilder(1 + (size * 8));
+        pb.writeByte(size);
+        for (long hash : ignoreList) {
+            pb.writeLong(hash);
+        }
+        return player.getSession().write(pb.toPacket());
+    }
+
+    public static ChannelFuture sendLoginBox(Player player) {
+        PacketBuilder pb = new PacketBuilder(20);
+        pb.setId(248);
+        pb.writeShort(0); // Days since last login
+        pb.writeShort(0); // Subscription time left
+        pb.writeBytes("127.0.0.1".getBytes()); // Ip address
+        return player.getSession().write(pb.toPacket());
+    }
+
+    public static ChannelFuture sendLoginResponse(Player player, LoginResponse response) {
+        ByteBuf buffer = Unpooled.buffer(1);
+        buffer.writeByte(response.getResponseCode());
+        return player.getSession().write(buffer);
+    }
+
+    public static ChannelFuture sendLogout(Player player) {
+        PacketBuilder pb = new PacketBuilder(0);
+        pb.setId(222);
         return player.getSession().write(pb.toPacket());
     }
 
@@ -59,60 +185,20 @@ public final class Packets {
         return player.getSession().write(pb.toPacket());
     }
 
-    public static ChannelFuture showBank(Player player) {
+    public static ChannelFuture sendMessage(Player player, String message) {
+        byte[] msg = message.getBytes();
+        PacketBuilder pb = new PacketBuilder(msg.length);
+        pb.setId(48);
+        pb.writeBytes(msg);
+        return player.getSession().write(pb.toPacket());
+    }
+
+    public static ChannelFuture sendPrayers(Player player) {
         throw new UnsupportedOperationException();
     }
 
-    public static ChannelFuture hideBank(Player player) {
-        PacketBuilder pb = new PacketBuilder(0);
-        pb.setId(171);
-        return player.getSession().write(pb.toPacket());
-    }
-
-    public static ChannelFuture updateBankItem(Player player, int slot, int newId, int amount) {
-        PacketBuilder pb = new PacketBuilder(7);
-        pb.setId(139);
-        pb.writeByte(slot);
-        pb.writeShort(newId);
-        pb.writeInt(amount);
-        return player.getSession().write(pb.toPacket());
-    }
-
-//    public static ChannelFuture showShop(Player player, Shop shop) {
-//        throw new UnsupportedOperationException();
-//    }
-
-    public static ChannelFuture hideShop(Player player) {
-        PacketBuilder pb = new PacketBuilder(0);
-        pb.setId(220);
-        return player.getSession().write(pb.toPacket());
-    }
-
-    public static ChannelFuture startShutdown(Player player, int seconds) {
-        PacketBuilder pb = new PacketBuilder(2);
-        pb.setId(172);
-        pb.writeShort((int) (((double) seconds / 32D) * 50));
-        return player.getSession().write(pb.toPacket());
-    }
-
-    public static ChannelFuture sendAlert(Player player, String message, boolean big) {
-        PacketBuilder pb = new PacketBuilder(message.length());
-        pb.setId(big ? 64 : 148);
-        pb.writeBytes(message.getBytes());
-        return player.getSession().write(pb.toPacket());
-    }
-
-    public static ChannelFuture sendSound(Player player, String soundName) {
-        PacketBuilder pb = new PacketBuilder(soundName.length());
-        pb.setId(11);
-        pb.writeBytes(soundName.getBytes());
-        return player.getSession().write(pb.toPacket());
-    }
-
-    public static ChannelFuture sendDied(Player player) {
-        PacketBuilder pb = new PacketBuilder(0);
-        pb.setId(11);
-        return player.getSession().write(pb.toPacket());
+    public static ChannelFuture sendPrivacySettings(Player player) {
+        throw new UnsupportedOperationException();
     }
 
     public static ChannelFuture sendPrivateMessage(Player player, long usernameHash, byte[] message) {
@@ -123,93 +209,9 @@ public final class Packets {
         return player.getSession().write(pb.toPacket());
     }
 
-    public static ChannelFuture sendFriendUpdate(Player player, long usernameHash, int world) {
-        PacketBuilder pb = new PacketBuilder(9);
-        pb.setId(25);
-        pb.writeLong(usernameHash);
-        pb.writeByte(99); // World number
-        return player.getSession().write(pb.toPacket());
-    }
-
-    public static ChannelFuture sendFriendList(Player player) {
-        Communication com = player.getComponent(Communication.class);
-        Queue<Long> friendList = com.getFriendList();
-        int size = friendList.size();
-
-        PacketBuilder pb = new PacketBuilder(1 + (size * 9));
-        pb.setId(249);
-        pb.writeByte(size);
-        for (long hash : friendList) {
-            pb.writeLong(hash);
-            pb.writeByte(99); // The world they're on
-        }
-        return player.getSession().write(pb.toPacket());
-    }
-
-    public static ChannelFuture sendIgnoreList(Player player) {
-        Communication com = player.getComponent(Communication.class);
-        Queue<Long> ignoreList = com.getIgnoreList();
-        int size = ignoreList.size();
-
-        PacketBuilder pb = new PacketBuilder(1 + (size * 8));
-        pb.writeByte(size);
-        for (long hash : ignoreList) {
-            pb.writeLong(hash);
-        }
-        return player.getSession().write(pb.toPacket());
-    }
-
-    public static ChannelFuture sendTradeAccept(Player player) {
-        throw new UnsupportedOperationException();
-    }
-
-    public static ChannelFuture sendDuelAccept(Player player) {
-        throw new UnsupportedOperationException();
-    }
-
-    public static ChannelFuture sendTradeAcceptUpdate(Player player) {
-        throw new UnsupportedOperationException();
-    }
-
-    public static ChannelFuture sendDuelAcceptUpdate(Player player) {
-        throw new UnsupportedOperationException();
-    }
-
-    public static ChannelFuture sendDuelSettingUpdate(Player player) {
-        throw new UnsupportedOperationException();
-    }
-
-    public static ChannelFuture sendTradeItems(Player player) {
-        throw new UnsupportedOperationException();
-    }
-
-    public static ChannelFuture sendDuelItems(Player player) {
-        throw new UnsupportedOperationException();
-    }
-
-    public static ChannelFuture sendTradeWindowOpen(Player player) {
-        throw new UnsupportedOperationException();
-    }
-
-    public static ChannelFuture sendDuelWindowOpen(Player player) {
-        throw new UnsupportedOperationException();
-    }
-
-    public static ChannelFuture sendTradeWindowClose(Player player) {
+    public static ChannelFuture sendScreenshot(Player player) {
         PacketBuilder pb = new PacketBuilder(0);
-        pb.setId(187);
-        return player.getSession().write(pb.toPacket());
-    }
-
-    public static ChannelFuture sendDuelWindowClose(Player player) {
-        PacketBuilder pb = new PacketBuilder(0);
-        pb.setId(160);
-        return player.getSession().write(pb.toPacket());
-    }
-
-    public static ChannelFuture sendAppearanceScreen(Player player) {
-        PacketBuilder pb = new PacketBuilder(0);
-        pb.setId(207);
+        pb.setId(181);
         return player.getSession().write(pb.toPacket());
     }
 
@@ -222,30 +224,15 @@ public final class Packets {
         return player.getSession().write(pb.toPacket());
     }
 
-    public static ChannelFuture sendTeleBubble(Player player, int x, int y, boolean grab) {
-        Point loc = player.getLocation();
-        PacketBuilder pb = new PacketBuilder(3);
-        pb.setId(23);
-        pb.writeByte(grab ? 1 : 0);
-        pb.writeByte(x - loc.getX());
-        pb.writeByte(y - loc.getY());
+    public static ChannelFuture sendSound(Player player, String soundName) {
+        PacketBuilder pb = new PacketBuilder(soundName.length());
+        pb.setId(11);
+        pb.writeBytes(soundName.getBytes());
         return player.getSession().write(pb.toPacket());
-    }
-
-    public static ChannelFuture sendMessage(Player player, String message) {
-        byte[] msg = message.getBytes();
-        PacketBuilder pb = new PacketBuilder(msg.length);
-        pb.setId(48);
-        pb.writeBytes(msg);
-        return player.getSession().write(pb.toPacket());
-    }
-
-    public static ChannelFuture sendEquipmentStats(Player player) {
-        throw new UnsupportedOperationException();
     }
 
     public static ChannelFuture sendStat(Player player, int stat) {
-        Skills skills = player.getComponent(Skills.class);
+        Skills skills = player.getSkills();
         PacketBuilder pb = new PacketBuilder(7);
         pb.setId(208);
         pb.writeByte(stat);
@@ -256,7 +243,7 @@ public final class Packets {
     }
 
     public static ChannelFuture sendStats(Player player) {
-        Skills skills = player.getComponent(Skills.class);
+        Skills skills = player.getSkills();
         PacketBuilder pb = new PacketBuilder(108);
         pb.setId(180);
 
@@ -278,6 +265,38 @@ public final class Packets {
         return player.getSession().write(pb.toPacket());
     }
 
+    public static ChannelFuture sendTeleBubble(Player player, int x, int y, boolean grab) {
+        Point loc = player.getLocation();
+        PacketBuilder pb = new PacketBuilder(3);
+        pb.setId(23);
+        pb.writeByte(grab ? 1 : 0);
+        pb.writeByte(x - loc.getX());
+        pb.writeByte(y - loc.getY());
+        return player.getSession().write(pb.toPacket());
+    }
+
+    public static ChannelFuture sendTradeAccept(Player player) {
+        throw new UnsupportedOperationException();
+    }
+
+    public static ChannelFuture sendTradeAcceptUpdate(Player player) {
+        throw new UnsupportedOperationException();
+    }
+
+    public static ChannelFuture sendTradeItems(Player player) {
+        throw new UnsupportedOperationException();
+    }
+
+    public static ChannelFuture sendTradeWindowClose(Player player) {
+        PacketBuilder pb = new PacketBuilder(0);
+        pb.setId(187);
+        return player.getSession().write(pb.toPacket());
+    }
+
+    public static ChannelFuture sendTradeWindowOpen(Player player) {
+        throw new UnsupportedOperationException();
+    }
+
     public static ChannelFuture sendWorldInfo(Player player) {
         PacketBuilder pb = new PacketBuilder(10);
         pb.setId(131);
@@ -289,43 +308,24 @@ public final class Packets {
         return player.getSession().write(pb.toPacket());
     }
 
-    public static ChannelFuture sendPrayers(Player player) {
+    public static ChannelFuture showBank(Player player) {
         throw new UnsupportedOperationException();
     }
 
-    public static ChannelFuture sendGameSettings(Player player) {
-        throw new UnsupportedOperationException();
-    }
-
-    public static ChannelFuture sendPrivacySettings(Player player) {
-        throw new UnsupportedOperationException();
-    }
-
-    public static ChannelFuture sendLogout(Player player) {
-        PacketBuilder pb = new PacketBuilder(0);
-        pb.setId(222);
+    public static ChannelFuture startShutdown(Player player, int seconds) {
+        PacketBuilder pb = new PacketBuilder(2);
+        pb.setId(172);
+        pb.writeShort((int) (((double) seconds / 32D) * 50));
         return player.getSession().write(pb.toPacket());
     }
 
-    public static ChannelFuture sendCantLogout(Player player) {
-        PacketBuilder pb = new PacketBuilder(0);
-        pb.setId(136);
+    public static ChannelFuture updateBankItem(Player player, int slot, int newId, int amount) {
+        PacketBuilder pb = new PacketBuilder(7);
+        pb.setId(139);
+        pb.writeByte(slot);
+        pb.writeShort(newId);
+        pb.writeInt(amount);
         return player.getSession().write(pb.toPacket());
-    }
-
-    public static ChannelFuture sendLoginBox(Player player) {
-        PacketBuilder pb = new PacketBuilder(20);
-        pb.setId(248);
-        pb.writeShort(0); // Days since last login
-        pb.writeShort(0); // Subscription time left
-        pb.writeBytes("127.0.0.1".getBytes()); // Ip address
-        return player.getSession().write(pb.toPacket());
-    }
-
-    public static ChannelFuture sendLoginResponse(Player player, LoginResponse response) {
-        ByteBuf buffer = Unpooled.buffer(1);
-        buffer.writeByte(response.getResponseCode());
-        return player.getSession().write(buffer);
     }
 
     public static enum LoginResponse {

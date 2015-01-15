@@ -35,36 +35,6 @@ public final class PacketBuilder {
         return this;
     }
 
-    public PacketBuilder writeByte(int value) {
-        buffer.writeByte(value);
-        return this;
-    }
-
-    public PacketBuilder writeShort(int value) {
-        buffer.writeShort(value);
-        return this;
-    }
-
-    public PacketBuilder writeInt(int value) {
-        buffer.writeInt(value);
-        return this;
-    }
-
-    public PacketBuilder writeLong(long value) {
-        buffer.writeLong(value);
-        return this;
-    }
-
-    public PacketBuilder writeBytes(byte[] src) {
-        buffer.writeBytes(src);
-        return this;
-    }
-
-    public PacketBuilder writeBytes(byte[] src, int startIndex, int length) {
-        buffer.writeBytes(src, startIndex, length);
-        return this;
-    }
-
     public ByteBuf toPacket() {
         int dataLen = buffer.readableBytes(); // Length of payload
         int packetLen = dataLen + 1;          // Length of opcode followed by payload
@@ -88,5 +58,35 @@ public final class PacketBuilder {
                 return header;
             }
         }
+    }
+
+    public PacketBuilder writeByte(int value) {
+        buffer.writeByte(value);
+        return this;
+    }
+
+    public PacketBuilder writeBytes(byte[] src, int startIndex, int length) {
+        buffer.writeBytes(src, startIndex, length);
+        return this;
+    }
+
+    public PacketBuilder writeBytes(byte[] src) {
+        buffer.writeBytes(src);
+        return this;
+    }
+
+    public PacketBuilder writeInt(int value) {
+        buffer.writeInt(value);
+        return this;
+    }
+
+    public PacketBuilder writeLong(long value) {
+        buffer.writeLong(value);
+        return this;
+    }
+
+    public PacketBuilder writeShort(int value) {
+        buffer.writeShort(value);
+        return this;
     }
 }

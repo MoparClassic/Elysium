@@ -16,16 +16,11 @@ import org.moparscape.elysium.world.Region;
  */
 public class ItemDropTask extends AbstractTimedTask {
 
-    private final Player owner;
-
-    private final Movement movement;
-
-    private final Inventory inventory;
-
-    private final int slot;
-
     private final int expectedActionCount;
-
+    private final Inventory inventory;
+    private final Movement movement;
+    private final Player owner;
+    private final int slot;
     private volatile boolean finished = false;
 
     public ItemDropTask(Player owner, int slot, int actionCount) {
@@ -35,8 +30,8 @@ public class ItemDropTask extends AbstractTimedTask {
         this.slot = slot;
         this.expectedActionCount = actionCount;
 
-        this.movement = owner.getComponent(Movement.class);
-        this.inventory = owner.getComponent(Inventory.class);
+        this.movement = owner.getMovement();
+        this.inventory = owner.getInventory();
     }
 
     public void run() {

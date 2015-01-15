@@ -16,6 +16,11 @@ public final class Config {
         loadEnv();
     }
 
+    public static String CONF_DIR, RSCD_HOME;
+    public static int SERVER_NUM = 72;
+    //public static int SERVER_PORT, SERVER_VERSION, MAX_PLAYERS, LS_PORT, SERVER_NUM;
+    public static long START_TIME;
+
     /**
      * Called to load config settings from the given file
      *
@@ -68,9 +73,4 @@ public final class Config {
 
         RSCD_HOME = home;
     }
-
-    public static int SERVER_NUM = 72;
-    public static String CONF_DIR, RSCD_HOME;
-    //public static int SERVER_PORT, SERVER_VERSION, MAX_PLAYERS, LS_PORT, SERVER_NUM;
-    public static long START_TIME;
 }

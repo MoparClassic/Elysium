@@ -10,15 +10,13 @@ import java.nio.ByteBuffer;
  */
 public final class Sector {
     /**
-     * The width of a sector
-     */
-    public static final short WIDTH = 48;
-
-    /**
      * The height of a sector
      */
     public static final short HEIGHT = 48;
-
+    /**
+     * The width of a sector
+     */
+    public static final short WIDTH = 48;
     /**
      * An array containing all the tiles within this Sector
      */
@@ -35,17 +33,20 @@ public final class Sector {
     }
 
     /**
-     * Sets the the Tile at the given coords
+     * Create a new Sector from raw data packed into the given ByteBuffer
      */
-    public void setTile(int x, int y, Tile t) {
-        setTile(x * Sector.WIDTH + y, t);
-    }
+    public static Sector unpack(ByteBuffer in) throws IOException {
+        int length = Sector.WIDTH * Sector.HEIGHT;
+        if (in.remaining() < (10 * length)) {
+            throw new IOException("Provided buffer too short");
+        }
+        Sector sector = new Sector();
 
-    /**
-     * Sets the Tile at the given index
-     */
-    public void setTile(int i, Tile t) {
-        tiles[i] = t;
+        for (int i = 0; i < length; i++) {
+            sector.setTile(i, Tile.unpack(in));
+        }
+
+        return sector;
     }
 
     /**
@@ -77,19 +78,16 @@ public final class Sector {
     }
 
     /**
-     * Create a new Sector from raw data packed into the given ByteBuffer
+     * Sets the Tile at the given index
      */
-    public static Sector unpack(ByteBuffer in) throws IOException {
-        int length = Sector.WIDTH * Sector.HEIGHT;
-        if (in.remaining() < (10 * length)) {
-            throw new IOException("Provided buffer too short");
-        }
-        Sector sector = new Sector();
+    public void setTile(int i, Tile t) {
+        tiles[i] = t;
+    }
 
-        for (int i = 0; i < length; i++) {
-            sector.setTile(i, Tile.unpack(in));
-        }
-
-        return sector;
+    /**
+     * Sets the the Tile at the given coords
+     */
+    public void setTile(int x, int y, Tile t) {
+        setTile(x * Sector.WIDTH + y, t);
     }
 }

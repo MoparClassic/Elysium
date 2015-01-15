@@ -15,50 +15,88 @@ import java.util.concurrent.atomic.AtomicIntegerArray;
  */
 public final class UpdateProxy extends AbstractComponent {
 
-    private Sprite sprite;
-
     private Communication communication;
-
     private Credentials credentials;
-
     private Movement movement;
-
     private Observer observer;
-
     private Skills skills;
-
-    public void resolveDependencies(Map<Class<? extends Component>, Component> components) {
-        this.sprite = Sprite.class.cast(components.get(Sprite.class));
-        this.communication = Communication.class.cast(components.get(Communication.class));
-        this.credentials = Credentials.class.cast(components.get(Credentials.class));
-        this.movement = Movement.class.cast(components.get(Movement.class));
-        this.observer = Observer.class.cast(components.get(Observer.class));
-        this.skills = Skills.class.cast(components.get(Skills.class));
-    }
-
-    public void updateEntityLists() {
-        observer.updateEntityLists();
-    }
-
-    public void clearDisplayLists() {
-        observer.clearDisplayLists();
-    }
+    private Sprite sprite;
 
     public void clearChatLists() {
         communication.clearChatMessagesNeedingDisplayed();
         communication.clearNpcMessagesNeedingDisplayed();
     }
 
-    public void revalidateWatchedEntities() {
-        observer.revalidateWatchedEntities();
+    public void clearDisplayLists() {
+        observer.clearDisplayLists();
     }
 
-    public void updateWatchedEntities() {
-        observer.updateWatchedEntities();
+    public Appearance getAppearance() {
+        return sprite.getAppearance();
     }
 
-    public StatefulEntityCollection<GameObject> getWatchedObjects() {
-        return observer.getWatchedObjects();
+    public int getAppearanceId() {
+        return sprite.getAppearanceId();
+    }
+
+    public Queue<Bubble> getBubblesNeedingDisplayed() {
+        return observer.getBubblesNeedingDisplayed();
+    }
+
+    public Queue<ChatMessage> getChatMessagesNeedingDisplayed() {
+        return communication.getChatMessagesNeedingDisplayed();
+    }
+
+    public int getCombatLevel() {
+        return skills.getCombatLevel();
+    }
+
+    public int getHits() {
+        return skills.getHits();
+    }
+
+    public int getLastDamage() {
+        return skills.getLastDamage();
+    }
+
+    public int getMaxHits() {
+        return skills.getMaxHits();
+    }
+
+    public ChatMessage getNextChatMessage() {
+        return communication.getNextChatMessage();
+    }
+
+    public Queue<Npc> getNpcHitUpdates() {
+        return observer.getNpcHitUpdates();
+    }
+
+    public Queue<ChatMessage> getNpcMessagesNeedingDisplayed() {
+        return communication.getNpcMessagesNeedingDisplayed();
+    }
+
+    public List<Player> getPlayerAppearanceUpdates() {
+        return observer.getPlayerAppearanceUpdates();
+    }
+
+    public Queue<Player> getPlayerHitUpdates() {
+        return observer.getPlayerHitUpdates();
+    }
+
+    public Queue<Projectile> getProjectilesNeedingDisplayed() {
+        return observer.getProjectilesNeedingDisplayed();
+    }
+
+    public int getSprite() {
+        return sprite.getSprite();
+    }
+
+    public String getUsername() {
+        return credentials.getUsername();
+    }
+
+    public long getUsernameHash() {
+        return credentials.getUsernameHash();
     }
 
     public StatefulEntityCollection<Item> getWatchedItems() {
@@ -69,80 +107,20 @@ public final class UpdateProxy extends AbstractComponent {
         return observer.getWatchedNpcs();
     }
 
+    public StatefulEntityCollection<GameObject> getWatchedObjects() {
+        return observer.getWatchedObjects();
+    }
+
     public StatefulEntityCollection<Player> getWatchedPlayers() {
         return observer.getWatchedPlayers();
-    }
-
-    public Queue<Projectile> getProjectilesNeedingDisplayed() {
-        return observer.getProjectilesNeedingDisplayed();
-    }
-
-    public Queue<Bubble> getBubblesNeedingDisplayed() {
-        return observer.getBubblesNeedingDisplayed();
-    }
-
-    public Queue<Npc> getNpcHitUpdates() {
-        return observer.getNpcHitUpdates();
-    }
-
-    public Queue<Player> getPlayerHitUpdates() {
-        return observer.getPlayerHitUpdates();
-    }
-
-    public List<Player> getPlayerAppearanceUpdates() {
-        return observer.getPlayerAppearanceUpdates();
-    }
-
-    public boolean spriteChanged() {
-        return sprite.spriteChanged();
-    }
-
-    public void resetSpriteChanged() {
-        sprite.resetSpriteChanged();
-    }
-
-    public void setAppearanceChanged(boolean changed) {
-        sprite.setAppearanceChanged(changed);
-    }
-
-    public void updateAppearanceId() {
-        sprite.updateAppearanceId();
-    }
-
-    public int getAppearanceId() {
-        return sprite.getAppearanceId();
-    }
-
-    public Appearance getAppearance() {
-        return sprite.getAppearance();
-    }
-
-    public int getSprite() {
-        return sprite.getSprite();
     }
 
     public AtomicIntegerArray getWornItems() {
         return sprite.getWornItems();
     }
 
-    public boolean isSkulled() {
-        return sprite.isSkulled();
-    }
-
     public boolean hasMoved() {
         return movement.hasMoved();
-    }
-
-    public void resetMoved() {
-        movement.resetMoved();
-    }
-
-    public void updatePosition() {
-        movement.updatePosition();
-    }
-
-    public ChatMessage getNextChatMessage() {
-        return communication.getNextChatMessage();
     }
 
     public void informOfChatMessage(ChatMessage message) {
@@ -157,35 +135,52 @@ public final class UpdateProxy extends AbstractComponent {
         return communication.isIgnoring(usernameHash);
     }
 
-    public Queue<ChatMessage> getChatMessagesNeedingDisplayed() {
-        return communication.getChatMessagesNeedingDisplayed();
+    public boolean isSkulled() {
+        return sprite.isSkulled();
     }
 
-    public Queue<ChatMessage> getNpcMessagesNeedingDisplayed() {
-        return communication.getNpcMessagesNeedingDisplayed();
+    public void resetMoved() {
+        movement.resetMoved();
     }
 
-    public String getUsername() {
-        return credentials.getUsername();
+    public void resetSpriteChanged() {
+        sprite.resetSpriteChanged();
     }
 
-    public long getUsernameHash() {
-        return credentials.getUsernameHash();
+    public void resolveDependencies(Map<Class<? extends Component>, Component> components) {
+        this.sprite = Sprite.class.cast(components.get(Sprite.class));
+        this.communication = Communication.class.cast(components.get(Communication.class));
+        this.credentials = Credentials.class.cast(components.get(Credentials.class));
+        this.movement = Movement.class.cast(components.get(Movement.class));
+        this.observer = Observer.class.cast(components.get(Observer.class));
+        this.skills = Skills.class.cast(components.get(Skills.class));
     }
 
-    public int getLastDamage() {
-        return skills.getLastDamage();
+    public void revalidateWatchedEntities() {
+        observer.revalidateWatchedEntities();
     }
 
-    public int getHits() {
-        return skills.getHits();
+    public void setAppearanceChanged(boolean changed) {
+        sprite.setAppearanceChanged(changed);
     }
 
-    public int getMaxHits() {
-        return skills.getMaxHits();
+    public boolean spriteChanged() {
+        return sprite.spriteChanged();
     }
 
-    public int getCombatLevel() {
-        return skills.getCombatLevel();
+    public void updateAppearanceId() {
+        sprite.updateAppearanceId();
+    }
+
+    public void updateEntityLists() {
+        observer.updateEntityLists();
+    }
+
+    public void updatePosition() {
+        movement.updatePosition();
+    }
+
+    public void updateWatchedEntities() {
+        observer.updateWatchedEntities();
     }
 }

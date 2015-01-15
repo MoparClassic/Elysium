@@ -10,9 +10,9 @@ import org.moparscape.elysium.net.codec.Message;
  */
 public interface MessageDecoder<T extends Message> {
 
-    int getOpcode();
+    T decode(ByteBuf buffer, int length);
 
     Class<T> getMessageType();
 
-    T decode(ByteBuf buffer, int length);
+    int getOpcode();
 }
