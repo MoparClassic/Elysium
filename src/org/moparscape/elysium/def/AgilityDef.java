@@ -9,7 +9,7 @@ public class AgilityDef {
      */
     public boolean canFail;
     /**
-     * The xp you get for doing this obstacle safely
+     * The xp you getStateUpdateFunction for doing this obstacle safely
      */
     public int exp;
     /**
@@ -57,7 +57,7 @@ public class AgilityDef {
     }
 
     /**
-     * @return the xp you get for doing this agility object
+     * @return the xp you getStateUpdateFunction for doing this agility object
      */
     public int getExp() {
         return exp;

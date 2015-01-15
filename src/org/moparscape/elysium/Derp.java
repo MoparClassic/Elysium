@@ -1,9 +1,10 @@
 package org.moparscape.elysium;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.atomic.AtomicBoolean;
+import org.moparscape.elysium.entity.EntityComparators;
+import org.moparscape.elysium.entity.Heartbeat;
+
+import java.util.PriorityQueue;
+import java.util.UUID;
 
 /**
  * Created by IntelliJ IDEA.
@@ -13,58 +14,30 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class Derp {
 
     public static void main(String[] args) throws Exception {
-        AtomicBoolean bool = new AtomicBoolean(false); // Safe for optimistic concurrency.
-
-        List<Integer> a = new ArrayList<>(500);
-        ConcurrentLinkedQueue<Integer> b = new ConcurrentLinkedQueue<>();
-        //ArrayBlockingQueue<Integer> b = new ArrayBlockingQueue<Integer>(500); // Useless - doesn't grow in capacity.
-
-        // An idea: Cache viewable entities at the beginning of each game pulse.
-
-        int zz = 1;
-
-        for (int i = 0; i < 10; i++) {
-            a.add(i);
-            b.add(i);
-        }
-
         long start = time();
-        for (int i = 0; i < 10; i++) {
-            synchronized (a) {
-                for (Integer x : a) {
-                    zz += x;
-                }
-            }
+        String s = null;
+        int progress = 0;
+        for (int i = 0; i < 1000; i++) {
+            UUID id = UUID.randomUUID();
+            System.out.println(id);
+            progress++;
         }
+        //System.out.printf("%d %s\n", progress, s);
         long end = time();
         System.out.println(end - start);
+        if (true) return;
 
-        start = time();
-        for (int x = 0; x < 10; x++) {
-            for (Integer i : b) {
-                zz += i;
-            }
-        }
-        end = time();
-        System.out.println(end - start);
+        EntityComparators.HeartbeatComparator a = new EntityComparators.HeartbeatComparator();
+        PriorityQueue<Heartbeat> pq = new PriorityQueue<>(new EntityComparators.HeartbeatComparator());
 
-        System.out.println(zz);
+        pq.add(new HeartbeatImpl(1));
+        pq.add(new HeartbeatImpl(1000));
+        pq.add(new HeartbeatImpl(20));
+        pq.add(new HeartbeatImpl(15));
+        pq.add(new HeartbeatImpl(10));
+        pq.add(new HeartbeatImpl(0));
 
-//        Something a = new Something("A", 1);
-//        Something b = new Something("B", 2);
-//        Something c = new Something("C", 3);
-//
-//        PriorityQueue<Something> q = new PriorityQueue<>();
-//        q.add(a);
-//        q.add(b);
-//        q.add(c);
-//
-//        b.index = 5;
-//
-//        while (q.peek() != null) {
-//            Something s = q.poll();
-//            System.out.printf("%s %d\n", s.name, s.index);
-//        }
+        while (pq.peek() != null) System.out.println(pq.poll().getScheduledPulseTime());
     }
 
     public static void printSomething(Something s) {
@@ -74,6 +47,35 @@ public class Derp {
     private static long time() {
         //return System.nanoTime() / 1000000;
         return System.currentTimeMillis();
+    }
+
+    private static class HeartbeatImpl implements Heartbeat {
+
+        private long pulseTime;
+
+        public HeartbeatImpl(long time) {
+            this.pulseTime = time;
+        }
+
+        @Override
+        public long getScheduledPulseTime() {
+            return pulseTime;
+        }
+
+        @Override
+        public void setScheduledPulseTime(long time) {
+            this.pulseTime = time;
+        }
+
+        @Override
+        public void pulse() {
+
+        }
+
+        @Override
+        public boolean isCancelled() {
+            return false;
+        }
     }
 
     private static class Something implements Comparable<Something> {

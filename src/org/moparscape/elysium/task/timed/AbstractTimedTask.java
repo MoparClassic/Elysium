@@ -28,12 +28,7 @@ public abstract class AbstractTimedTask implements TimedTask {
      * @return
      */
     public final int compareTo(TimedTask other) {
-        long diff = this.getExecutionTime() - other.getExecutionTime();
-
-        if (diff != 0) {
-            return diff > 0 ? 1 : -1;
-        }
-        return 0;
+        return Long.compare(this.getExecutionTime(), other.getExecutionTime());
     }
 
     public long getExecutionTime() {

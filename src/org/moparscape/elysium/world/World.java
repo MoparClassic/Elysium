@@ -25,6 +25,7 @@ public final class World {
     private static final EntityFactory ENTITY_FACTORY = new DefaultEntityFactory();
     private static final World INSTANCE;
     private final CopyOnWriteArrayList<Npc> npcList = new CopyOnWriteArrayList<Npc>();
+
     static {
         INSTANCE = new World();
     }

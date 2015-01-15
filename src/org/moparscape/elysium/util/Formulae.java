@@ -499,7 +499,7 @@ public final class Formulae {
      */
     public static int calcRangeHit(int rangeLvl, int rangeEquip,
                                    int armourEquip, int arrowID) {
-        int armourRatio = (int) (60D + ((double) ((rangeEquip * 3D) - armourEquip) / 300D) * 40D);
+        int armourRatio = (int) (60D + (((rangeEquip * 3D) - armourEquip) / 300D) * 40D);
 
         if (DataConversions.random(0, 100) > armourRatio
                 && DataConversions.random(0, 1) == 0) {
@@ -601,7 +601,7 @@ public final class Formulae {
     }
 
     /**
-     * Decide what fish, if any, we should get from the water
+     * Decide what fish, if any, we should getStateUpdateFunction from the water
      */
 //    public static ObjectFishDef getFish(int waterId, int fishingLevel, int click) {
 //        ArrayList<ObjectFishDef> fish = new ArrayList<ObjectFishDef>();
@@ -614,7 +614,7 @@ public final class Formulae {
 //        if (fish.size() <= 0) {
 //            return null;
 //        }
-//        ObjectFishDef thisFish = fish.get(DataConversions.random(0,
+//        ObjectFishDef thisFish = fish.getStateUpdateFunction(DataConversions.random(0,
 //                fish.size() - 1));
 //        int levelDiff = fishingLevel - thisFish.getReqLevel();
 //        if (levelDiff < 0) {
@@ -667,7 +667,7 @@ public final class Formulae {
 
 //    public static int getItemPos(Shop shop, int id) {
 //        for (int i = 0; i < shop.getItems().size(); i++) {
-//            if (shop.getItems().get(i).getID() == id)
+//            if (shop.getItems().getStateUpdateFunction(i).getID() == id)
 //                return i;
 //        }
 //        return -1;
@@ -965,7 +965,7 @@ public final class Formulae {
      * Check what height we are currently at on the map
      */
     public static int getHeight(int y) {
-        return (int) (y / 944);
+        return y / 944;
     }
 
     /**
@@ -976,7 +976,7 @@ public final class Formulae {
     }
 
     /**
-     * Should we get a log from the tree?
+     * Should we getStateUpdateFunction a log from the tree?
      */
     public static boolean getLog(ObjectWoodcuttingDef def, int woodcutLevel,
                                  int axeId) {
@@ -1028,7 +1028,6 @@ public final class Formulae {
 //    }
 
     // maxHit
-
     public static String getLvlDiffColour(int lvlDiff) {
         if (lvlDiff < -9) {
             return "@red@";
@@ -1074,7 +1073,7 @@ public final class Formulae {
     }
 
     /**
-     * Should we can get an ore from the rock?
+     * Should we can getStateUpdateFunction an ore from the rock?
      */
     public static boolean getOre(ObjectMiningDef def, int miningLevel, int axeId) {
 
@@ -1162,7 +1161,7 @@ public final class Formulae {
 //    }
 
     /**
-     * Given a stat string get its index returns -1 on failure
+     * Given a stat string getStateUpdateFunction its index returns -1 on failure
      */
     public static int getStatIndex(String stat) {
         for (int index = 0; index < statArray.length; index++) {
@@ -1254,8 +1253,8 @@ public final class Formulae {
      */
     public static int maxHit(int strength, int weaponPower, boolean burst,
                              boolean superhuman, boolean ultimate, int bonus) {
-        double newStrength = (double) ((strength * addPrayers(burst,
-                superhuman, ultimate)) + bonus);
+        double newStrength = (strength * addPrayers(burst,
+                superhuman, ultimate)) + bonus;
 
         int fin = (int) ((newStrength
                 * ((((double) weaponPower * 0.00175D) + 0.1D)) + 1.05D) * 0.95D);

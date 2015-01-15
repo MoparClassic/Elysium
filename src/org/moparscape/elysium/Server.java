@@ -26,15 +26,15 @@ import java.util.concurrent.*;
  */
 public class Server {
 
-    public static final int TASK_THREADS = 4;
     private static final Object INSTANCE_LOCK = new Object();
 
     private static volatile Server INSTANCE;
 
-    private final EventLoopGroup bossGroup = new NioEventLoopGroup();
+    private final EventLoopGroup bossGroup = new NioEventLoopGroup(Runtime.getRuntime().availableProcessors());
     private final ExecutorService dataExecutorService = Executors.newSingleThreadExecutor();
     private final ArrayBlockingQueue<Session> sessions = new ArrayBlockingQueue<>(1500);
-    private final ScheduledExecutorService taskExecutorService = Executors.newScheduledThreadPool(TASK_THREADS);
+    private final ScheduledExecutorService taskExecutorService =
+            Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors() * 2);
     /**
      * We used to use a PriorityBlockingQueue here. But upon inspecting the source code
      * I've learned that it acquires and release a lock EVERY TIME you peek/poll.
@@ -42,7 +42,7 @@ public class Server {
      */
     private final PriorityQueue<TimedTask> taskQueue = new PriorityQueue<>();
     private final GameStateUpdater updater = new GameStateUpdater();
-    private final EventLoopGroup workerGroup = new NioEventLoopGroup();
+    private final EventLoopGroup workerGroup = new NioEventLoopGroup(Runtime.getRuntime().availableProcessors());
     /**
      * An epoch timestamp (set using System.currentTimeMillis()) that can be used
      * for storing and comparing database timestamps.
